@@ -1,1 +1,29 @@
-<p>sign-up works!</p>
+<div class="signup-container">
+  <div class="signup-card">
+    <img class="avatar" src="https://anhcuoiviet.vn/wp-content/uploads/2022/11/avatar-dep-dang-yeu-nu-5.jpg" alt="Avatar" />
+    <h3>Welcome to NewWorld</h3>
+    <h2>Sign up now!</h2>
+
+    <form>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput placeholder="Enter your email" type="email" />
+        <mat-hint>"Ex:ANguyen&#64;gmail.com"</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput placeholder="Enter your password" type="password" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Re-enter Password</mat-label>
+        <input matInput placeholder="Re-enter your password" type="password" />
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" class="continue-btn">
+        Continue <mat-icon>arrow_forward</mat-icon>
+      </button>
+    </form>
+  </div>
+</div>

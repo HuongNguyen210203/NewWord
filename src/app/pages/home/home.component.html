@@ -1,13 +1,19 @@
 <app-topbar></app-topbar>
 <mat-sidenav-container>
-  <mat-sidenav mode="side" opened><app-sidebar></app-sidebar></mat-sidenav>
+  <mat-sidenav mode="side" opened>
+    <app-sidebar></app-sidebar>
+  </mat-sidenav>
+
   <mat-sidenav-content>
-    <div class="section">
+    <!-- Discussion scrollable -->
+    <div class="section scrollable-section">
       <h2>Discussion</h2>
-      <div class="card-list">
+      <div class="card-list scroll-content">
         <app-card-room *ngFor="let room of rooms"></app-card-room>
       </div>
     </div>
+
+    <!-- Event -->
     <div class="section">
       <h2>Event</h2>
       <div class="card-list">

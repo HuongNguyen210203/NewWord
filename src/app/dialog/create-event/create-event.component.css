@@ -1,0 +1,82 @@
+.create-event-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 32px;
+  background-color: #f9fbe7;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.upload-section {
+  position: relative;
+  overflow: hidden;
+  border: 2px dashed #aed581;
+  border-radius: 8px;
+  padding: 0;
+  background: #f1f8e9;
+
+  .cover-img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+  }
+
+  .cover-placeholder {
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+    color: #9e9e9e;
+  }
+
+  .upload-btn {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    background-color: #81c784;
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+    transition: background-color 0.2s ease;
+  }
+
+  .upload-btn:hover {
+    background-color: #66bb6a;
+  }
+}
+
+.form-section mat-form-field {
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  mat-form-field {
+    flex: 1 1 200px;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+
+  button {
+    min-width: 120px;
+  }
+}

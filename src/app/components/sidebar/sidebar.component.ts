@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {MaterialModule} from '../../modules/material/material.module';
+import { MaterialModule } from '../../modules/material/material.module';
 
 import {RouterLink, RouterLinkActive} from '@angular/router';
 

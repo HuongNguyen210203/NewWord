@@ -1,0 +1,72 @@
+.layout {
+  height: 100vh;
+}
+
+.main-content {
+  padding: 24px;
+}
+
+.header-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.overview-section {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.overview-card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  flex: 1;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.overview-card.orange { color: #ff9800; }
+.overview-card.purple { color: #673ab7; }
+.overview-card.red { color: #f44336; }
+
+.dashboard-grid {
+  display: flex;
+  gap: 24px;
+}
+
+.chart-container {
+  flex: 2;
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.table-container {
+  flex: 1.2;
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+th, td {
+  padding: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+  text-align: left;
+  color: #444;
+  font-weight: 500;
+}
+
+.time {
+  color: #4caf50;
+  font-weight: bold;
+}

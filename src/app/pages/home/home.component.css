@@ -1,30 +1,87 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9f9f9;
+}
+
+mat-sidenav-container {
+  height: 100vh;
+}
+
+mat-sidenav-content {
+  overflow-y: auto;
+}
+
 .section {
   padding: 24px;
 
   h2 {
     margin-bottom: 12px;
-    color: #376a3e;
+    color: #2e7d32;
+    font-size: 20px;
+    font-weight: 600;
   }
 
   .card-list {
     display: flex;
+    flex-direction: row;
     gap: 16px;
     overflow-x: auto;
+    overflow-y: hidden;
     padding-bottom: 16px;
+
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+
+    > * {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+    }
+
+  // Scrollbar đẹp
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #a5d6a7;
+      border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: #e0f2f1;
+    }
   }
 }
-mat-sidenav-container {
-  height: 100vh; /* Chiều cao cố định = chiều cao màn hình */
-}
 
-mat-sidenav-content {
-  overflow-y: auto; /* Cho phép scroll nội dung nếu dài hơn viewport */
-}
 
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden; /* tránh scroll toàn trang nếu không muốn */
-}
+/*.section {*/
+/*  padding: 24px;*/
 
+/*  h2 {*/
+/*    margin-bottom: 12px;*/
+/*    color: #376a3e;*/
+/*  }*/
+
+/*  .card-list {*/
+/*    display: flex;*/
+/*    gap: 16px;*/
+/*    overflow-x: auto;*/
+/*    padding-bottom: 16px;*/
+/*  }*/
+/*}*/
+/*mat-sidenav-container {*/
+/*  height: 100vh; !* Chiều cao cố định = chiều cao màn hình *!*/
+/*}*/
+
+/*mat-sidenav-content {*/
+/*  overflow-y: auto; !* Cho phép scroll nội dung nếu dài hơn viewport *!*/
+/*}*/
+
+/*html, body {*/
+/*  margin: 0;*/
+/*  padding: 0;*/
+/*  height: 100%;*/
+/*  overflow: hidden; !* tránh scroll toàn trang nếu không muốn *!*/
+/*}*/

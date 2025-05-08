@@ -1,0 +1,54 @@
+.create-room-container {
+  max-width: 400px;
+  margin: 32px auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: #e8f5e9; // xanh nhạt như trang home
+border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(46, 125, 50, 0.1); // xanh đậm mờ
+border: 1px solid #a5d6a7;
+}
+
+.upload-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .preview-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #81c784; // viền xanh mềm
+  }
+
+  .upload-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .upload-title {
+      font-weight: 500;
+      margin: 0;
+      color: #2e7d32; // text xanh đậm
+    }
+    button[mat-icon-button]{
+      background-color: #a5d6a7; // nút xanh nhạt
+      color: #2e7d32; // icon xanh đậm
+      border-radius: 50%;
+      padding: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // bóng nhẹ
+    }
+    button[mat-icon-button]:hover {
+      background-color: #81c784; // nút xanh đậm
+      color: #fff;
+    }
+    button[mat-icon-button]:hover mat-icon {
+      color: #fff;
+    }
+  }
+}
+
+

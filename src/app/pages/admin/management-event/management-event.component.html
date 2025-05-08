@@ -1,1 +1,77 @@
-<p>management-event works!</p>
+<!--<app-topbar></app-topbar>-->
+<!--<mat-sidenav-container class="layout-container">-->
+<!--  <mat-sidenav mode="side" opened class="sidenav">-->
+<!--    <app-sidebar></app-sidebar>-->
+<!--  </mat-sidenav>-->
+
+<!--  <mat-sidenav-content class="content">-->
+<!--    <div class="toolbar-section">-->
+<!--      <h2>Event Management</h2>-->
+<!--      <button mat-stroked-button color="accent" routerLink="/create-event">-->
+<!--        <mat-icon>add</mat-icon>-->
+<!--        Create Event-->
+<!--      </button>-->
+<!--    </div>-->
+
+<!--    <div class="event-table-container">-->
+<!--      <table mat-table [dataSource]="dataSource" class="mat-elevation-z1" matSort>-->
+<!--        <ng-container matColumnDef="select">-->
+<!--          <th mat-header-cell *matHeaderCellDef>-->
+<!--            <mat-checkbox (change)="$event ? masterToggle() : null"-->
+<!--                          [checked]="selection.hasValue() && isAllSelected()"-->
+<!--                          [indeterminate]="selection.hasValue() && !isAllSelected()">-->
+<!--            </mat-checkbox>-->
+<!--          </th>-->
+<!--          <td mat-cell *matCellDef="let row">-->
+<!--            <mat-checkbox (click)="$event.stopPropagation()"-->
+<!--                          (change)="$event ? selection.toggle(row) : null"-->
+<!--                          [checked]="selection.isSelected(row)">-->
+<!--            </mat-checkbox>-->
+<!--          </td>-->
+<!--        </ng-container>-->
+
+<!--        <ng-container matColumnDef="image">-->
+<!--          <th mat-header-cell *matHeaderCellDef> Event Picture </th>-->
+<!--          <td mat-cell *matCellDef="let element">-->
+<!--            <img [src]="element.image" width="100" height="60" />-->
+<!--          </td>-->
+<!--        </ng-container>-->
+
+<!--        <ng-container matColumnDef="name">-->
+<!--          <th mat-header-cell *matHeaderCellDef> Event Name </th>-->
+<!--          <td mat-cell *matCellDef="let element"> {{ element.name }} </td>-->
+<!--        </ng-container>-->
+
+<!--        <ng-container matColumnDef="description">-->
+<!--          <th mat-header-cell *matHeaderCellDef> Description </th>-->
+<!--          <td mat-cell *matCellDef="let element"> {{ element.description }} </td>-->
+<!--        </ng-container>-->
+
+<!--        <ng-container matColumnDef="registerStart">-->
+<!--          <th mat-header-cell *matHeaderCellDef> Registration start date </th>-->
+<!--          <td mat-cell *matCellDef="let element"> {{ element.registerStart | date:'medium' }} </td>-->
+<!--        </ng-container>-->
+
+<!--        <ng-container matColumnDef="registerEnd">-->
+<!--          <th mat-header-cell *matHeaderCellDef> Registration end date </th>-->
+<!--          <td mat-cell *matCellDef="let element"> {{ element.registerEnd | date:'medium' }} </td>-->
+<!--        </ng-container>-->
+
+<!--        <ng-container matColumnDef="eventDate">-->
+<!--          <th mat-header-cell *matHeaderCellDef> Event date </th>-->
+<!--          <td mat-cell *matCellDef="let element"> {{ element.eventDate | date:'medium' }} </td>-->
+<!--        </ng-container>-->
+
+<!--        <ng-container matColumnDef="participants">-->
+<!--          <th mat-header-cell *matHeaderCellDef> Number of participants </th>-->
+<!--          <td mat-cell *matCellDef="let element"> {{ element.participants }} </td>-->
+<!--        </ng-container>-->
+
+<!--        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>-->
+<!--        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>-->
+<!--      </table>-->
+
+<!--      <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>-->
+<!--    </div>-->
+<!--  </mat-sidenav-content>-->
+<!--</mat-sidenav-container>-->

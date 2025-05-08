@@ -1,1 +1,94 @@
-<p>admin-page works!</p>
+<app-topbar></app-topbar>
+<mat-sidenav-container class="layout">
+  <mat-sidenav mode="side" opened class="sidenav">
+    <app-sidebar></app-sidebar>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="main-content">
+    <h2 class="header-title">Admin management</h2>
+
+    <div class="overview-section">
+      <div class="overview-card">
+        <p>Events</p>
+        <h3>14</h3>
+        <small>Last 7 days</small>
+      </div>
+      <div class="overview-card orange">
+        <p>Total Discussions</p>
+        <h3>868</h3>
+        <small>Last 7 days</small>
+      </div>
+      <div class="overview-card purple">
+        <p>Total Users</p>
+        <h3>120</h3>
+        <small>Last 7 days</small>
+      </div>
+      <div class="overview-card red">
+        <p>Messages from Users</p>
+        <h3>12</h3>
+        <small>Need to Reply</small>
+        <br />
+        <small>2 Past Mess</small>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="chart-container">
+        <h3>Number of Users</h3>
+        <h2 class="stat-value">120</h2>
+        <p>50 Orders</p>
+        <ngx-charts-bar-vertical
+          [results]="chartData"
+          [scheme]="colorScheme"
+          [xAxis]="true"
+          [yAxis]="true"
+          [roundEdges]="true"
+          [legend]="false">
+        </ngx-charts-bar-vertical>
+      </div>
+
+      <div class="table-container">
+        <h3>Upcoming Events</h3>
+        <select>
+          <option>This Week</option>
+          <option>Next Week</option>
+          <option>This Month</option>
+        </select>
+        <table>
+          <thead>
+          <tr>
+            <th>Name of Events</th>
+            <th>Number of attendees</th>
+            <th>Time</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let row of eventRows">
+            <td>{{ row.name }}</td>
+            <td>{{ row.attendees | number }}</td>
+            <td class="time">{{ row.time }}</td>
+          </tr>
+          </tbody>
+        </table>
+
+        <h3>Famous Discussion</h3>
+        <table>
+          <thead>
+          <tr>
+            <th>Name of Events</th>
+            <th>Number of attendees</th>
+            <th>Time</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let row of discussionRows">
+            <td>{{ row.name }}</td>
+            <td>{{ row.attendees | number }}</td>
+            <td class="time">{{ row.time }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
