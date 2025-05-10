@@ -1,1 +1,63 @@
-<p>management-profile works!</p>
+<mat-sidenav-container class="layout-container">
+  <mat-sidenav mode="side" opened class="sidenav">
+    <app-sidebar></app-sidebar>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="main-content">
+    <app-topbar></app-topbar>
+
+    <div class="toolbar">
+      <h2>Profile User</h2>
+    </div>
+
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z1" matSort>
+      <!-- Checkbox Column -->
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox
+            (change)="masterToggle()"
+            [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox
+            (click)="$event.stopPropagation()"
+            (change)="selection.toggle(row)"
+            [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <!-- Email Column -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>User Email</th>
+        <td mat-cell *matCellDef="let row">{{ row.email }}</td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>User Name</th>
+        <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+      </ng-container>
+
+      <!-- Joined Rooms Column -->
+      <ng-container matColumnDef="joinedRooms">
+        <th mat-header-cell *matHeaderCellDef>Number of joined rooms</th>
+        <td mat-cell *matCellDef="let row">{{ row.joinedRooms }}%</td>
+      </ng-container>
+
+      <!-- Participated Events Column -->
+      <ng-container matColumnDef="events">
+        <th mat-header-cell *matHeaderCellDef>Events participated in</th>
+        <td mat-cell *matCellDef="let row">{{ row.events }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <mat-paginator [length]="dataSource.length" [pageSize]="10" [pageSizeOptions]="[5, 10, 25]">
+    </mat-paginator>
+  </mat-sidenav-content>
+</mat-sidenav-container>

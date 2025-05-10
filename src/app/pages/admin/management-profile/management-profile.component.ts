@@ -1,11 +1,104 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatSidenavModule, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+
+import { TopbarComponent } from '../../../components/topbar/topbar.component';
+import { SidebarComponent } from '../../../components/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-management-profile',
-  imports: [],
+  standalone: true,
   templateUrl: './management-profile.component.html',
-  styleUrl: './management-profile.component.css'
+  styleUrls: ['./management-profile.component.css'],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatSidenavModule,
+    MatSidenavContainer,
+    MatSidenavContent,
+    MatTableModule,
+    MatCheckboxModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatIconModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    TopbarComponent,
+    SidebarComponent
+  ]
 })
 export class ManagementProfileComponent {
+  searchTerm: string = '';
 
+  displayedColumns: string[] = ['select', 'email', 'name', 'joinedRooms', 'events'];
+
+  dataSource = Array.from({ length: 10 }).map((_, i) => ({
+    email: `user${i + 1}@example.com`,
+    name: `User ${i + 1}`,
+    joinedRooms: Math.floor(Math.random() * 50 + 50),
+    events: Math.floor(Math.random() * 10 + 1)
+  }));
+
+  get filteredData() {
+    const term = this.searchTerm.trim().toLowerCase();
+    return this.dataSource.filter(row =>
+      row.email.toLowerCase().includes(term) ||
+      row.name.toLowerCase().includes(term)
+    );
+  }
+
+  selection = {
+    selected: [] as any[],
+    toggle(row: any) {
+      const index = this.selected.indexOf(row);
+      index === -1 ? this.selected.push(row) : this.selected.splice(index, 1);
+    },
+    isSelected(row: any) {
+      return this.selected.includes(row);
+    },
+    hasValue() {
+      return this.selected.length > 0;
+    }
+  };
+
+  isAllSelected(): boolean {
+    return this.selection.selected.length === this.filteredData.length;
+  }
+
+  masterToggle(): void {
+    this.isAllSelected()
+      ? (this.selection.selected = [])
+      : (this.selection.selected = [...this.filteredData]);
+  }
+
+  exportCSV(): void {
+    const rows = [
+      ['Email', 'Name', 'Joined Rooms', 'Events'],
+      ...this.filteredData.map(row => [row.email, row.name, row.joinedRooms, row.events])
+    ];
+    const csvContent = rows.map(e => e.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'user_profiles.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  viewUserDetail(row: any): void {
+    alert(`Viewing details for: ${row.name} (${row.email})`);
+  }
 }

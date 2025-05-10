@@ -1,0 +1,27 @@
+.layout-container {
+  height: 100vh;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 16px 0;
+  padding: 0 16px;
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-field {
+  width: 250px;
+}
+
+img {
+  border-radius: 4px;
+  object-fit: cover;
+}
+
