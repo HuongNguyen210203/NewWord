@@ -2,8 +2,10 @@ import { Component } from '@angular/core';
 import {MaterialModule} from '../../modules/material/material.module';
 import {CardEventComponent} from '../../components/card-event/card-event.component';
 import {CardRoomComponent} from '../../components/card-room/card-room.component';
-import {TopbarComponent} from '../../../../../../../DoAnA/NewWord/src/app/components/topbar/topbar.component';
-import {SidebarComponent} from '../../../../../../../DoAnA/NewWord/src/app/components/sidebar/sidebar.component';
+// import {TopbarComponent} from '../../../../../../../DoAnA/NewWord/src/app/components/topbar/topbar.component';
+// import {SidebarComponent} from '../../../../../../../DoAnA/NewWord/src/app/components/sidebar/sidebar.component';
+import {TopbarComponent} from '../../components/topbar/topbar.component';
+import {SidebarComponent} from '../../components/sidebar/sidebar.component';
 import {NgForOf} from '@angular/common';
 
 

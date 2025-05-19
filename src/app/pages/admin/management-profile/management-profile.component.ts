@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatTableModule } from '@angular/material/table';
 import { MatSidenavModule, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatPaginatorModule } from '@angular/material/paginator';
@@ -10,9 +10,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-
-import { TopbarComponent } from '../../../components/topbar/topbar.component';
-import { SidebarComponent } from '../../../components/sidebar/sidebar.component';
+import { TopbarComponent } from '../admin-page/components/topbar/topbar.component';
+import { SidebarComponent } from '../admin-page/components/sidebar/sidebar.component';
+import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
+import { MatDialog } from '@angular/material/dialog';
+import { EditProfileDialogComponent} from './components/edit-profile-dialog/edit-profile-dialog.component';
 
 @Component({
   selector: 'app-management-profile',
@@ -34,14 +36,18 @@ import { SidebarComponent } from '../../../components/sidebar/sidebar.component'
     MatFormFieldModule,
     MatInputModule,
     TopbarComponent,
-    SidebarComponent
+    SidebarComponent,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem
   ]
 })
 export class ManagementProfileComponent {
+
+  constructor(private dialog: MatDialog) {}
+
   searchTerm: string = '';
-
-  displayedColumns: string[] = ['select', 'email', 'name', 'joinedRooms', 'events'];
-
+  displayedColumns: string[] = ['select', 'email', 'name', 'joinedRooms', 'events', 'actions'];
   dataSource = Array.from({ length: 10 }).map((_, i) => ({
     email: `user${i + 1}@example.com`,
     name: `User ${i + 1}`,
@@ -100,5 +106,28 @@ export class ManagementProfileComponent {
 
   viewUserDetail(row: any): void {
     alert(`Viewing details for: ${row.name} (${row.email})`);
+  }
+  editUser(row: any) {
+    const dialogRef = this.dialog.open(EditProfileDialogComponent, {
+      width: '500px',
+      data: { ...row }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const index = this.dataSource.findIndex(user => user.email === row.email);
+        if (index !== -1) {
+          this.dataSource[index] = result;
+          this.dataSource = [...this.dataSource]; // Cập nhật lại UI
+        }
+      }
+    });
+  }
+
+  deleteUser(row: any) {
+    const confirmed = confirm(`Are you sure to delete ${row.name}?`);
+    if (confirmed) {
+      this.dataSource = this.dataSource.filter(u => u !== row);
+    }
   }
 }

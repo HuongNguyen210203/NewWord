@@ -1,24 +1,14 @@
 <app-topbar></app-topbar>
-<mat-sidenav-container class="main-layout">
-  <!-- Sidebar -->
-  <mat-sidenav mode="side" opened>
-    <app-sidebar></app-sidebar>
 
-  </mat-sidenav>
+<div class="layout-wrapper">
+  <app-sidebar></app-sidebar>
 
-  <!-- Nội dung chính -->
-  <mat-sidenav-content>
-    <!-- Topbar -->
-
-
-    <!-- Toolbar profile -->
+  <main class="profile-content">
     <mat-toolbar color="primary">
       <span>Profile</span>
     </mat-toolbar>
 
-    <!-- Profile nội dung -->
     <div class="profile-container">
-      <!-- Avatar và thông tin người dùng -->
       <div class="user-info">
         <div class="user-meta">
           <img class="avatar" src="https://anhcuoiviet.vn/wp-content/uploads/2022/11/avatar-dep-dang-yeu-nu-5.jpg" alt="Avatar">
@@ -34,7 +24,6 @@
         </button>
       </div>
 
-      <!-- Form -->
       <div class="form-container">
         <mat-form-field appearance="fill">
           <mat-label>Full Name</mat-label>
@@ -71,11 +60,10 @@
         </mat-form-field>
       </div>
 
-      <!-- Sự kiện đã tham gia -->
       <div class="participated-events">
         <h3>⭐ Participated Events</h3>
         <div class="event-row">
-          <mat-card class="event-card" *ngFor="let event of ['1st', '2nd', '3rd', '4th', '5th', '3rd', '3rd', '3rd']">
+          <mat-card class="event-card" *ngFor="let event of ['1st', '2nd', '3rd', '4th', '5th', '3rd']">
             <mat-card-content>
               <div class="placeholder">{{ event }}</div>
             </mat-card-content>
@@ -87,6 +75,5 @@
         </button>
       </div>
     </div>
-  </mat-sidenav-content>
-</mat-sidenav-container>
-
+  </main>
+</div>

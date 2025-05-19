@@ -1,0 +1,17 @@
+<mat-card class="stat-card">
+  <mat-card-header>
+    <mat-card-title [class]="colorClass">{{ title }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="stat-content">
+      <div class="stat-primary">
+        <p class="stat-value">{{ value }}</p>
+        <p class="stat-subtitle">{{ subtitle }}</p>
+      </div>
+      <div class="stat-secondary" *ngIf="secondValue">
+        <p class="stat-value">{{ secondValue }}</p>
+        <p class="stat-subtitle">{{ secondSubtitle }}</p>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

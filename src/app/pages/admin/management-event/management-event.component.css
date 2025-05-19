@@ -1,19 +1,40 @@
-/* General layout and container styling */
-.layout-container {
+:host {
+  display: flex;
+  flex-direction: column;
   height: 100vh;
+}
+
+app-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+}
+
+.layout-container {
   display: flex;
   flex-direction: row;
+  height: calc(100vh - 64px);
+  margin-top: 64px;
 }
 
+mat-sidenav {
+  width: 200px;
+  background-color: #4caf82;
+  color: white;
+  border: none;
+  border-radius: 0;
+}
 
-
-.main-content {
-  flex-grow: 1;
+mat-sidenav-content {
   padding: 20px;
   background-color: #f5f5f5;
+  box-sizing: border-box;
+  width: 100%;
+  overflow: auto;
 }
 
-/* Toolbar styling */
 .toolbar {
   display: flex;
   justify-content: space-between;
@@ -39,7 +60,6 @@
   color: white;
 }
 
-/* Table styling */
 table {
   width: 100%;
   background-color: white;
@@ -65,40 +85,59 @@ td img {
   object-fit: cover;
 }
 
-/* Sidebar menu items */
-.sidenav .mat-nav-list .mat-list-item {
-  color: white;
-  padding: 10px 20px;
-}
-
-.sidenav .mat-nav-list .mat-list-item:hover {
-  background-color: #1b5e20;
-}
-
-/* Pagination styling */
 .mat-paginator {
   background-color: white;
   padding: 10px;
   border-radius: 4px;
-  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+  margin-top: 20px;
 }
 
-.mat-paginator-page-size {
-  margin-right: 10px;
-}
+/*:host {*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*  height: 100vh;*/
+/*}*/
 
-/* Sign out button */
-.sidenav .sign-out {
-  position: absolute;
-  bottom: 20px;
-  width: 90%;
-  background-color: #ddd;
-  color: #333;
-  border: none;
-  padding: 10px;
-  border-radius: 4px;
-}
+/*.layout-container {*/
+/*  display: flex;*/
+/*  height: calc(100vh - 64px);*/
+/*  margin-top: 64px;*/
+/*}*/
 
-.sidenav .sign-out:hover {
-  background-color: #ccc;
-}
+/*mat-sidenav {*/
+/*  width: 200px;*/
+/*  background-color: #4caf82;*/
+/*  color: white;*/
+/*}*/
+
+/*mat-sidenav-content {*/
+/*  padding: 20px;*/
+/*  background: #f5f5f5;*/
+/*  box-sizing: border-box;*/
+/*  overflow: auto;*/
+/*}*/
+
+/*.toolbar {*/
+/*  display: flex;*/
+/*  justify-content: space-between;*/
+/*  align-items: center;*/
+/*  margin-bottom: 20px;*/
+/*}*/
+
+/*.search-field {*/
+/*  width: 100%;*/
+/*  max-width: 400px;*/
+/*  margin-bottom: 20px;*/
+/*}*/
+
+/*table {*/
+/*  width: 100%;*/
+/*  background-color: white;*/
+/*  border-radius: 4px;*/
+/*}*/
+
+/*td img {*/
+/*  width: 100px;*/
+/*  height: 60px;*/
+/*  object-fit: cover;*/
+/*}*/

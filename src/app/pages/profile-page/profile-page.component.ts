@@ -7,12 +7,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { NgFor } from '@angular/common';
-import {TopbarComponent} from '../../../../../../../DoAnA/NewWord/src/app/components/topbar/topbar.component';
+// import {TopbarComponent} from '../../../../../../../DoAnA/NewWord/src/app/components/topbar/topbar.component';
 import {CardEventComponent} from '../../components/card-event/card-event.component';
 import {CardRoomComponent} from '../../components/card-room/card-room.component';
 import {MatSidenav, MatSidenavContainer, MatSidenavContent} from '@angular/material/sidenav';
-import {SidebarComponent} from '../../../../../../../DoAnA/NewWord/src/app/components/sidebar/sidebar.component'; // để dùng *ngFor
-
+// import {SidebarComponent} from '../../../../../../../DoAnA/NewWord/src/app/components/sidebar/sidebar.component'; // để dùng *ngFor
+import {SidebarComponent} from '../../components/sidebar/sidebar.component'; // để dùng *ngFor
+import {TopbarComponent} from '../../components/topbar/topbar.component'; // để dùng *ngFor
 @Component({
   selector: 'app-profile-page',
   standalone: true,

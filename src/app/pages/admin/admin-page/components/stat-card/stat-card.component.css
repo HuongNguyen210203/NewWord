@@ -1,0 +1,50 @@
+.stat-card {
+  height: 100%;
+}
+
+.stat-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.stat-primary, .stat-secondary {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-secondary {
+  text-align: right;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.stat-subtitle {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+.color-blue {
+  color: #1976d2;
+}
+
+.color-orange {
+  color: #ff9800;
+}
+
+.color-purple {
+  color: #9c27b0;
+}
+
+.color-red {
+  color: #f44336;
+}
+
+.color-green {
+  color: #4CAF82;
+}

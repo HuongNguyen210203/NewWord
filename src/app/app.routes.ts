@@ -11,10 +11,12 @@ import { SignInComponent } from './dialog/sign-in/sign-in.component';
 import { SignUpComponent } from './dialog/sign-up/sign-up.component';
 import { CreateRoomComponent } from './dialog/create-room/create-room.component';
 import { CreateEventComponent } from './dialog/create-event/create-event.component';
+import {AdminPageComponent} from './pages/admin/admin-page/admin-page.component';
 
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent },
   { path: 'profile', component: ProfilePageComponent },
   { path: 'chat', component: RoomChatPageComponent },
   { path: 'signin', component: SignInComponent },
@@ -25,5 +27,6 @@ export const routes: Routes = [
   {path: 'management-event', component: ManagementEventComponent},
   {path: 'management-profile', component: ManagementProfileComponent},
   {path: 'management-room', component: ManagementRoomComponent},
+  {path: 'admin', component: AdminPageComponent}, //just added
   { path: '**', redirectTo: '' }
 ];

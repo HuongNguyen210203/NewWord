@@ -1,0 +1,12 @@
+.events-table {
+  width: 100%;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.time-cell {
+  color: #4CAF82;
+  font-weight: 500;
+}

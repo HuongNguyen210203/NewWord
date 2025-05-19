@@ -11,8 +11,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 
-import { TopbarComponent } from '../../../components/topbar/topbar.component';
-import { SidebarComponent } from '../../../components/sidebar/sidebar.component';
+import { TopbarComponent } from '../admin-page/components/topbar/topbar.component';
+import { SidebarComponent } from '../admin-page/components/sidebar/sidebar.component';
+import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
+import { MatDialog } from '@angular/material/dialog';
+import { EditRoomDialogComponent} from './components/edit-room-dialog/edit-room-dialog.component';
 
 @Component({
   selector: 'app-management-room',
@@ -34,13 +37,22 @@ import { SidebarComponent } from '../../../components/sidebar/sidebar.component'
     MatFormFieldModule,
     MatInputModule,
     TopbarComponent,
-    SidebarComponent
+    SidebarComponent,
+    MatMenu,
+    MatMenuTrigger,
+    MatMenuItem
   ]
 })
 export class ManagementRoomComponent {
+  constructor(private dialog: MatDialog) {}
+  sidebarOpen = true;
+
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
   searchTerm: string = '';
 
-  displayedColumns: string[] = ['select', 'image', 'name', 'description', 'createdAt', 'members'];
+  displayedColumns: string[] = ['select', 'image', 'name', 'description', 'createdAt', 'members', 'actions'];
 
   dataSource = Array.from({ length: 10 }).map((_, i) => ({
     image: 'https://m.yodycdn.com/products/anhthobaymau14_m3o64um60zyfvvlu2ltf.jpg',
@@ -84,5 +96,28 @@ export class ManagementRoomComponent {
 
   viewRoomDetail(row: any): void {
     alert(`Viewing details for room: ${row.name}`);
+  }
+  editRoom(row: any): void {
+    const dialogRef = this.dialog.open(EditRoomDialogComponent, {
+      width: '600px',
+      data: { ...row } // clone để tránh sửa trực tiếp
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const index = this.dataSource.indexOf(row);
+        if (index !== -1) {
+          this.dataSource[index] = result;
+          this.dataSource = [...this.dataSource]; // force UI update
+        }
+      }
+    });
+  }
+
+  deleteRoom(row: any): void {
+    const confirmDelete = confirm(`Are you sure you want to delete room "${row.name}"?`);
+    if (confirmDelete) {
+      this.dataSource = this.dataSource.filter(item => item !== row);
+    }
   }
 }
