@@ -35,30 +35,7 @@ mat-sidenav-content {
   overflow: auto;
 }
 
-/*.toolbar {*/
-/*  display: flex;*/
-/*  justify-content: space-between;*/
-/*  align-items: center;*/
-/*  margin-bottom: 20px;*/
-/*}*/
 
-/*.toolbar h2 {*/
-/*  margin: 0;*/
-/*  font-size: 24px;*/
-/*  color: #333;*/
-/*}*/
-
-/*.toolbar button {*/
-/*  background-color: transparent;*/
-/*  border: 2px solid #2e7d32;*/
-/*  color: #2e7d32;*/
-/*  padding: 5px 15px;*/
-/*}*/
-
-/*.toolbar button:hover {*/
-/*  background-color: #2e7d32;*/
-/*  color: white;*/
-/*}*/
 
 table {
   width: 100%;

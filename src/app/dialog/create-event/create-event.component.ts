@@ -28,61 +28,7 @@ import {MatDialogRef} from '@angular/material/dialog';
     MatNativeDateModule
   ]
 })
-// export class CreateEventComponent {
-//   eventImage: string | ArrayBuffer | null = null;
-//
-//   event = {
-//     title: '',
-//     description: '',
-//     startDate: '',
-//     startTime: '09:00',
-//     endDate: '',
-//     endTime: '17:00',
-//     registerDeadline: '',
-//     maxAttendees: 0,
-//     location: '',
-//   };
-//
-//   onImageChange(event: Event) {
-//     const file = (event.target as HTMLInputElement).files?.[0];
-//     if (file) {
-//       const reader = new FileReader();
-//       reader.onload = () => (this.eventImage = reader.result);
-//       reader.readAsDataURL(file);
-//     }
-//   }
-//
-//   createEvent() {
-//     const start = this.combineDateAndTime(this.event.startDate, this.event.startTime);
-//     const end = this.combineDateAndTime(this.event.endDate, this.event.endTime);
-//
-//     if (!start || !end) {
-//       alert('Vui lòng điền đầy đủ ngày và giờ bắt đầu/kết thúc.');
-//       return;
-//     }
-//
-//     if (end <= start) {
-//       alert('Giờ kết thúc phải sau giờ bắt đầu.');
-//       return;
-//     }
-//
-//     console.log('Sự kiện đã tạo:', {
-//       ...this.event,
-//       start,
-//       end
-//     });
-//
-//     alert('Sự kiện đã được tạo thành công!');
-//   }
-//
-//   combineDateAndTime(date: any, time: string): Date | null {
-//     if (!date || !time) return null;
-//     const [hours, minutes] = time.split(':').map(Number);
-//     const result = new Date(date);
-//     result.setHours(hours, minutes, 0, 0);
-//     return result;
-//   }
-// }
+
 export class CreateEventComponent {
   eventImage: string | ArrayBuffer | null = null;
 
