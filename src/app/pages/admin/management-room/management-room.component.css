@@ -1,77 +1,99 @@
-.layout-container {
-  height: 100%;
-  background-color: #f4f6f8;
+:host {
+  display: block;
+  height: 100vh;
+  overflow: hidden;
 }
 
 app-topbar {
-  width: 100%;
-  z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  z-index: 1001;
 }
 
-.main-content {
-  padding: 24px;
+.layout-container {
   display: flex;
+  height: 100vh;
   flex-direction: column;
+}
+
+mat-sidenav-container {
+  flex: 1;
+  display: flex;
+  height: calc(100vh - 64px);
+}
+
+mat-sidenav {
+  width: 200px;
+  background-color: #4caf82;
+  color: white;
+}
+
+mat-sidenav-content {
+  padding: 84px 20px 20px 20px;
+  background-color: #f5f5f5;
+  overflow: auto;
+  box-sizing: border-box;
 }
 
 .toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .toolbar h2 {
   margin: 0;
   font-size: 24px;
-  font-weight: 600;
-  color: #2e7d32;
+  color: #333;
 }
 
-.search-field {
-  min-width: 240px;
+.toolbar button {
+  background-color: transparent;
+  border: 2px solid #2e7d32;
+  color: #2e7d32;
+  padding: 5px 15px;
+}
+
+.toolbar button:hover {
+  background-color: #2e7d32;
+  color: white;
 }
 
 table {
   width: 100%;
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
   border-collapse: collapse;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-mat-header-cell {
-  background-color: #f0f4f8;
-  font-weight: 600;
-  font-size: 13px;
-  color: #455a64;
-  padding: 14px 16px;
-}
-
-mat-cell {
-  padding: 12px 16px;
-  font-size: 14px;
-  color: #37474f;
-  border-top: 1px solid #e0e0e0;
-}
-
-mat-row:hover {
+th {
   background-color: #f5f5f5;
+  padding: 10px;
+  text-align: left;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
-img {
+td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+}
+
+td img {
   width: 100px;
   height: 60px;
   object-fit: cover;
-  border-radius: 6px;
 }
 
-mat-paginator {
-  margin-top: 16px;
-  background-color: #fff;
-  padding: 12px;
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+.mat-paginator {
+  background-color: white;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 20px;
 }

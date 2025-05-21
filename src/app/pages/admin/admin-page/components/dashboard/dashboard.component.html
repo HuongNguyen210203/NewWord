@@ -1,0 +1,55 @@
+<div class="dashboard-container">
+  <div class="header">
+    <h2 class="title">Admin management</h2>
+  </div>
+
+  <div class="section">
+    <h3 class="section-title">Overall Inventory</h3>
+    <div class="stats-grid">
+      <app-stat-card title="Events" value="14" subtitle="Last 7 days" color="blue"></app-stat-card>
+      <app-stat-card title="Discussions" value="868" subtitle="Last 7 days" color="orange"></app-stat-card>
+      <app-stat-card title="Total Users" value="120" subtitle="Last 7 days" color="purple"></app-stat-card>
+      <app-stat-card
+        title="Messages from Users"
+        value="12"
+        subtitle="Need to Reply"
+        secondValue="2"
+        secondSubtitle="Past Mess"
+        color="red">
+      </app-stat-card>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <div class="chart-header">
+          <div>
+            <mat-card-title>Number of Users</mat-card-title>
+            <p class="big-number">120</p>
+            <p class="subtitle">50 Orders</p>
+          </div>
+          <mat-form-field appearance="outline">
+            <mat-select [(value)]="selectedTimeFrame">
+              <mat-option *ngFor="let time of timeFrames" [value]="time">
+                {{ time }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <app-bar-chart></app-bar-chart>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Famous Discussion</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <app-events-table></app-events-table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

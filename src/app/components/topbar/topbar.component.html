@@ -1,7 +1,17 @@
-<div class="topbar">
-  <div class="logo">NEWWORD</div>
-  <div class="actions">
-    <button mat-icon-button><mat-icon>notifications</mat-icon></button>
-    <img src="https://anhcuoiviet.vn/wp-content/uploads/2022/11/avatar-dep-dang-yeu-nu-5.jpg" class="avatar" />
+<mat-toolbar class="topbar">
+  <div class="left-section">
+    <button mat-icon-button (click)="onMenuClick()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <h1 class="brand">NEWWORD</h1>
   </div>
-</div>
+
+  <div class="right-section">
+    <button mat-icon-button>
+      <mat-icon>notifications</mat-icon>
+    </button>
+    <div class="avatar">
+      <img src="/assets/images/avatar.png" alt="User avatar" />
+    </div>
+  </div>
+</mat-toolbar>

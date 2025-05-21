@@ -24,6 +24,10 @@
       <mat-label>Mô tả</mat-label>
       <textarea matInput rows="4" [(ngModel)]="event.description" name="description"></textarea>
     </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Địa điểm</mat-label>
+      <input matInput [(ngModel)]="event.location" name="location" />
+    </mat-form-field>
 
     <!-- Ngày + giờ bắt đầu -->
     <div class="form-group">

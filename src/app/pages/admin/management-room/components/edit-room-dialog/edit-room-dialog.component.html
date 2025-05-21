@@ -1,0 +1,71 @@
+<!--<h2 mat-dialog-title>-->
+<!--  <mat-icon>edit</mat-icon> Edit Room-->
+<!--</h2>-->
+
+<!--<form class="dialog-form">-->
+<!--  <mat-form-field appearance="outline" class="full-width">-->
+<!--    <mat-label>Room Name</mat-label>-->
+<!--    <input matInput [(ngModel)]="data.name" name="name" />-->
+<!--  </mat-form-field>-->
+
+<!--  <mat-form-field appearance="outline" class="full-width">-->
+<!--    <mat-label>Description</mat-label>-->
+<!--    <textarea matInput rows="3" [(ngModel)]="data.description" name="description"></textarea>-->
+<!--  </mat-form-field>-->
+
+<!--  <mat-form-field appearance="outline" class="full-width">-->
+<!--    <mat-label>Active Members</mat-label>-->
+<!--    <input matInput type="number" [(ngModel)]="data.members" name="members" />-->
+<!--  </mat-form-field>-->
+<!--</form>-->
+
+<!--<div class="dialog-actions">-->
+<!--  <button mat-stroked-button color="warn" (click)="cancel()">Cancel</button>-->
+<!--  <button mat-raised-button color="primary" (click)="save()">Save</button>-->
+<!--</div>-->
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon class="dialog-icon">edit</mat-icon>
+  <span>Edit Room</span>
+</h2>
+
+<div class="edit-room-container">
+  <!-- Upload ảnh -->
+  <div class="upload-section">
+    <img *ngIf="roomImage" [src]="roomImage" class="cover-img" />
+    <div *ngIf="!roomImage" class="cover-placeholder">No room image</div>
+    <button mat-icon-button (click)="fileInput.click()" class="upload-btn" aria-label="Upload image">
+      <mat-icon>cloud_upload</mat-icon>
+    </button>
+    <input type="file" hidden #fileInput (change)="onImageChange($event)" />
+  </div>
+
+  <!-- Form -->
+  <form class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Room Name</mat-label>
+      <input matInput [(ngModel)]="data.name" name="name" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Description</mat-label>
+      <textarea matInput rows="3" [(ngModel)]="data.description" name="description"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Created At</mat-label>
+      <input matInput [matDatepicker]="createdPicker" [(ngModel)]="data.createdAt" name="createdAt" />
+      <mat-datepicker-toggle matSuffix [for]="createdPicker"></mat-datepicker-toggle>
+      <mat-datepicker #createdPicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Active Members</mat-label>
+      <input matInput type="number" [(ngModel)]="data.members" name="members" />
+    </mat-form-field>
+  </form>
+
+  <div class="dialog-actions">
+    <button mat-stroked-button color="warn" (click)="cancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="save()">Save</button>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<div class="admin-container">
+  <app-topbar (menuClick)="toggleSidebar()"></app-topbar>
+
+  <div class="main-wrapper">
+    <app-sidebar [open]="sidebarOpen" [class.collapsed]="!sidebarOpen"></app-sidebar>
+
+    <div class="main-content" [ngClass]="{ 'collapsed': !sidebarOpen }">
+      <app-dashboard></app-dashboard>
+    </div>
+  </div>
+</div>

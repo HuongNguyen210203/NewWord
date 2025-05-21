@@ -34,7 +34,7 @@ export class RoomChatPageComponent {
     { from: 'me', avatar: 'https://i.pravatar.cc/40?img=5' }
   ];
 
-  // Gợi ý nhanh
+
   suggestions = ['Let’s do it', 'Great!', 'Great!'];
 
   // Nội dung input người dùng đang nhập

@@ -1,87 +1,69 @@
-html, body {
-  height: 100%;
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f9f9f9;
-}
 
-mat-sidenav-container {
+:host {
+  display: block;
   height: 100vh;
+  overflow: hidden;
 }
 
-mat-sidenav-content {
+.home-wrapper {
+  display: flex;
+  height: 100vh;
+  padding-top: 64px; /* chiều cao của topbar */
+}
+
+app-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  height: calc(100vh - 64px);
+  position: fixed;
+  top: 64px;
+  left: 0;
+}
+
+.home-content {
+  margin-left: 200px;
+  flex: 1;
+  padding: 24px;
   overflow-y: auto;
+  background-color: #f9f9f9;
+  height: calc(100vh - 64px);
+  box-sizing: border-box;
 }
 
 .section {
-  padding: 24px;
-
-  h2 {
-    margin-bottom: 12px;
-    color: #2e7d32;
-    font-size: 20px;
-    font-weight: 600;
-  }
-
-  .card-list {
-    display: flex;
-    flex-direction: row;
-    gap: 16px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding-bottom: 16px;
-
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-
-    > * {
-      flex: 0 0 auto;
-      scroll-snap-align: start;
-    }
-
-  // Scrollbar đẹp
-  &::-webkit-scrollbar {
-    height: 8px;
-  }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: #a5d6a7;
-      border-radius: 10px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background-color: #e0f2f1;
-    }
-  }
+  margin-bottom: 32px;
 }
 
+.section h2 {
+  margin-bottom: 12px;
+  color: #2e7d32;
+  font-size: 20px;
+  font-weight: 600;
+}
 
-/*.section {*/
-/*  padding: 24px;*/
+.card-list {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding-bottom: 12px;
+}
 
-/*  h2 {*/
-/*    margin-bottom: 12px;*/
-/*    color: #376a3e;*/
-/*  }*/
+.card-list > * {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+}
 
-/*  .card-list {*/
-/*    display: flex;*/
-/*    gap: 16px;*/
-/*    overflow-x: auto;*/
-/*    padding-bottom: 16px;*/
-/*  }*/
-/*}*/
-/*mat-sidenav-container {*/
-/*  height: 100vh; !* Chiều cao cố định = chiều cao màn hình *!*/
-/*}*/
+.card-list::-webkit-scrollbar {
+  height: 8px;
+}
 
-/*mat-sidenav-content {*/
-/*  overflow-y: auto; !* Cho phép scroll nội dung nếu dài hơn viewport *!*/
-/*}*/
+.card-list::-webkit-scrollbar-thumb {
+  background-color: #a5d6a7;
+  border-radius: 10px;
+}
 
-/*html, body {*/
-/*  margin: 0;*/
-/*  padding: 0;*/
-/*  height: 100%;*/
-/*  overflow: hidden; !* tránh scroll toàn trang nếu không muốn *!*/
-/*}*/
+.card-list::-webkit-scrollbar-track {
+  background-color: #e0f2f1;
+}

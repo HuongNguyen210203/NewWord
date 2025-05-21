@@ -38,7 +38,8 @@ export class CreateEventComponent {
     endDate: '',
     endTime: '17:00',
     registerDeadline: '',
-    maxAttendees: 0
+    maxAttendees: 0,
+    location: '',
   };
 
   onImageChange(event: Event) {
