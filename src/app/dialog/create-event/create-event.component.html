@@ -1,11 +1,6 @@
-<mat-toolbar color="primary">
-  <span>Tạo sự kiện mới</span>
-</mat-toolbar>
-
 <div class="create-event-container">
-  <!-- Upload ảnh -->
   <div class="upload-section">
-    <img *ngIf="eventImage" [src]="eventImage" class="cover-img" />
+    <img *ngIf="eventImage" [src]="eventImage" class="cover-img"  alt="event img"/>
     <div *ngIf="!eventImage" class="cover-placeholder">Chưa có ảnh sự kiện</div>
     <button mat-icon-button (click)="fileInput.click()" class="upload-btn">
       <mat-icon>upload</mat-icon>
@@ -13,23 +8,23 @@
     <input type="file" hidden #fileInput (change)="onImageChange($event)" />
   </div>
 
-  <!-- Form -->
   <form class="form-section">
     <mat-form-field appearance="outline">
       <mat-label>Tên sự kiện</mat-label>
       <input matInput [(ngModel)]="event.title" name="title" />
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" class="narrow-description">
       <mat-label>Mô tả</mat-label>
-      <textarea matInput rows="4" [(ngModel)]="event.description" name="description"></textarea>
+      <input matInput rows="4" [(ngModel)]="event.description" name="description">
     </mat-form-field>
+
+
     <mat-form-field appearance="outline">
       <mat-label>Địa điểm</mat-label>
       <input matInput [(ngModel)]="event.location" name="location" />
     </mat-form-field>
 
-    <!-- Ngày + giờ bắt đầu -->
     <div class="form-group">
       <mat-form-field appearance="outline">
         <mat-label>Ngày bắt đầu</mat-label>
@@ -40,11 +35,10 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Giờ bắt đầu</mat-label>
-        <input matInput type="time" [(ngModel)]="event.startTime" name="startTime" required />
+        <input matInput type="time" [(ngModel)]="event.startTime" name="startTime" />
       </mat-form-field>
     </div>
 
-    <!-- Ngày + giờ kết thúc -->
     <div class="form-group">
       <mat-form-field appearance="outline">
         <mat-label>Ngày kết thúc</mat-label>
@@ -55,11 +49,10 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Giờ kết thúc</mat-label>
-        <input matInput type="time" [(ngModel)]="event.endTime" name="endTime" required />
+        <input matInput type="time" [(ngModel)]="event.endTime" name="endTime" />
       </mat-form-field>
     </div>
 
-    <!-- Hạn đăng ký -->
     <mat-form-field appearance="outline">
       <mat-label>Hạn đăng ký</mat-label>
       <input matInput [matDatepicker]="regPicker" [(ngModel)]="event.registerDeadline" name="registerDeadline" />
@@ -67,15 +60,13 @@
       <mat-datepicker #regPicker></mat-datepicker>
     </mat-form-field>
 
-    <!-- Số người -->
     <mat-form-field appearance="outline">
       <mat-label>Số người tối đa</mat-label>
       <input matInput type="number" [(ngModel)]="event.maxAttendees" name="maxAttendees" />
     </mat-form-field>
 
-    <!-- Nút -->
     <div class="actions">
-      <button mat-stroked-button color="warn">Hủy</button>
+      <button mat-stroked-button color="warn" (click)="dialogRef.close()">Hủy</button>
       <button mat-raised-button color="primary" (click)="createEvent()">Tạo sự kiện</button>
     </div>
   </form>
