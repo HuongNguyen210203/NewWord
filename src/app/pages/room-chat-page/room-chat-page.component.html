@@ -1,60 +1,65 @@
+<app-topbar></app-topbar>
+
 <div class="chat-layout">
-  <!-- Sidebar trái -->
-  <aside class="sidebar">
+
+  <app-sidebar></app-sidebar>
+
+
+  <aside class="chat-room-list">
     <h3>Conversations</h3>
     <div class="chat-list">
-      <div class="chat-item" *ngFor="let i of [1,2,3,4,5,6,7]">
-        <div class="avatar" ></div>
-        <div class="text">
-          <p class="name">Name</p>
-          <p class="preview">Chao Day la doan chat mơi nhat  ....</p>
+
+      <div class="chat-scroll">
+        <div
+          *ngFor="let room of chatRooms"
+          class="chat-item"
+          [class.active]="room.active"
+          (click)="selectRoom(room)"
+        >
+          <img [src]="room.avatar" class="avatar" />
+          <div class="chat-info">
+            <div class="name">{{ room.name }}</div>
+            <div class="preview">{{ room.preview }}</div>
+          </div>
+          <div class="time">{{ room.time }}</div>
         </div>
-        <span class="time">10 min</span>
       </div>
     </div>
   </aside>
 
-  <!-- Nội dung khung chat -->
+  <!-- Nội dung chat -->
   <main class="chat-main">
-    <!-- Header -->
-    <div class="chat-header">
-      <div class="header-left">
-        <mat-icon>person</mat-icon>
-        <span>Name</span>
-      </div>
-      <div class="header-right">
-        <mat-icon>notifications_none</mat-icon>
-        <mat-icon>settings</mat-icon>
+    <div class="chat-header">{{ activeRoom?.name || 'Chọn cuộc trò chuyện' }}</div>
+
+    <div class="chat-content-wrapper">
+      <div class="chat-content">
+        <div
+          *ngFor="let msg of messages"
+          class="message"
+          [ngClass]="msg.from === 'me' ? 'right' : 'left'"
+        >
+          <img class="msg-avatar" [src]="msg.avatar" />
+          <div class="bubble">{{ msg.text }}</div>
+        </div>
       </div>
     </div>
 
-    <!-- Tin nhắn -->
-    <div class="chat-content">
-      <div class="message left" *ngFor="let msg of [1,2,3,4]">
-        <img class="msg-avatar" src="https://chiemtaimobile.vn/images/companies/1/%E1%BA%A2nh%20Blog/avatar-facebook-dep/Anh-avatar-hoat-hinh-de-thuong-doi-lot-soi.jpg?1704788224743">
-        <div class="bubble"></div>
-      </div>
-      <div class="message right">
-        <div class="bubble"></div>
-        <img class="msg-avatar" src="https://anhcuoiviet.vn/wp-content/uploads/2022/11/avatar-dep-dang-yeu-nu-5.jpg">
-      </div>
-    </div>
-
-    <!-- Input -->
-    <div class="chat-input">
-      <div class="input-left">
-        <mat-icon>add</mat-icon>
-        <mat-icon>sentiment_satisfied</mat-icon>
-      </div>
-      <input type="text" placeholder="Type a message..." />
-      <mat-icon class="mic">mic</mat-icon>
-    </div>
-
-    <!-- Gợi ý -->
     <div class="suggestions">
-      <button>Let’s do it</button>
-      <button>Great!</button>
-      <button>Great!</button>
+      <button *ngFor="let s of suggestions" (click)="sendSuggestion(s)">
+        {{ s }}
+      </button>
+    </div>
+
+    <div class="chat-input">
+      <mat-icon>add</mat-icon>
+      <mat-icon>sentiment_satisfied</mat-icon>
+      <input
+        type="text"
+        [(ngModel)]="inputMessage"
+        placeholder="Aa"
+        (keyup.enter)="sendMessage()"
+      />
+      <mat-icon (click)="sendMessage()">mic</mat-icon>
     </div>
   </main>
 </div>

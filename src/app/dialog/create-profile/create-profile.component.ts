@@ -1,10 +1,8 @@
 import { Component, Inject} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgFor } from '@angular/common';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
 
-
-// Angular Material modules
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,37 +14,32 @@ import { MatOptionModule } from '@angular/material/core';
 @Component({
   selector: 'app-create-room',
   standalone: true,
-  templateUrl: './create-room.component.html',
-  styleUrls: ['./create-room.component.css'],
+  templateUrl: './create-profile.component.html',
+  styleUrls: ['./create-profile.component.css'],
   imports: [
     FormsModule,
-    NgFor,
-
-    // Angular Material
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatOptionModule
+    MatOptionModule,
+    MatDialogTitle
   ]
 })
-
-export class CreateRoomComponent {
+export class CreateProfileComponent {
   imagePreview: string | ArrayBuffer | null = null;
 
-  room = {
+  profile = {
+    email: '',
     name: '',
-    description: '',
-    event: '',
-    people: ''
+    joinedRooms: 0,
+    events: 0
   };
 
 
-  peopleOptions = ['5', '10', '20', '50', 'Unlimited'];
-
-  constructor(private dialogRef: MatDialogRef<CreateRoomComponent>) {}
+  constructor(private dialogRef: MatDialogRef<CreateProfileComponent>) {}
 
   onFileSelected(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
@@ -57,13 +50,17 @@ export class CreateRoomComponent {
     }
   }
 
-  createRoom() {
+  createProfile() {
     this.dialogRef.close({
-      ...this.room,
-      name: this.room.name || `Room ${Date.now()}`, // dùng tên người dùng nhập
-      image: this.imagePreview || 'https://placeholder.com/room.jpg',
-      createdAt: new Date(),
-      members: this.room.people === 'Unlimited' ? 9999 : parseInt(this.room.people, 10)
+      ...this.profile,
+      email: this.profile.email,
+      name: this.profile.name,
+      joinedRooms: this.profile.joinedRooms,
+      events: this.profile.events,
     });
   }
+  onCancel() {
+    this.dialogRef.close();
+  }
+
 }

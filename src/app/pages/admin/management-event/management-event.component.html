@@ -8,23 +8,31 @@
     </mat-sidenav>
 
     <mat-sidenav-content class="main-content">
+
       <div class="toolbar">
         <h2>Event Management</h2>
-        <button mat-stroked-button color="accent" routerLink="/create-event">
-          <mat-icon>add</mat-icon>
-          Create Event
-        </button>
+        <div class="toolbar-actions">
+          <div class="custom-search">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input
+              type="text"
+              [(ngModel)]="searchTerm"
+              placeholder="Search public content"
+              class="search-input"
+            />
+          </div>
+
+          <button mat-stroked-button color="accent" (click)="openCreateDialog()">
+            <mat-icon>add</mat-icon>
+            Create Event
+          </button>
+        </div>
       </div>
 
-      <mat-form-field appearance="outline" class="search-field">
-        <mat-label>Search</mat-label>
-        <input matInput [(ngModel)]="searchTerm" placeholder="Search event..." />
-        <button mat-icon-button matSuffix><mat-icon>search</mat-icon></button>
-      </mat-form-field>
 
       <table mat-table [dataSource]="filteredData" matSort class="mat-elevation-z1">
 
-        <!-- Columns: Select, Image, Name, etc. -->
+
         <ng-container matColumnDef="select">
           <th mat-header-cell *matHeaderCellDef>
             <mat-checkbox
@@ -100,7 +108,12 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
 
-      <mat-paginator [length]="filteredData.length" [pageSize]="10" [pageSizeOptions]="[5, 10, 25]"></mat-paginator>
+      <mat-paginator
+        [length]="dataSource.length"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)">
+      </mat-paginator>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

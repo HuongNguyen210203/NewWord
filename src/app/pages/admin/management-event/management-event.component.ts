@@ -1,21 +1,42 @@
 
-import {Component, HostListener} from '@angular/core';
-import { SidebarComponent} from '../admin-page/components/sidebar/sidebar.component';
+import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { SidebarComponent } from '../admin-page/components/sidebar/sidebar.component';
 import { TopbarComponent } from '../admin-page/components/topbar/topbar.component';
-import { MatSidenavModule, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { DatePipe, CommonModule } from '@angular/common';
-import {MatButton, MatIconButton} from '@angular/material/button';
-import {RouterLink} from '@angular/router';
-import {MatSort} from '@angular/material/sort';
-import {MatDialog} from '@angular/material/dialog';
-import {MatFormField, MatInput, MatLabel, MatSuffix} from '@angular/material/input';
-import {FormsModule} from '@angular/forms';
-import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
-import {EditEventDialogComponent} from './components/edit-event-dialog/edit-event-dialog.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import {
+  MatSidenavModule,
+  MatSidenavContainer,
+  MatSidenavContent
+} from '@angular/material/sidenav';
+import {
+  MatButton,
+  MatIconButton
+} from '@angular/material/button';
+import {
+  MatIconModule
+} from '@angular/material/icon';
+import {
+  MatCheckboxModule
+} from '@angular/material/checkbox';
+import {
+  MatTableModule
+} from '@angular/material/table';
+import {
+  MatPaginatorModule, PageEvent
+} from '@angular/material/paginator';
+import {
+  MatSort
+} from '@angular/material/sort';
+import {
+  MatMenu,
+  MatMenuItem,
+  MatMenuTrigger
+} from '@angular/material/menu';
+
+import { EditEventDialogComponent } from './components/edit-event-dialog/edit-event-dialog.component';
+import { CreateEventComponent } from '../../../dialog/create-event/create-event.component';
 
 @Component({
   selector: 'app-management-event',
@@ -32,17 +53,12 @@ import {EditEventDialogComponent} from './components/edit-event-dialog/edit-even
     MatTableModule,
     MatPaginatorModule,
     MatButton,
-    RouterLink,
     MatSort,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    MatIconButton,
-    MatSuffix,
     FormsModule,
     MatMenuTrigger,
     MatMenu,
     MatMenuItem,
+    MatIconButton,
   ],
   templateUrl: './management-event.component.html',
   styleUrls: ['./management-event.component.css']
@@ -51,6 +67,11 @@ import {EditEventDialogComponent} from './components/edit-event-dialog/edit-even
 export class ManagementEventComponent {
   sidebarOpen = true;
   searchTerm = '';
+
+  pageIndex = 0;
+  pageSize = 5;
+  readonly pageSizeOptions = [1, 3, 5];
+
   displayedColumns = [
     'select',
     'image',
@@ -65,8 +86,8 @@ export class ManagementEventComponent {
 
   dataSource = Array.from({ length: 8 }).map((_, i) => {
     const base = new Date();
-    const start = new Date(base.getTime() + i * 24 * 60 * 60 * 1000); // cộng ngày
-    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000); // +2 tiếng
+    const start = new Date(base.getTime() + i * 24 * 60 * 60 * 1000);
+    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
 
     return {
       id: i + 1,
@@ -75,13 +96,12 @@ export class ManagementEventComponent {
       description: 'Sample event description',
       registerStart: start,
       registerEnd: end,
-      eventDate: new Date(start.getTime() + 86400000), // hôm sau
+      eventDate: new Date(start.getTime() + 86400000),
       start: start,
       end: end,
       participants: Math.floor(Math.random() * 100 + 1)
     };
   });
-
 
   selection: any = {
     selected: [] as any[],
@@ -111,11 +131,23 @@ export class ManagementEventComponent {
 
   get filteredData() {
     const keyword = this.searchTerm.toLowerCase();
-    return this.dataSource.filter(event =>
-      event.name.toLowerCase().includes(keyword) ||
-      event.description.toLowerCase().includes(keyword)
-    );
+
+    const sorted = this.dataSource
+      .filter(event =>
+        event.name.toLowerCase().includes(keyword) ||
+        event.description.toLowerCase().includes(keyword)
+      )
+      .sort((a, b) => b.id - a.id); // Mới nhất lên đầu
+
+    const start = this.pageIndex * this.pageSize;
+    return sorted.slice(start, start + this.pageSize);
   }
+
+  onPageChange(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+  }
+
   formatTime(date: Date | string): string {
     const d = new Date(date);
     const hours = String(d.getHours()).padStart(2, '0');
@@ -140,12 +172,8 @@ export class ManagementEventComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Dialog returned:', result); // ✅ THÊM DÒNG NÀY
-
       if (result) {
         const index = this.dataSource.findIndex(e => e.id === result.id);
-        console.log('Matched index:', index); // ✅ THÊM DÒNG NÀY
-
         if (index !== -1) {
           this.dataSource[index] = {
             ...this.dataSource[index],
@@ -155,23 +183,41 @@ export class ManagementEventComponent {
             eventDate: result.eventDate
           };
           this.dataSource = [...this.dataSource];
-          console.log('Updated row:', this.dataSource[index]); // ✅ THÊM DÒNG NÀY
         }
       }
     });
-
-
   }
 
+  openCreateDialog() {
+    const dialogRef = this.dialog.open(CreateEventComponent, {
+      width: '800px'
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) return;
+
+      const newEvent = {
+        id: Date.now(),
+        image: result.image || 'https://via.placeholder.com/100x60',
+        name: result.title?.trim() || 'Untitled Event',
+        description: result.description?.trim() || 'No description provided.',
+        location: result.location?.trim() || 'Unknown',
+        registerStart: result.start,
+        registerEnd: result.end,
+        eventDate: result.registerDeadline,
+        start: result.start,
+        end: result.end,
+        participants: 0
+      };
+
+      this.dataSource = [newEvent, ...this.dataSource];
+    });
+  }
 
   deleteEvent(row: any) {
     const confirmed = confirm(`Are you sure to delete "${row.name}"?`);
     if (confirmed) {
       this.dataSource = this.dataSource.filter(item => item !== row);
-
-      // // Supabase delete example
-      // await supabase.from('events').delete().eq('id', row.id);
     }
   }
 }

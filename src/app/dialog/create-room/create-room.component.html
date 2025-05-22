@@ -1,39 +1,35 @@
-<mat-toolbar color="primary">
-  <span>Create a Chat Room</span>
-</mat-toolbar>
-
 <div class="create-room-container">
-  <!-- Upload Image -->
-  <div class="upload-section">
-    <img [src]="imagePreview || 'https://png.pngtree.com/png-clipart/20200225/original/pngtree-image-upload-icon-photo-upload-icon-png-image_5279794.jpg'" alt="Preview" class="preview-img">
-    <div class="upload-text">
-      <p class="upload-title">Upload here</p>
-      <button mat-icon-button (click)="fileInput.click()">
-        <mat-icon>upload</mat-icon>
-      </button>
-      <input type="file" #fileInput hidden (change)="onFileSelected($event)" />
+    <div class="upload-section">
+      <img [src]="imagePreview || 'https://png.pngtree.com/png-clipart/20200225/original/pngtree-image-upload-icon-photo-upload-icon-png-image_5279794.jpg'" alt="Preview" class="preview-img">
+      <div class="upload-text">
+        <p class="upload-title">Upload here</p>
+        <button mat-icon-button (click)="fileInput.click()">
+          <mat-icon>upload</mat-icon>
+        </button>
+        <input type="file" #fileInput hidden (change)="onFileSelected($event)" />
+      </div>
     </div>
-  </div>
 
-  <!-- Description -->
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Room Name</mat-label>
+    <input matInput placeholder="Enter room name" [(ngModel)]="room.name" />
+  </mat-form-field>
+
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>About this chat</mat-label>
     <textarea matInput placeholder="Describe your chat room" [(ngModel)]="room.description"></textarea>
   </mat-form-field>
 
-  <!-- Event -->
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Happening Event</mat-label>
     <input matInput placeholder="Enter your event" [(ngModel)]="room.event">
   </mat-form-field>
 
-  <!-- Max People -->
   <mat-form-field appearance="outline" class="full-width">
-    <mat-label>People in this chat</mat-label>
-    <mat-select [(ngModel)]="room.people">
-      <mat-option *ngFor="let p of peopleOptions" [value]="p">{{ p }}</mat-option>
-    </mat-select>
+    <mat-label>Active Members</mat-label>
+    <input matInput type="number" [(ngModel)]="room.people" min="0" />
   </mat-form-field>
+
 
   <button mat-raised-button color="primary" (click)="createRoom()">
     Create <mat-icon>chevron_right</mat-icon>
