@@ -8,9 +8,22 @@
     <mat-sidenav-content class="main-content">
       <div class="toolbar">
         <h2>Profile User</h2>
+        <div class="toolbar-actions">
+
+          <div class="custom-search">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input class="search-input" [(ngModel)]="searchTerm" placeholder="Search user..." />
+          </div>
+
+
+          <button mat-stroked-button color="accent" (click)="openCreateProfile()">+ Create Profile</button>
+        </div>
       </div>
 
-      <table mat-table [dataSource]="filteredData" class="mat-elevation-z1" matSort>
+
+
+
+      <table mat-table [dataSource]="pagedData" class="mat-elevation-z1" matSort>
         <ng-container matColumnDef="select">
           <th mat-header-cell *matHeaderCellDef>
             <mat-checkbox
@@ -72,8 +85,14 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
 
-      <mat-paginator [length]="filteredData.length" [pageSize]="10" [pageSizeOptions]="[5, 10, 25]">
+      <mat-paginator
+        [length]="filteredData.length"
+        [pageSize]="pageSize"
+        [pageIndex]="currentPageIndex"
+        [pageSizeOptions]="[1, 3, 5]"
+        (page)="onPageEvent($event)">
       </mat-paginator>
+
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

@@ -1,5 +1,3 @@
-
-
 :host {
   display: block;
   height: 100vh;
@@ -12,7 +10,7 @@ app-topbar {
   left: 0;
   right: 0;
   height: 64px;
-  z-index: 1001;
+  z-index: 500;
 }
 
 .layout-container {
@@ -40,20 +38,71 @@ mat-sidenav-content {
   overflow: auto;
   box-sizing: border-box;
 }
+.custom-search {
+  display: flex;
+  align-items: center;
+  background-color: #edf4f1;
+  border-radius: 28px;
+  padding: 8px 16px;
+  width: 280px;
+  height: 44px;
+  box-sizing: border-box;
+  transition: border 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.custom-search:hover {
+  border-color: #2e7d32;
+}
+
+.search-icon {
+  font-size: 20px;
+  color: #444;
+  margin-right: 12px;
+}
+
+.search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 15px;
+  color: #333;
+  width: 100%;
+}
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 
 .toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   margin-bottom: 20px;
 }
 
 .toolbar h2 {
-  margin: 0;
   font-size: 24px;
+  margin: 0;
   color: #333;
 }
 
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.toolbar-actions button {
+  height: 40px;
+  border-radius: 20px;
+  padding: 0 16px;
+  font-weight: 500;
+}
 .table-wrapper {
   width: 100%;
   overflow-x: auto;
