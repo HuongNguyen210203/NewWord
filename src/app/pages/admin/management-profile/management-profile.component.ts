@@ -15,6 +15,7 @@ import { SidebarComponent } from '../admin-page/components/sidebar/sidebar.compo
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { EditProfileDialogComponent} from './components/edit-profile-dialog/edit-profile-dialog.component';
+import { CreateProfileComponent } from '../../../dialog/create-profile/create-profile.component';
 
 @Component({
   selector: 'app-management-profile',
@@ -55,12 +56,43 @@ export class ManagementProfileComponent {
     events: Math.floor(Math.random() * 10 + 1)
   }));
 
+  pageSize = 3;
+  currentPageIndex = 0;
+
   get filteredData() {
     const term = this.searchTerm.trim().toLowerCase();
     return this.dataSource.filter(row =>
       row.email.toLowerCase().includes(term) ||
       row.name.toLowerCase().includes(term)
     );
+  }
+
+  get pagedData() {
+    const startIndex = this.currentPageIndex * this.pageSize;
+    return this.filteredData.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  onPageEvent(event: any): void {
+    this.pageSize = event.pageSize;
+    this.currentPageIndex = event.pageIndex;
+  }
+
+  openCreateProfile(): void {
+    const dialogRef = this.dialog.open(CreateProfileComponent, {
+      width: '500px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.dataSource.unshift(result);
+        this.dataSource = [...this.dataSource];
+        this.updatePaginator();
+      }
+    });
+  }
+
+  updatePaginator(): void {
+    this.currentPageIndex = 0;
   }
 
   selection = {
@@ -107,6 +139,7 @@ export class ManagementProfileComponent {
   viewUserDetail(row: any): void {
     alert(`Viewing details for: ${row.name} (${row.email})`);
   }
+
   editUser(row: any) {
     const dialogRef = this.dialog.open(EditProfileDialogComponent, {
       width: '500px',
@@ -118,7 +151,7 @@ export class ManagementProfileComponent {
         const index = this.dataSource.findIndex(user => user.email === row.email);
         if (index !== -1) {
           this.dataSource[index] = result;
-          this.dataSource = [...this.dataSource]; // Cập nhật lại UI
+          this.dataSource = [...this.dataSource];
         }
       }
     });

@@ -10,7 +10,7 @@ app-topbar {
   left: 0;
   right: 0;
   height: 64px;
-  z-index: 1001;
+  z-index: 500;
 }
 
 .layout-container {
@@ -42,9 +42,15 @@ mat-sidenav-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   margin-bottom: 20px;
 }
-
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
 .toolbar h2 {
   margin: 0;
   font-size: 24px;
@@ -53,7 +59,6 @@ mat-sidenav-content {
 
 .toolbar button {
   background-color: transparent;
-  border: 2px solid #2e7d32;
   color: #2e7d32;
   padding: 5px 15px;
 }
@@ -96,4 +101,35 @@ td img {
   padding: 10px;
   border-radius: 4px;
   margin-top: 20px;
+}
+.custom-search {
+  display: flex;
+  align-items: center;
+  background-color: #edf4f1;
+  border-radius: 28px;
+  padding: 8px 16px;
+  width: 280px;
+  height: 44px;
+  box-sizing: border-box;
+  transition: border 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.custom-search:hover {
+  border-color: #2e7d32;
+}
+
+.search-icon {
+  font-size: 20px;
+  color: #444;
+  margin-right: 12px;
+}
+
+.search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 15px;
+  color: #333;
+  width: 100%;
 }

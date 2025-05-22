@@ -12,7 +12,7 @@ html, body {
 }
 
 
-/* Layout cố định */
+
 .chat-layout {
   display: flex;
   height: calc(100vh - 60px); /* 60px topbar */
@@ -47,7 +47,7 @@ app-sidebar {
   gap: 12px;
 }
 
-/* Mỗi phòng */
+
 .chat-item {
   padding: 10px;
   border-radius: 10px;
@@ -64,7 +64,7 @@ app-sidebar {
   border: 2px dashed purple;
 }
 
-/* Nội dung chat */
+
 .chat-main {
   flex: 1;
   display: flex;
@@ -72,7 +72,6 @@ app-sidebar {
   background: #ffffff;
 }
 
-/* Header */
 .chat-header {
   padding: 16px;
   background: #e8f5e9;
@@ -80,7 +79,7 @@ app-sidebar {
   font-weight: bold;
 }
 
-/* Nội dung cuộn được */
+
 .chat-content-wrapper {
   flex: 1;
   overflow-y: auto;
@@ -90,7 +89,6 @@ app-sidebar {
   background: #fff;
 }
 
-/* Tin nhắn */
 .chat-content {
   width: 100%;
   max-width: 800px;
@@ -141,7 +139,7 @@ app-sidebar {
   cursor: pointer;
 }
 
-/* Input */
+
 .chat-input {
   padding: 12px 24px;
   background: #fef6fe;
