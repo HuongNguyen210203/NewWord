@@ -4,20 +4,25 @@
     <h3>Welcome back</h3>
     <h2>Sign in now!</h2>
 
-    <form>
+    <!-- Form đăng nhập email/password -->
+    <form (ngSubmit)="handleSignIn()">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Email</mat-label>
-        <input matInput placeholder="Enter your email" type="email" />
+        <input matInput placeholder="Enter your email" type="email" [(ngModel)]="email" name="email" required />
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Password</mat-label>
-        <input matInput placeholder="Enter your password" type="password" />
+        <input matInput placeholder="Enter your password" type="password" [(ngModel)]="password" name="password" required />
       </mat-form-field>
 
-      <button mat-flat-button color="primary" class="continue-btn">
+      <button mat-flat-button color="primary" class="continue-btn" type="submit">
         Sign In <mat-icon>arrow_forward</mat-icon>
       </button>
     </form>
+    <p class="signup-link">
+      Don’t have an account?
+      <a routerLink="/signup">Sign up</a>
+    </p>
   </div>
 </div>
