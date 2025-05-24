@@ -1,23 +1,28 @@
-import {Component, AfterViewInit, ViewChild, OnInit} from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  AfterViewInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatSidenavModule, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
+import { MatDialog } from '@angular/material/dialog';
+import { supabase } from '../../../supabase.client';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatMenuModule } from '@angular/material/menu';
 
-
-import { TopbarComponent } from '../admin-page/components/topbar/topbar.component';
 import { SidebarComponent } from '../admin-page/components/sidebar/sidebar.component';
-import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
-import { MatDialog } from '@angular/material/dialog';
-import { EditRoomDialogComponent} from './components/edit-room-dialog/edit-room-dialog.component';
-import { CreateRoomComponent} from '../../../dialog/create-room/create-room.component';
+import { TopbarComponent } from '../admin-page/components/topbar/topbar.component';
+import { CreateRoomComponent } from '../../../dialog/create-room/create-room.component';
+import { EditRoomDialogComponent } from './components/edit-room-dialog/edit-room-dialog.component';
+import {FormsModule} from '@angular/forms';
+import {MatSortModule} from '@angular/material/sort';
 
 @Component({
   selector: 'app-management-room',
@@ -27,22 +32,18 @@ import { CreateRoomComponent} from '../../../dialog/create-room/create-room.comp
   imports: [
     CommonModule,
     FormsModule,
-    MatSidenavModule,
-    MatSidenavContainer,
-    MatSidenavContent,
     MatTableModule,
-    MatCheckboxModule,
     MatPaginatorModule,
     MatSortModule,
+    MatCheckboxModule,
     MatIconModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    TopbarComponent,
+    MatSidenavModule,
+    MatMenuModule,
     SidebarComponent,
-    MatMenu,
-    MatMenuTrigger,
-    MatMenuItem
+    TopbarComponent
   ]
 })
 export class ManagementRoomComponent implements OnInit, AfterViewInit {
@@ -50,28 +51,41 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
 
   sidebarOpen = true;
   searchTerm: string = '';
-
   displayedColumns: string[] = ['select', 'image', 'name', 'description', 'createdAt', 'members', 'actions'];
   dataSource = new MatTableDataSource<any>([]);
 
   constructor(private dialog: MatDialog) {}
 
   ngOnInit() {
-    const rooms = Array.from({ length: 10 }).map((_, i) => ({
-      image: 'https://m.yodycdn.com/products/anhthobaymau14_m3o64um60zyfvvlu2ltf.jpg',
-      name: `Room ${i + 1}`,
-      description: 'Lorem Ipsum Dolor Sit Amet',
-      createdAt: new Date(Date.now() - i * 1000 * 60 * 60 * 24), // mỗi room cách nhau 1 ngày
-      members: Math.floor(Math.random() * 100 + 1)
-    }));
+    this.loadRoomsFromSupabase();
+  }
 
-    // sắp xếp từ mới đến cũ
-    rooms.sort((a, b) => +b.createdAt - +a.createdAt);
-    this.dataSource.data = rooms;
+
+  async loadRoomsFromSupabase() {
+    const { data, error } = await supabase
+      .from('chat_rooms')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Lỗi khi tải phòng:', error);
+      return;
+    }
+
+    this.dataSource.data = (data || []).map(room => ({
+      ...room,
+      image: room.image_url,
+      createdAt: new Date(room.created_at),
+      members: room.members ?? 0
+    }));
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+  }
+
+  get roomList() {
+    return this.dataSource?.data ?? [];
   }
 
   toggleSidebar() {
@@ -91,7 +105,6 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
 
   selection = {
     selected: [] as any[],
@@ -117,15 +130,10 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
       : (this.selection.selected = [...this.dataSource.data]);
   }
 
-  viewRoomDetail(row: any): void {
-    alert(`Viewing details for room: ${row.name}`);
-  }
-
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.dataSource.filter = filterValue;
   }
-
 
   editRoom(row: any): void {
     const dialogRef = this.dialog.open(EditRoomDialogComponent, {

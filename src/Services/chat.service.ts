@@ -36,25 +36,40 @@ export class ChatService {
    * @returns dữ liệu phòng vừa tạo
    */
   async createRoom(room: { name: string; description?: string; imageFile?: File }): Promise<ChatRoom> {
+    // 1. Kiểm tra phiên đăng nhập
     const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-    if (sessionError || !sessionData.session?.user) throw new Error('Chưa đăng nhập');
+    const user = sessionData.session?.user;
 
+    if (sessionError || !user) throw new Error('Chưa đăng nhập');
+
+    // 2. Upload ảnh nếu có
     let imageUrl = '';
     if (room.imageFile) {
-      imageUrl = await this.uploadRoomImage(room.imageFile);
+      try {
+        imageUrl = await this.uploadRoomImage(room.imageFile);
+      } catch (uploadError) {
+        console.error('Lỗi khi upload ảnh:', uploadError);
+        throw new Error('Không thể upload ảnh phòng');
+      }
     }
 
+    // 3. Tạo phòng
     const { data, error } = await supabase
       .from('chat_rooms')
       .insert({
         name: room.name,
         description: room.description || '',
-        image_url: imageUrl
+        image_url: imageUrl,
+        created_by: user.id
       })
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Lỗi khi tạo phòng:', error);
+      throw new Error('Không thể tạo phòng. Vui lòng thử lại.');
+    }
+
     return data;
   }
 

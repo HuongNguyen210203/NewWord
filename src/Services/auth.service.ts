@@ -11,18 +11,27 @@ export class AuthService {
    * - Ghi thêm thông tin vào bảng `users`
    */
   async signUp(email: string, password: string, name: string, birth: string) {
+    email = email.trim();
+
+    // 1. Đăng ký Supabase Auth
     const { data, error } = await supabase.auth.signUp({
       email,
       password
     });
-
     if (error) throw error;
 
-    const { user } = data;
+    // 2. Delay nhỏ (hoặc gọi getSession) để chắc chắn token hoạt động
+    await new Promise((resolve) => setTimeout(resolve, 200)); // ⏳ delay nhẹ
 
-    // Tạo bản ghi trong bảng users
+    // 3. Lấy lại session để đảm bảo auth.uid() có hiệu lực
+    const { data: session } = await supabase.auth.getSession();
+    const uid = session.session?.user?.id;
+
+    if (!uid) throw new Error('Không thể xác định UID sau đăng ký');
+
+    // 4. Ghi dữ liệu vào bảng users
     const { error: insertError } = await supabase.from('users').insert({
-      id: user?.id,
+      id: uid,
       email,
       name,
       birth,
@@ -32,7 +41,6 @@ export class AuthService {
 
     if (insertError) throw insertError;
   }
-
   /**
    * Đăng nhập bằng email và password
    * - Kiểm tra tài khoản có bị khóa không (`is_hidden`)
@@ -55,18 +63,6 @@ export class AuthService {
     if (profile?.is_hidden) throw new Error('Tài khoản đã bị vô hiệu hoá');
 
     return profile.role as 'user' | 'admin';
-  }
-
-  /**
-   * Đăng nhập bằng Google OAuth
-   * - Yêu cầu đã bật Google trong Supabase Dashboard
-   */
-  async signInWithGoogle() {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google'
-    });
-
-    if (error) throw error;
   }
 
   /**
