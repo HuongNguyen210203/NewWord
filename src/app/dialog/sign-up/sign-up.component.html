@@ -1,29 +1,50 @@
 <div class="signup-container">
   <div class="signup-card">
     <img class="avatar" src="https://anhcuoiviet.vn/wp-content/uploads/2022/11/avatar-dep-dang-yeu-nu-5.jpg" alt="Avatar" />
-    <h3>Welcome to NewWorld</h3>
-    <h2>Sign up now!</h2>
+    <h3>Welcome to</h3>
+    <h2>Create an Account</h2>
 
-    <form>
+    <form (ngSubmit)="handleSignUp()">
+      <!-- Email -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Email</mat-label>
-        <input matInput placeholder="Enter your email" type="email" />
-        <mat-hint>"Ex:ANguyen&#64;gmail.com"</mat-hint>
+        <input matInput [(ngModel)]="email" name="email" type="email" placeholder="Enter your email" required />
       </mat-form-field>
 
+      <!-- Password -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Password</mat-label>
-        <input matInput placeholder="Enter your password" type="password" />
+        <input matInput [(ngModel)]="password" name="password" type="password" placeholder="Enter your password" required />
       </mat-form-field>
 
+      <!-- Re-enter Password -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Re-enter Password</mat-label>
-        <input matInput placeholder="Re-enter your password" type="password" />
+        <input matInput [(ngModel)]="rePassword" name="rePassword" type="password" placeholder="Re-enter your password" required />
       </mat-form-field>
 
-      <button mat-flat-button color="primary" class="continue-btn">
+      <!-- Name -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Name</mat-label>
+        <input matInput [(ngModel)]="name" name="name" placeholder="Your full name" />
+      </mat-form-field>
+
+      <!-- Birth -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Birth</mat-label>
+        <input matInput [(ngModel)]="birth" name="birth" type="date" />
+      </mat-form-field>
+
+      <!-- Submit -->
+      <button mat-flat-button color="primary" class="continue-btn" type="submit">
         Continue <mat-icon>arrow_forward</mat-icon>
       </button>
     </form>
+
+    <!-- Quay lại trang đăng nhập -->
+    <p class="signin-link">
+      Already have an account?
+      <a routerLink="/signin">Sign in</a>
+    </p>
   </div>
 </div>

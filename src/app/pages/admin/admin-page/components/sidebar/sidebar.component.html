@@ -1,22 +1,30 @@
 <div class="sidebar" [class.collapsed]="!open">
   <div class="sidebar-inner">
+    <!-- Menu chính -->
     <div class="menu-items">
-      <a *ngFor="let item of menuItems"
-         [routerLink]="item.route"
-         routerLinkActive="active"
-         [routerLinkActiveOptions]="{ exact: true }"
-         class="menu-item">
-        <mat-icon>{{ item.icon }}</mat-icon>
-        <span *ngIf="open">{{ item.label }}</span>
-      </a>
+      @for (item of menuItems; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="menu-item">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          @if (open) {
+            <span>{{ item.label }}</span>
+          }
+        </a>
+      }
     </div>
 
+    <!-- Nút Sign out -->
     <div class="bottom-menu">
       <a class="menu-item"
          [class.active]="activeItem === 'sign out'"
          (click)="setActive('sign out'); handleLogout()">
         <mat-icon>logout</mat-icon>
-        <span *ngIf="open">Sign out</span>
+        @if (open) {
+          <span>Sign out</span>
+        }
       </a>
     </div>
   </div>

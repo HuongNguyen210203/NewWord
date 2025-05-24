@@ -8,10 +8,13 @@
         <p class="stat-value">{{ value }}</p>
         <p class="stat-subtitle">{{ subtitle }}</p>
       </div>
-      <div class="stat-secondary" *ngIf="secondValue">
-        <p class="stat-value">{{ secondValue }}</p>
-        <p class="stat-subtitle">{{ secondSubtitle }}</p>
-      </div>
+
+      @if (secondValue) {
+        <div class="stat-secondary">
+          <p class="stat-value">{{ secondValue }}</p>
+          <p class="stat-subtitle">{{ secondSubtitle }}</p>
+        </div>
+      }
     </div>
   </mat-card-content>
 </mat-card>

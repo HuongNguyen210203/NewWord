@@ -1,37 +1,56 @@
 <div class="create-room-container">
-    <div class="upload-section">
-      <img [src]="imagePreview || 'https://png.pngtree.com/png-clipart/20200225/original/pngtree-image-upload-icon-photo-upload-icon-png-image_5279794.jpg'" alt="Preview" class="preview-img">
-      <div class="upload-text">
-        <p class="upload-title">Upload here</p>
-        <button mat-icon-button (click)="fileInput.click()">
-          <mat-icon>upload</mat-icon>
-        </button>
-        <input type="file" #fileInput hidden (change)="onFileSelected($event)" />
-      </div>
-    </div>
 
+  <!-- Khu vực chọn ảnh và xem trước -->
+  <div class="upload-section">
+    <img
+      [src]="imagePreview || 'https://png.pngtree.com/png-clipart/20200225/original/pngtree-image-upload-icon-photo-upload-icon-png-image_5279794.jpg'"
+      alt="Preview"
+      class="preview-img">
+
+    <div class="upload-text">
+      <p class="upload-title">Upload PNG only</p>
+      <button mat-icon-button (click)="fileInput.click()">
+        <mat-icon>upload</mat-icon>
+      </button>
+      <input
+        type="file"
+        #fileInput
+        hidden
+        accept="image/png"
+        (change)="onFileSelected($event)" />
+    </div>
+  </div>
+
+  <!-- Nhập tên phòng -->
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Room Name</mat-label>
     <input matInput placeholder="Enter room name" [(ngModel)]="room.name" />
   </mat-form-field>
 
+  <!-- Mô tả phòng -->
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>About this chat</mat-label>
     <textarea matInput placeholder="Describe your chat room" [(ngModel)]="room.description"></textarea>
   </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Happening Event</mat-label>
-    <input matInput placeholder="Enter your event" [(ngModel)]="room.event">
-  </mat-form-field>
+  <!-- Hành động -->
+  <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px;">
+    <button
+      mat-stroked-button
+      (click)="dialogRef.close()"
+      style="
+      color: #CD5656;
+      border-color: #ccc;
+      background-color: #f9faf3;
+    "
+      onmouseover="this.style.backgroundColor='#CD5656';this.style.color='#fff'"
+      onmouseout="this.style.backgroundColor='#f9faf3'; this.style.color='#CD5656'"
+    >
+      Cancel
+    </button>
+    <button mat-raised-button color="primary" (click)="createRoom()">
+      Create <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
 
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Active Members</mat-label>
-    <input matInput type="number" [(ngModel)]="room.people" min="0" />
-  </mat-form-field>
-
-
-  <button mat-raised-button color="primary" (click)="createRoom()">
-    Create <mat-icon>chevron_right</mat-icon>
-  </button>
 </div>

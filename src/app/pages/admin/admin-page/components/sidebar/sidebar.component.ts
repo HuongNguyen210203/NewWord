@@ -1,7 +1,7 @@
 import { Component, Input} from '@angular/core';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
-import {NgForOf, NgIf} from '@angular/common';
 import {MatIcon} from '@angular/material/icon';
+import {AuthService} from '../../../../../../Services/auth.service';
 
 interface MenuItem {
   icon: string
@@ -14,9 +14,7 @@ interface MenuItem {
     MatIcon,
     MatIcon,
     RouterLink,
-    NgForOf,
     MatIcon,
-    NgIf,
     RouterLinkActive
   ],
   templateUrl: './sidebar.component.html',
@@ -26,7 +24,9 @@ export class SidebarComponent {
   @Input() open = true;
   activeItem = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService) {}
 
   menuItems: MenuItem[] = [
     { icon: 'dashboard', label: 'Dashboard', route: '/admin' },
@@ -40,7 +40,9 @@ export class SidebarComponent {
   }
 
   handleLogout() {
-    console.log('Logging out...');
-    // TODO: Gọi AuthService.logout() hoặc điều hướng về /login
+    this.authService.signOut().then(() => {
+      this.router.navigate(['/signin']);
+    });
   }
+
 }
