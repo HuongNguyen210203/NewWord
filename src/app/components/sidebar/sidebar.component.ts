@@ -2,6 +2,7 @@ import { Component, Input} from '@angular/core';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {NgForOf, NgIf} from '@angular/common';
 import {MatIcon} from '@angular/material/icon';
+import {AuthService} from '../../../Services/auth.service';
 
 interface MenuItem {
   icon: string
@@ -26,7 +27,9 @@ export class SidebarComponent {
   @Input() open = true;
   activeItem = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService) {}
 
   menuItems: MenuItem[] = [
     { icon: 'home', label: 'Home', route: '/home' },
@@ -38,8 +41,14 @@ export class SidebarComponent {
     this.activeItem = item;
   }
 
-  handleLogout() {
+  async handleLogout() {
     console.log('Logging out...');
-    // TODO: Gọi AuthService.logout() hoặc điều hướng về /login
+    try {
+      await this.authService.signOut(); // Gọi phương thức đăng xuất từ service
+      this.router.navigate(['/signin']); // Chuyển về trang đăng nhập
+    } catch (error) {
+      console.error('Lỗi khi đăng xuất:', error);
+      alert('Đã xảy ra lỗi khi đăng xuất');
+    }
   }
 }

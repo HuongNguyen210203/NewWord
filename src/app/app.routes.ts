@@ -15,7 +15,7 @@ import {AdminPageComponent} from './pages/admin/admin-page/admin-page.component'
 
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '', redirectTo: 'signin', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'profile', component: ProfilePageComponent },
   { path: 'chat', component: RoomChatPageComponent },

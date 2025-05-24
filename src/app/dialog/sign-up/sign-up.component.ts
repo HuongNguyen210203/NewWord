@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
+import {AuthService} from '../../../Services/auth.service';
+import {RouterModule} from '@angular/router';
+import { Router } from '@angular/router';
+//Material Imports
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {AuthService} from '../../../Services/auth.service';
-import {RouterModule} from '@angular/router';
 
 @Component({
   selector: 'app-sign-up',
@@ -29,9 +31,19 @@ export class SignUpComponent {
   name = '';
   birth = '';
 
-  constructor(private authService: AuthService) {}
-
+  constructor(
+    private authService: AuthService,
+    private router: Router) {}
   async handleSignUp() {
+    this.email = this.email.trim(); // ✅ loại bỏ khoảng trắng đầu/cuối
+
+    // ✅ Kiểm tra định dạng email cơ bản
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.email)) {
+      alert('Email không hợp lệ');
+      return;
+    }
+
     if (!this.email || !this.password || !this.rePassword) {
       alert('Vui lòng nhập đầy đủ thông tin');
       return;
@@ -45,9 +57,15 @@ export class SignUpComponent {
     try {
       await this.authService.signUp(this.email, this.password, this.name, this.birth);
       alert('Đăng ký thành công!');
-      // Bạn có thể chuyển hướng đến trang login tại đây
+      // Chuyển đến trang đăng nhập sau khi đăng ký
+      this.router.navigate(['/signin']);
     } catch (error: any) {
-      alert(error.message || 'Đã xảy ra lỗi khi đăng ký');
+      console.error('Đăng ký lỗi:', error);
+      if (error.message.includes('is invalid') || error.message.includes('already registered')) {
+        alert('Email đã được đăng ký hoặc không hợp lệ.');
+      } else {
+        alert(error.message || 'Đã xảy ra lỗi khi đăng ký');
+      }
     }
   }
 }
