@@ -5,4 +5,6 @@ export interface ChatRoom {
   created_by: string;
   created_at?: string;
   image_url?: string;
+  active_members?: number;
+  members?: number;
 }

@@ -23,6 +23,8 @@ import { CreateRoomComponent } from '../../../dialog/create-room/create-room.com
 import { EditRoomDialogComponent } from './components/edit-room-dialog/edit-room-dialog.component';
 import {FormsModule} from '@angular/forms';
 import {MatSortModule} from '@angular/material/sort';
+import {ChatService} from '../../../../Services/chat.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-management-room',
@@ -54,7 +56,10 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['select', 'image', 'name', 'description', 'createdAt', 'members', 'actions'];
   dataSource = new MatTableDataSource<any>([]);
 
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private chatService: ChatService,
+    public router : Router) {}
 
   ngOnInit() {
     this.loadRoomsFromSupabase();
@@ -134,7 +139,6 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.dataSource.filter = filterValue;
   }
-
   editRoom(row: any): void {
     const dialogRef = this.dialog.open(EditRoomDialogComponent, {
       width: '600px',
@@ -144,11 +148,12 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const index = this.dataSource.data.indexOf(row);
-        if (index !== -1) {
-          this.dataSource.data[index] = result;
-          this.dataSource.data = [...this.dataSource.data];
+        window.location.reload();
+          if (index !== -1) {
+            this.dataSource.data[index] = result;
+            this.dataSource.data = [...this.dataSource.data];
+          }
         }
-      }
     });
   }
 
