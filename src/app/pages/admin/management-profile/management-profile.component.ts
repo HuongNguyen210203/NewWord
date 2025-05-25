@@ -77,19 +77,6 @@ export class ManagementProfileComponent {
     this.currentPageIndex = event.pageIndex;
   }
 
-  openCreateProfile(): void {
-    const dialogRef = this.dialog.open(CreateProfileComponent, {
-      width: '500px'
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.dataSource.unshift(result);
-        this.dataSource = [...this.dataSource];
-        this.updatePaginator();
-      }
-    });
-  }
 
   updatePaginator(): void {
     this.currentPageIndex = 0;
