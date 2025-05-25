@@ -1,7 +1,10 @@
 <div class="create-event-container">
   <div class="upload-section">
-    <img *ngIf="eventImage" [src]="eventImage" class="cover-img"  alt="event img"/>
-    <div *ngIf="!eventImage" class="cover-placeholder">Chưa có ảnh sự kiện</div>
+    @if (eventImage) {
+      <img [src]="eventImage" class="cover-img" alt="event img" />
+    } @else {
+      <div class="cover-placeholder">Chưa có ảnh sự kiện</div>
+    }
     <button mat-icon-button (click)="fileInput.click()" class="upload-btn">
       <mat-icon>upload</mat-icon>
     </button>
