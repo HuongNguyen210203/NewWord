@@ -1,78 +1,56 @@
-
-import { Component } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+
 import { SidebarComponent } from '../admin-page/components/sidebar/sidebar.component';
 import { TopbarComponent } from '../admin-page/components/topbar/topbar.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  MatSidenavModule,
-  MatSidenavContainer,
-  MatSidenavContent
-} from '@angular/material/sidenav';
-import {
-  MatButton,
-  MatIconButton
-} from '@angular/material/button';
-import {
-  MatIconModule
-} from '@angular/material/icon';
-import {
-  MatCheckboxModule
-} from '@angular/material/checkbox';
-import {
-  MatTableModule
-} from '@angular/material/table';
-import {
-  MatPaginatorModule, PageEvent
-} from '@angular/material/paginator';
-import {
-  MatSort
-} from '@angular/material/sort';
-import {
-  MatMenu,
-  MatMenuItem,
-  MatMenuTrigger
-} from '@angular/material/menu';
+import { MatSidenavModule, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatMenuModule } from '@angular/material/menu';
 
-import { EditEventDialogComponent } from './components/edit-event-dialog/edit-event-dialog.component';
 import { CreateEventComponent } from '../../../dialog/create-event/create-event.component';
+import { EditEventDialogComponent } from './components/edit-event-dialog/edit-event-dialog.component';
+
+import { EventService } from '../../../../Services/event.service';
+import { AppEvent } from '../../../../Models/event.model';
 
 @Component({
   selector: 'app-management-event',
   standalone: true,
+  templateUrl: './management-event.component.html',
+  styleUrls: ['./management-event.component.css'],
   imports: [
     CommonModule,
+    FormsModule,
     TopbarComponent,
     SidebarComponent,
     MatSidenavModule,
     MatSidenavContainer,
     MatSidenavContent,
+    MatButtonModule,
     MatIconModule,
     MatCheckboxModule,
     MatTableModule,
     MatPaginatorModule,
-    MatButton,
-    MatSort,
-    FormsModule,
-    MatMenuTrigger,
-    MatMenu,
-    MatMenuItem,
-    MatIconButton,
-  ],
-  templateUrl: './management-event.component.html',
-  styleUrls: ['./management-event.component.css']
+    MatSortModule,
+    MatMenuModule,
+  ]
 })
-
-export class ManagementEventComponent {
-  sidebarOpen = true;
-  searchTerm = '';
-
-  pageIndex = 0;
-  pageSize = 5;
-  readonly pageSizeOptions = [1, 3, 5];
-
-  displayedColumns = [
+export class ManagementEventComponent implements OnInit {
+  dataSource: AppEvent[] = [];
+  displayedColumns: string[] = [
     'select',
     'image',
     'name',
@@ -81,43 +59,145 @@ export class ManagementEventComponent {
     'registerEnd',
     'eventDate',
     'participants',
-    'actions'
+    'actions',
   ];
 
-  dataSource = Array.from({ length: 8 }).map((_, i) => {
-    const base = new Date();
-    const start = new Date(base.getTime() + i * 24 * 60 * 60 * 1000);
-    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+  searchTerm: string = '';
+  pageSize = 3;
+  pageIndex = 0;
+  pageSizeOptions = [3, 5, 10];
 
-    return {
-      id: i + 1,
-      image: 'https://upload.wikimedia.org/wikipedia/vi/5/56/Bia_truyen_Tho_bay_mau%2C_2022.webp',
-      name: `Event ${i + 1}`,
-      description: 'Sample event description',
-      registerStart: start,
-      registerEnd: end,
-      eventDate: new Date(start.getTime() + 86400000),
-      start: start,
-      end: end,
-      participants: Math.floor(Math.random() * 100 + 1)
-    };
-  });
+  sidebarOpen = true;
 
-  selection: any = {
-    selected: [] as any[],
-    toggle: (row: any) => {
-      const index = this.selection.selected.indexOf(row);
-      index === -1 ? this.selection.selected.push(row) : this.selection.selected.splice(index, 1);
-    },
-    isSelected: (row: any) => this.selection.selected.includes(row),
-    hasValue: () => this.selection.selected.length > 0
-  };
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private eventService: EventService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadEventsFromSupabase();
+  }
+
+  async loadEventsFromSupabase() {
+    try {
+      const events = await this.eventService.getAllEvents();
+      this.dataSource = events.map(event => ({
+        ...event,
+        image: event.image_url,
+        participants: 0,
+        registerStart: new Date(event.registration_deadline),
+        registerEnd: new Date(event.end_time),
+        eventDate: new Date(event.start_time)
+      }));
+    } catch (error) {
+      console.error('Lỗi khi tải sự kiện:', error);
+    }
+  }
+
+  get filteredData() {
+    const filtered = this.dataSource.filter(item =>
+      item.title.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+
+    return filtered.slice(start, end);
+  }
+
+  onPageChange(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+  }
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
   }
+
+  truncateText(text: string | undefined, limit: number): string {
+    if (!text) return '';
+    return text.length > limit ? text.substring(0, limit) + '...' : text;
+  }
+
+  openCreateDialog(): void {
+    const dialogRef = this.dialog.open(CreateEventComponent, {
+      width: '800px'
+    });
+
+    dialogRef.afterClosed().subscribe(async result => {
+      if (!result) return;
+
+      try {
+        const created = await this.eventService.createEvent(result);
+
+        this.dataSource = [
+          {
+            ...(created as any),
+            image: created.image_url,
+            registerStart: new Date(created.start_time),
+            registerEnd: new Date(created.end_time),
+            eventDate: new Date(created.registration_deadline),
+            participants: 0
+          },
+          ...this.dataSource,
+        ];
+      } catch (error) {
+        console.error('Lỗi khi tạo sự kiện:', error);
+        alert('Không thể tạo sự kiện. Vui lòng thử lại.');
+      }
+    });
+  }
+
+  openEditDialog(event: AppEvent): void {
+    const dialogRef = this.dialog.open(EditEventDialogComponent, {
+      width: '800px',
+      data: {
+        ...event,
+        startDate: new Date(event.start_time),
+        startTime: this.formatTime(event.start_time),
+        endDate: new Date(event.end_time),
+        endTime: this.formatTime(event.end_time),
+        registerDeadline: new Date(event.registration_deadline),
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(async result => {
+      if (result) {
+        try {
+          const updated = await this.eventService.updateEvent(event.id, result);
+          const index = this.dataSource.findIndex(e => e.id === event.id);
+          if (index !== -1) {
+            this.dataSource[index] = { ...this.dataSource[index], ...updated };
+            this.dataSource = [...this.dataSource];
+          }
+        } catch (err) {
+          alert('Cập nhật thất bại.');
+        }
+      }
+    });
+  }
+
+  deleteEvent(event: AppEvent): void {
+    const confirmed = confirm(`Bạn có chắc muốn xoá sự kiện "${event.title}"?`);
+    if (!confirmed) return;
+
+    this.eventService.deleteEvent(event.id).then(() => {
+      this.dataSource = this.dataSource.filter(e => e.id !== event.id);
+    }).catch(() => alert('Xoá thất bại.'));
+  }
+
+  // Selection logic
+  selection = {
+    selected: [] as AppEvent[],
+    toggle: (row: AppEvent) => {
+      const idx = this.selection.selected.indexOf(row);
+      idx === -1 ? this.selection.selected.push(row) : this.selection.selected.splice(idx, 1);
+    },
+    isSelected: (row: AppEvent) => this.selection.selected.includes(row),
+    hasValue: () => this.selection.selected.length > 0
+  };
 
   isAllSelected(): boolean {
     return this.selection.selected.length === this.filteredData.length;
@@ -129,102 +209,10 @@ export class ManagementEventComponent {
       : (this.selection.selected = [...this.filteredData]);
   }
 
-  get filteredData() {
-    const keyword = this.searchTerm.toLowerCase();
-
-    const sorted = this.dataSource
-      .filter(event =>
-        event.name.toLowerCase().includes(keyword) ||
-        event.description.toLowerCase().includes(keyword)
-      )
-      .sort((a, b) => b.id - a.id); // Mới nhất lên đầu
-
-    const start = this.pageIndex * this.pageSize;
-    return sorted.slice(start, start + this.pageSize);
-  }
-
-  onPageChange(event: PageEvent) {
-    this.pageIndex = event.pageIndex;
-    this.pageSize = event.pageSize;
-  }
-
-  formatTime(date: Date | string): string {
-    const d = new Date(date);
-    const hours = String(d.getHours()).padStart(2, '0');
-    const minutes = String(d.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
-  }
-
-  openEditDialog(event: any) {
-    const authenticated = confirm('Are you authenticated to modify?');
-    if (!authenticated) return;
-
-    const dialogRef = this.dialog.open(EditEventDialogComponent, {
-      width: '800px',
-      data: {
-        ...event,
-        startDate: new Date(event.start),
-        startTime: this.formatTime(event.start),
-        endDate: new Date(event.end),
-        endTime: this.formatTime(event.end),
-        eventDate: new Date(event.eventDate),
-      }
+  formatTime(dateString: string): string {
+    return new Date(dateString).toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit'
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        const index = this.dataSource.findIndex(e => e.id === result.id);
-        if (index !== -1) {
-          this.dataSource[index] = {
-            ...this.dataSource[index],
-            ...result,
-            registerStart: result.start,
-            registerEnd: result.end,
-            eventDate: result.eventDate
-          };
-          this.dataSource = [...this.dataSource];
-        }
-      }
-    });
-  }
-
-  openCreateDialog() {
-    const dialogRef = this.dialog.open(CreateEventComponent, {
-      width: '800px'
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (!result) return;
-
-      const newEvent = {
-        id: Date.now(),
-        image: result.image || 'https://via.placeholder.com/100x60',
-        name: result.title?.trim() || 'Untitled Event',
-        description: result.description?.trim() || 'No description provided.',
-        location: result.location?.trim() || 'Unknown',
-        registerStart: result.start,
-        registerEnd: result.end,
-        eventDate: result.registerDeadline,
-        start: result.start,
-        end: result.end,
-        participants: 0
-      };
-
-      this.dataSource = [newEvent, ...this.dataSource];
-    });
-  }
-
-  deleteEvent(row: any) {
-    const confirmed = confirm(`Are you sure to delete "${row.name}"?`);
-    if (confirmed) {
-      this.dataSource = this.dataSource.filter(item => item !== row);
-    }
-  }
-  truncateText(text: string, maxWords: number): string {
-    if (!text) return '';
-    const words = text.split(' ');
-    return words.length > maxWords
-      ? words.slice(0, maxWords).join(' ') + '...'
-      : text;
   }
 }

@@ -1,5 +1,5 @@
-export interface Event {
-  id?: string;
+export interface AppEvent {
+  id: string;
   title: string;
   description: string;
   start_time: string; // ISO string

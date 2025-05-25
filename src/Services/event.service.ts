@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import {supabase} from '../app/supabase.client';
-import { Event } from '../Models/event.model';
+import { AppEvent } from '../Models/event.model';
 
 @Injectable({ providedIn: 'root' })
 export class EventService {
 
   // ✅ Lấy danh sách tất cả sự kiện (order by created_at)
-  async getAllEvents(): Promise<Event[]> {
+  async getAllEvents(): Promise<AppEvent[]> {
     const { data, error } = await supabase
       .from('events')
       .select('*')
@@ -17,7 +17,7 @@ export class EventService {
   }
 
   // ✅ Tạo một sự kiện mới
-  async createEvent(event: Omit<Event, 'id' | 'created_at'>): Promise<Event> {
+  async createEvent(event: Omit<AppEvent, 'id' | 'created_at'>): Promise<AppEvent> {
     const { data, error } = await supabase
       .from('events')
       .insert(event)
@@ -31,12 +31,13 @@ export class EventService {
   // ✅ Upload ảnh sự kiện (tùy chọn)
   async uploadEventImage(file: File): Promise<string> {
     const fileName = `${Date.now()}_${file.name}`;
-    const { error } = await supabase
+
+    const { error: uploadError } = await supabase
       .storage
       .from('event-images')
       .upload(fileName, file);
 
-    if (error) throw error;
+    if (uploadError) throw uploadError;
 
     const { data } = supabase
       .storage
@@ -56,7 +57,7 @@ export class EventService {
     if (error) throw error;
   }
   // ✅ Cập nhật sự kiện theo ID
-  async updateEvent(eventId: string, updatedFields: Partial<Event>): Promise<Event> {
+  async updateEvent(eventId: string, updatedFields: Partial<AppEvent>): Promise<AppEvent> {
     const { data, error } = await supabase
       .from('events')
       .update(updatedFields)
