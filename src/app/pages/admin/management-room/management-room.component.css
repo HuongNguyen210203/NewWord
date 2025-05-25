@@ -81,13 +81,18 @@ th {
   padding: 10px;
   text-align: left;
   font-weight: 500;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  vertical-align: top;
 }
 
 td {
+  max-width: 200px;
   padding: 10px;
   border-bottom: 1px solid #ddd;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  vertical-align: top;
 }
 
 td img {
@@ -132,4 +137,33 @@ td img {
   font-size: 15px;
   color: #333;
   width: 100%;
+}
+.col-name {
+  min-width: 120px;
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.col-description {
+  min-width: 200px;
+  max-width: 300px;
+  white-space: normal;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.col-date {
+  min-width: 100px;
+  max-width: 120px;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.col-members {
+  min-width: 80px;
+  max-width: 100px;
+  text-align: center;
+  white-space: nowrap;
 }

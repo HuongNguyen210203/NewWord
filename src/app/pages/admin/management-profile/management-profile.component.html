@@ -42,24 +42,25 @@
         </ng-container>
 
         <ng-container matColumnDef="email">
-          <th mat-header-cell *matHeaderCellDef>User Email</th>
-          <td mat-cell *matCellDef="let row">{{ row.email }}</td>
+          <th mat-header-cell *matHeaderCellDef class="col-email">User Email</th>
+          <td mat-cell *matCellDef="let row" class="col-email">{{truncateText(row.email, 30)}}</td>
         </ng-container>
 
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>User Name</th>
-          <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+          <th mat-header-cell *matHeaderCellDef class="col-name">User Name</th>
+          <td mat-cell *matCellDef="let row" class="col-name">{{truncateText(row.name, 30)}}</td>
         </ng-container>
 
         <ng-container matColumnDef="joinedRooms">
-          <th mat-header-cell *matHeaderCellDef>Number of joined rooms</th>
-          <td mat-cell *matCellDef="let row">{{ row.joinedRooms }}%</td>
+          <th mat-header-cell *matHeaderCellDef class="col-joinedRooms">Number of joined rooms</th>
+          <td mat-cell *matCellDef="let row" class="col-joinedRooms">{{ row.joinedRooms }}%</td>
         </ng-container>
 
         <ng-container matColumnDef="events">
-          <th mat-header-cell *matHeaderCellDef>Events participated in</th>
-          <td mat-cell *matCellDef="let row">{{ row.events }}</td>
+          <th mat-header-cell *matHeaderCellDef class="col-events">Events participated in</th>
+          <td mat-cell *matCellDef="let row" class="col-events">{{ row.events }}</td>
         </ng-container>
+
 
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef></th>

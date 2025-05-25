@@ -136,3 +136,34 @@ td button.mat-icon-button {
   width: 32px;
   height: 32px;
 }
+
+.col-image {
+  min-width: 100px;
+  max-width: 100px;
+}
+
+.col-name {
+  min-width: 150px;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.col-description {
+  min-width: 200px;
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.col-date,
+.col-participants {
+  min-width: 100px;
+  max-width: 120px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
