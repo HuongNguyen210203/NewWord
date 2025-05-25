@@ -163,4 +163,12 @@ export class ManagementProfileComponent {
       this.dataSource = this.dataSource.filter(u => u !== row);
     }
   }
+  truncateText(text: string, maxWords: number): string {
+    if (!text) return '';
+    const words = text.split(' ');
+    return words.length > maxWords
+      ? words.slice(0, maxWords).join(' ') + '...'
+      : text;
+  }
+
 }

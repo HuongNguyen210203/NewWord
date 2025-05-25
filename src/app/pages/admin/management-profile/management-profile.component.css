@@ -122,12 +122,39 @@ th {
   padding: 10px;
   text-align: left;
   font-weight: 500;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  vertical-align: top;
 }
 
 td {
   padding: 10px;
   border-bottom: 1px solid #ddd;
+  white-space: normal;
+  word-break: break-word;
+  vertical-align: top;
+}
+.col-email {
+  min-width: 180px;
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.col-name {
+  min-width: 200px;
+  max-width: 350px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.col-joinedRooms,
+.col-events {
+  min-width: 100px;
+  max-width: 120px;
+  text-align: center;
   white-space: nowrap;
 }
 

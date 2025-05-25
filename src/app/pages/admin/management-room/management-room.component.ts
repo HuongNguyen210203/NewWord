@@ -163,4 +163,10 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
       this.dataSource.data = this.dataSource.data.filter(item => item !== row);
     }
   }
+  truncateText(text: string, wordLimit: number = 40): string {
+    if (!text) return '';
+    const words = text.split(' ');
+    return words.length > wordLimit ? words.slice(0, wordLimit).join(' ') + '...' : text;
+  }
+
 }
