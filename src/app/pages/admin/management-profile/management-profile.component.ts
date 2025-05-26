@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
-import { MatSidenavModule, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
@@ -10,10 +10,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { TopbarComponent } from '../admin-page/components/topbar/topbar.component';
 import { SidebarComponent } from '../admin-page/components/sidebar/sidebar.component';
-import { MatDialog } from '@angular/material/dialog';
-
+import {UserService} from '../../../../Services/user.service';
+import {User} from '../../../../Models/user.model';
+import {MatSlideToggle} from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-management-profile',
@@ -34,47 +36,38 @@ import { MatDialog } from '@angular/material/dialog';
     MatInputModule,
     TopbarComponent,
     SidebarComponent,
+    MatSlideToggle,
   ]
 })
-export class ManagementProfileComponent {
+export class ManagementProfileComponent implements OnInit {
   sidebarOpen = true;
+
+  constructor(private dialog: MatDialog, private userService: UserService) {}
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
   }
 
-  toggleVisibility(row: any): void {
-    row.isActive = !row.isActive;
-  }
-
-
-  constructor(private dialog: MatDialog) {}
-
-  searchTerm: string = '';
-  displayedColumns: string[] = ['select', 'email', 'name', 'joinedRooms', 'events', 'actions'];
-  dataSource = Array.from({ length: 10 }).map((_, i) => ({
-    email: `user${i + 1}@example.com`,
-    name: `User ${i + 1}`,
-    joinedRooms: Math.floor(Math.random() * 50 + 50),
-    events: Math.floor(Math.random() * 10 + 1),
-    isActive: true
-  }));
-
-
-
+  dataSource: User[] = [];
+  searchTerm = '';
   pageSize = 3;
   currentPageIndex = 0;
 
-  get filteredData() {
+  displayedColumns: string[] = ['select', 'email', 'name', 'joinedRooms', 'events', 'actions'];
+
+  async ngOnInit(): Promise<void> {
+    this.dataSource = await this.userService.getAllUsers();
+  }
+
+  get filteredData(): User[] {
     const term = this.searchTerm.trim().toLowerCase();
     return this.dataSource.filter(row =>
-          row.email.toLowerCase().includes(term) ||
-          row.name.toLowerCase().includes(term)
+      row.email.toLowerCase().includes(term) ||
+      row.name.toLowerCase().includes(term)
     );
   }
 
-
-  get pagedData() {
+  get pagedData(): User[] {
     const startIndex = this.currentPageIndex * this.pageSize;
     return this.filteredData.slice(startIndex, startIndex + this.pageSize);
   }
@@ -84,18 +77,27 @@ export class ManagementProfileComponent {
     this.currentPageIndex = event.pageIndex;
   }
 
-
   updatePaginator(): void {
     this.currentPageIndex = 0;
   }
 
+  async toggleVisibility(row: User): Promise<void> {
+    row.is_hidden = !row.is_hidden;
+    try {
+      await this.userService.updateVisibility(row.id, row.is_hidden);
+    } catch (err) {
+      alert('Lỗi khi cập nhật trạng thái người dùng');
+      row.is_hidden = !row.is_hidden; // rollback
+    }
+  }
+
   selection = {
-    selected: [] as any[],
-    toggle(row: any) {
+    selected: [] as User[],
+    toggle(row: User) {
       const index = this.selected.indexOf(row);
       index === -1 ? this.selected.push(row) : this.selected.splice(index, 1);
     },
-    isSelected(row: any) {
+    isSelected(row: User) {
       return this.selected.includes(row);
     },
     hasValue() {
@@ -118,18 +120,15 @@ export class ManagementProfileComponent {
       ['Email', 'Name', 'Joined Rooms', 'Events'],
       ...this.filteredData.map(row => [row.email, row.name, row.joinedRooms, row.events])
     ];
-    const csvContent = rows.map(e => e.join(",")).join("\n");
+    const csvContent = rows.map(e => e.join(',')).join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
+    link.setAttribute('href', URL.createObjectURL(blob));
     link.setAttribute('download', 'user_profiles.csv');
-    link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   }
-
 
   truncateText(text: string, maxWords: number): string {
     if (!text) return '';

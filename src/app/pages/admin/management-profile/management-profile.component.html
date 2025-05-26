@@ -64,17 +64,18 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let row">
-            <button mat-icon-button (click)="toggleVisibility(row)">
-              <mat-icon>{{ row.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
-            </button>
-
+            <mat-slide-toggle
+              [checked]="!row.is_hidden"
+              color="primary"
+              (change)="toggleVisibility(row)">
+            </mat-slide-toggle>
           </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row
             *matRowDef="let row; columns: displayedColumns;"
-            [ngClass]="{ 'row-inactive': !row.isActive }">
+            [ngClass]="{ 'row-inactive': row.is_hidden }">
         </tr>
 
       </table>
