@@ -18,6 +18,20 @@ import {DashboardComponent} from './components/dashboard/dashboard.component';
     DashboardComponent
   ]
 })
+// export class AdminPageComponent {
+//   sidebarOpen = true;
+//
+//   toggleSidebar() {
+//     this.sidebarOpen = !this.sidebarOpen;
+//   }
+//
+//   @HostListener('window:resize', ['$event'])
+//   onResize(event: any) {
+//     if (event.target.innerWidth < 768) {
+//       this.sidebarOpen = false;
+//     }
+//   }
+// }
 export class AdminPageComponent {
   sidebarOpen = true;
 

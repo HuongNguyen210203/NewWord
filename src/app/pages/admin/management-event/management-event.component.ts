@@ -37,8 +37,6 @@ import { AppEvent } from '../../../../Models/event.model';
     TopbarComponent,
     SidebarComponent,
     MatSidenavModule,
-    MatSidenavContainer,
-    MatSidenavContent,
     MatButtonModule,
     MatIconModule,
     MatCheckboxModule,

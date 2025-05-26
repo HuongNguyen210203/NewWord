@@ -1,12 +1,9 @@
 <app-topbar (menuClick)="toggleSidebar()"></app-topbar>
 
-<mat-sidenav-container class="layout-container">
-  <mat-sidenav mode="side" [opened]="sidebarOpen" class="sidenav">
-    <app-sidebar [open]="sidebarOpen"></app-sidebar>
-  </mat-sidenav>
+<div class="main-wrapper">
+  <app-sidebar [open]="sidebarOpen" [class.collapsed]="!sidebarOpen"></app-sidebar>
 
-  <mat-sidenav-content class="main-content management-container"
-                       [ngClass]="{ 'content-area-expanded': !sidebarOpen }">
+  <div class="main-content" [ngClass]="{ 'collapsed': !sidebarOpen }">
     <div class="toolbar">
       <h2>Room Management</h2>
 
@@ -110,5 +107,5 @@
     </table>
 
     <mat-paginator [pageSize]="3" [pageSizeOptions]="[1, 3, 5]"></mat-paginator>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  </div>
+</div>

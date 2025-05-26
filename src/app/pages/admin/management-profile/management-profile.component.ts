@@ -12,10 +12,8 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { TopbarComponent } from '../admin-page/components/topbar/topbar.component';
 import { SidebarComponent } from '../admin-page/components/sidebar/sidebar.component';
-import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
-import { EditProfileDialogComponent} from './components/edit-profile-dialog/edit-profile-dialog.component';
-import { CreateProfileComponent } from '../../../dialog/create-profile/create-profile.component';
+
 
 @Component({
   selector: 'app-management-profile',
@@ -26,8 +24,6 @@ import { CreateProfileComponent } from '../../../dialog/create-profile/create-pr
     CommonModule,
     FormsModule,
     MatSidenavModule,
-    MatSidenavContainer,
-    MatSidenavContent,
     MatTableModule,
     MatCheckboxModule,
     MatPaginatorModule,
@@ -38,12 +34,19 @@ import { CreateProfileComponent } from '../../../dialog/create-profile/create-pr
     MatInputModule,
     TopbarComponent,
     SidebarComponent,
-    MatMenuTrigger,
-    MatMenu,
-    MatMenuItem
   ]
 })
 export class ManagementProfileComponent {
+  sidebarOpen = true;
+
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  toggleVisibility(row: any): void {
+    row.isActive = !row.isActive;
+  }
+
 
   constructor(private dialog: MatDialog) {}
 
@@ -53,8 +56,11 @@ export class ManagementProfileComponent {
     email: `user${i + 1}@example.com`,
     name: `User ${i + 1}`,
     joinedRooms: Math.floor(Math.random() * 50 + 50),
-    events: Math.floor(Math.random() * 10 + 1)
+    events: Math.floor(Math.random() * 10 + 1),
+    isActive: true
   }));
+
+
 
   pageSize = 3;
   currentPageIndex = 0;
@@ -62,10 +68,11 @@ export class ManagementProfileComponent {
   get filteredData() {
     const term = this.searchTerm.trim().toLowerCase();
     return this.dataSource.filter(row =>
-      row.email.toLowerCase().includes(term) ||
-      row.name.toLowerCase().includes(term)
+          row.email.toLowerCase().includes(term) ||
+          row.name.toLowerCase().includes(term)
     );
   }
+
 
   get pagedData() {
     const startIndex = this.currentPageIndex * this.pageSize;
@@ -123,33 +130,7 @@ export class ManagementProfileComponent {
     document.body.removeChild(link);
   }
 
-  viewUserDetail(row: any): void {
-    alert(`Viewing details for: ${row.name} (${row.email})`);
-  }
 
-  editUser(row: any) {
-    const dialogRef = this.dialog.open(EditProfileDialogComponent, {
-      width: '500px',
-      data: { ...row }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        const index = this.dataSource.findIndex(user => user.email === row.email);
-        if (index !== -1) {
-          this.dataSource[index] = result;
-          this.dataSource = [...this.dataSource];
-        }
-      }
-    });
-  }
-
-  deleteUser(row: any) {
-    const confirmed = confirm(`Are you sure to delete ${row.name}?`);
-    if (confirmed) {
-      this.dataSource = this.dataSource.filter(u => u !== row);
-    }
-  }
   truncateText(text: string, maxWords: number): string {
     if (!text) return '';
     const words = text.split(' ');
@@ -157,5 +138,4 @@ export class ManagementProfileComponent {
       ? words.slice(0, maxWords).join(' ') + '...'
       : text;
   }
-
 }

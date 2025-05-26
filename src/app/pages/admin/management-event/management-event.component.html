@@ -1,33 +1,28 @@
-
 <app-topbar (menuClick)="toggleSidebar()"></app-topbar>
 
 <div class="main-wrapper">
-  <mat-sidenav-container class="layout-container">
-    <mat-sidenav mode="side" [opened]="sidebarOpen">
-      <app-sidebar [open]="sidebarOpen"></app-sidebar>
-    </mat-sidenav>
+  <app-sidebar [open]="sidebarOpen" [class.collapsed]="!sidebarOpen"></app-sidebar>
 
-    <mat-sidenav-content class="main-content">
-
-      <div class="toolbar">
-        <h2>Event Management</h2>
-        <div class="toolbar-actions">
-          <div class="custom-search">
-            <mat-icon class="search-icon">search</mat-icon>
-            <input
-              type="text"
-              [(ngModel)]="searchTerm"
-              placeholder="Search public content"
-              class="search-input"
-            />
-          </div>
-
-          <button mat-stroked-button color="accent" (click)="openCreateDialog()">
-            <mat-icon>add</mat-icon>
-            Create Event
-          </button>
+  <div class="main-content" [ngClass]="{ 'collapsed': !sidebarOpen }">
+    <div class="toolbar">
+      <h2>Event Management</h2>
+      <div class="toolbar-actions">
+        <div class="custom-search">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            placeholder="Search public content"
+            class="search-input"
+          />
         </div>
+
+        <button mat-stroked-button color="accent" (click)="openCreateDialog()">
+          <mat-icon>add</mat-icon>
+          Create Event
+        </button>
       </div>
+    </div>
 
 
       <table mat-table [dataSource]="filteredData" matSort class="mat-elevation-z1">
@@ -113,6 +108,5 @@
         [pageSizeOptions]="pageSizeOptions"
         (page)="onPageChange($event)">
       </mat-paginator>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
+  </div>
 </div>

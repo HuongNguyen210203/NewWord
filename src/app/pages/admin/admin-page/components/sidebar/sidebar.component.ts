@@ -1,5 +1,5 @@
-import { Component, Input} from '@angular/core';
-import {Router, RouterLink, RouterLinkActive} from '@angular/router';
+import {Component, Input, OnInit} from '@angular/core';
+import {NavigationEnd, Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {MatIcon} from '@angular/material/icon';
 import {AuthService} from '../../../../../../Services/auth.service';
 
@@ -20,23 +20,30 @@ interface MenuItem {
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css'
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   @Input() open = true;
   activeItem = '';
 
-  constructor(
-    private router: Router,
-    private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   menuItems: MenuItem[] = [
     { icon: 'dashboard', label: 'Dashboard', route: '/admin' },
     { icon: 'event', label: 'Manage Event', route: '/management-event' },
     { icon: 'people', label: 'Manage Profile', route: '/management-profile' },
-    { icon: 'forum', label: 'Manage Room', route: '/management-room' },
+    { icon: 'forum', label: 'Manage Room', route: '/management-room' }
   ];
 
-  setActive(item: string) {
-    this.activeItem = item;
+  ngOnInit() {
+    this.activeItem = this.router.url;
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.activeItem = event.urlAfterRedirects;
+      }
+    });
+  }
+
+  setActive(itemRoute: string) {
+    this.activeItem = itemRoute;
   }
 
   handleLogout() {
@@ -44,5 +51,4 @@ export class SidebarComponent {
       this.router.navigate(['/signin']);
     });
   }
-
 }
