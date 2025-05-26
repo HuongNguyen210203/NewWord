@@ -1,4 +1,3 @@
-
 <h2 mat-dialog-title class="dialog-title">
   <mat-icon class="dialog-icon">edit_calendar</mat-icon>
   <span>Chỉnh sửa sự kiện</span>
@@ -17,7 +16,7 @@
   <form class="form-grid">
     <mat-form-field appearance="outline">
       <mat-label>Tên sự kiện</mat-label>
-      <input matInput [(ngModel)]="data.name" name="name" />
+      <input matInput [(ngModel)]="data.title" name="name" />
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -49,19 +48,11 @@
       <input matInput type="time" [(ngModel)]="data.endTime" name="endTime" />
     </mat-form-field>
 
-<!--    <mat-form-field appearance="outline">-->
-<!--      <mat-label>Hạn đăng ký</mat-label>-->
-<!--      <input matInput [matDatepicker]="regPicker" [(ngModel)]="data.registerDeadline" name="registerDeadline" />-->
-<!--      <mat-datepicker-toggle matSuffix [for]="regPicker"></mat-datepicker-toggle>-->
-<!--      <mat-datepicker #regPicker></mat-datepicker>-->
-<!--    </mat-form-field>-->
-
-
     <mat-form-field appearance="outline">
-      <mat-label>Ngày diễn ra sự kiện</mat-label>
-      <input matInput [matDatepicker]="eventPicker" [(ngModel)]="data.eventDate" name="eventDate" />
-      <mat-datepicker-toggle matSuffix [for]="eventPicker"></mat-datepicker-toggle>
-      <mat-datepicker #eventPicker></mat-datepicker>
+      <mat-label>Hạn đăng ký</mat-label>
+      <input matInput [matDatepicker]="registerPicker" [(ngModel)]="data.registerDeadline" name="registerDeadline" />
+      <mat-datepicker-toggle matSuffix [for]="registerPicker"></mat-datepicker-toggle>
+      <mat-datepicker #registerPicker></mat-datepicker>
     </mat-form-field>
 
     <mat-form-field appearance="outline">

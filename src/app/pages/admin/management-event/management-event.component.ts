@@ -56,8 +56,8 @@ export class ManagementEventComponent implements OnInit {
     'name',
     'description',
     'registerStart',
-    'registerEnd',
     'eventDate',
+    'registerEnd',
     'participants',
     'actions',
   ];
@@ -166,13 +166,12 @@ export class ManagementEventComponent implements OnInit {
     dialogRef.afterClosed().subscribe(async result => {
       if (result) {
         try {
-          const updated = await this.eventService.updateEvent(event.id, result);
-          const index = this.dataSource.findIndex(e => e.id === event.id);
-          if (index !== -1) {
-            this.dataSource[index] = { ...this.dataSource[index], ...updated };
-            this.dataSource = [...this.dataSource];
-          }
+          await this.eventService.updateEvent(event.id, result);
+
+          await this.loadEventsFromSupabase();
+
         } catch (err) {
+          console.error('Cập nhật thất bại:', err);
           alert('Cập nhật thất bại.');
         }
       }

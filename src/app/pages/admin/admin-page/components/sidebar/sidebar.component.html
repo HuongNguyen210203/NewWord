@@ -1,13 +1,12 @@
-<div class="sidebar" [class.collapsed]="!open">
+<aside class="sidebar" [class.collapsed]="!open">
   <div class="sidebar-inner">
-    <!-- Menu chính -->
     <div class="menu-items">
       @for (item of menuItems; track item.route) {
         <a
           [routerLink]="item.route"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          class="menu-item">
+          class="menu-item"
+          [class.active]="activeItem === item.route"
+          (click)="setActive(item.route)">
           <mat-icon>{{ item.icon }}</mat-icon>
           @if (open) {
             <span>{{ item.label }}</span>
@@ -16,16 +15,13 @@
       }
     </div>
 
-    <!-- Nút Sign out -->
     <div class="bottom-menu">
-      <a class="menu-item"
-         [class.active]="activeItem === 'sign out'"
-         (click)="setActive('sign out'); handleLogout()">
-        <mat-icon>logout</mat-icon>
+      <a class="menu-item" [routerLink]="'/signout'">
+        <mat-icon>exit_to_app</mat-icon>
         @if (open) {
           <span>Sign out</span>
         }
       </a>
     </div>
   </div>
-</div>
+</aside>

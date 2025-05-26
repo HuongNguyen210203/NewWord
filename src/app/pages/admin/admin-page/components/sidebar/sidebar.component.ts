@@ -1,48 +1,44 @@
-import { Component, Input} from '@angular/core';
-import {Router, RouterLink, RouterLinkActive} from '@angular/router';
-import {MatIcon} from '@angular/material/icon';
-import {AuthService} from '../../../../../../Services/auth.service';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { Subscription } from 'rxjs';
 
-interface MenuItem {
-  icon: string
-  label: string
-  route: string
-}
 @Component({
   selector: 'app-sidebar',
-  imports: [
-    MatIcon,
-    MatIcon,
-    RouterLink,
-    MatIcon,
-    RouterLinkActive
-  ],
+  standalone: true,
+  imports: [RouterModule, MatIconModule],
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css'
+  styleUrls: ['./sidebar.component.css']
 })
-export class SidebarComponent {
-  @Input() open = true;
-  activeItem = '';
+export class SidebarComponent implements OnInit, OnDestroy {
+  @Input() open: boolean = true;
+  activeItem: string = '';
+  routerSubscription!: Subscription;
 
-  constructor(
-    private router: Router,
-    private authService: AuthService) {}
-
-  menuItems: MenuItem[] = [
-    { icon: 'dashboard', label: 'Dashboard', route: '/admin' },
-    { icon: 'event', label: 'Manage Event', route: '/management-event' },
-    { icon: 'people', label: 'Manage Profile', route: '/management-profile' },
-    { icon: 'forum', label: 'Manage Room', route: '/management-room' },
+  menuItems = [
+    { label: 'Dashboard', icon: 'dashboard', route: '/admin' },
+    { label: 'Manage Event', icon: 'event', route: '/management-event' },
+    { label: 'Manage Profile', icon: 'group', route: '/management-profile' },
+    { label: 'Manage Room', icon: 'chat', route: '/management-room' },
   ];
 
-  setActive(item: string) {
-    this.activeItem = item;
-  }
+  constructor(private router: Router) {}
 
-  handleLogout() {
-    this.authService.signOut().then(() => {
-      this.router.navigate(['/signin']);
+  ngOnInit() {
+    // Cập nhật activeItem mỗi khi route thay đổi
+    this.routerSubscription = this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.activeItem = event.urlAfterRedirects;
+      }
     });
+    this.activeItem = this.router.url;
   }
 
+  ngOnDestroy() {
+    this.routerSubscription?.unsubscribe();
+  }
+
+  setActive(route: string) {
+    this.activeItem = route;
+  }
 }
