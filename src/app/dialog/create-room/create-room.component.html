@@ -35,19 +35,7 @@
 
   <!-- Hành động -->
   <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px;">
-    <button
-      mat-stroked-button
-      (click)="dialogRef.close()"
-      style="
-      color: #CD5656;
-      border-color: #ccc;
-      background-color: #f9faf3;
-    "
-      onmouseover="this.style.backgroundColor='#CD5656';this.style.color='#fff'"
-      onmouseout="this.style.backgroundColor='#f9faf3'; this.style.color='#CD5656'"
-    >
-      Cancel
-    </button>
+    <button mat-stroked-button class="cancel-button" (click)="dialogRef.close()">Cancel</button>
     <button mat-raised-button color="primary" (click)="createRoom()">
       Create <mat-icon>chevron_right</mat-icon>
     </button>

@@ -1,24 +1,10 @@
-:host {
-  display: block;
-  height: 100vh;
-  overflow: hidden;
+.content-wrapper {
+  padding: 24px;
+  background-color: #fff;
+  min-height: calc(100vh - 64px);
+  box-sizing: border-box;
+  overflow-x: auto;
 }
-
-app-topbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 64px;
-  z-index: 500;
-}
-
-.layout-container {
-  display: flex;
-  height: 100vh;
-  flex-direction: column;
-}
-
 
 .custom-search {
   display: flex;
@@ -51,12 +37,6 @@ app-topbar {
   color: #333;
   width: 100%;
 }
-.toolbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
 
 .toolbar {
   display: flex;
@@ -85,18 +65,13 @@ app-topbar {
   padding: 0 16px;
   font-weight: 500;
 }
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-}
 
 table {
-  min-width: 1000px;
   width: 100%;
   background-color: white;
   border-radius: 4px;
-  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
   border-collapse: collapse;
+  box-shadow: 0 2px 1px -1px rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 1px 3px 0 rgba(0,0,0,0.12);
 }
 
 th {
@@ -104,22 +79,18 @@ th {
   padding: 10px;
   text-align: left;
   font-weight: 500;
-  white-space: normal;
-  word-break: break-word;
-  vertical-align: top;
+  white-space: nowrap;
 }
 
 td {
   padding: 10px;
   border-bottom: 1px solid #ddd;
-  white-space: normal;
-  word-break: break-word;
-  vertical-align: top;
+  white-space: nowrap;
 }
+
 .col-email {
   min-width: 180px;
   max-width: 250px;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -127,7 +98,6 @@ td {
 .col-name {
   min-width: 200px;
   max-width: 350px;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -137,7 +107,6 @@ td {
   min-width: 100px;
   max-width: 120px;
   text-align: center;
-  white-space: nowrap;
 }
 
 .mat-paginator {
@@ -146,28 +115,8 @@ td {
   border-radius: 4px;
   margin-top: 20px;
 }
-.main-wrapper {
-  display: flex;
-}
 
-.main-content {
-  flex-grow: 1;
-  padding: 20px;
-  background-color: #f5f5f5;
-  margin-left: 200px;
-  margin-top: 64px;
-  width: calc(100% - 200px);
-  height: calc(100vh - 64px);
-  overflow-y: auto;
-  transition: all 0.3s ease;
-}
-
-.main-content.collapsed {
-  margin-left: 70px;
-  width: calc(100% - 70px);
-}
 .row-inactive {
   opacity: 0.4;
   pointer-events: none;
 }
-

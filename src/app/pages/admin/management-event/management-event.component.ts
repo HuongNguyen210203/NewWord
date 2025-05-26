@@ -34,8 +34,6 @@ import { AppEvent } from '../../../../Models/event.model';
   imports: [
     CommonModule,
     FormsModule,
-    TopbarComponent,
-    SidebarComponent,
     MatSidenavModule,
     MatButtonModule,
     MatIconModule,
@@ -133,9 +131,9 @@ export class ManagementEventComponent implements OnInit {
           {
             ...(created as any),
             image: created.image_url,
-            registerStart: new Date(created.start_time),
+            registerStart: new Date(created.registration_deadline),
+            eventDate: new Date(created.start_time),
             registerEnd: new Date(created.end_time),
-            eventDate: new Date(created.registration_deadline),
             participants: 0
           },
           ...this.dataSource,

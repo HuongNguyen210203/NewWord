@@ -68,3 +68,14 @@
     grid-template-columns: 1fr;
   }
 }
+
+.cancel-button {
+  color: #CD5656;
+  border-color: #CD5656;
+}
+
+.cancel-button:hover {
+  background-color: #CD5656;
+  color: white;
+}
+

@@ -12,6 +12,7 @@ import { SignUpComponent } from './dialog/sign-up/sign-up.component';
 import { CreateRoomComponent } from './dialog/create-room/create-room.component';
 import { CreateEventComponent } from './dialog/create-event/create-event.component';
 import {AdminPageComponent} from './pages/admin/admin-page/admin-page.component';
+import {DashboardComponent} from './pages/admin/admin-page/components/dashboard/dashboard.component';
 
 
 export const routes: Routes = [
@@ -24,9 +25,18 @@ export const routes: Routes = [
   { path: 'create-room', component: CreateRoomComponent },
   { path: 'create-event', component: CreateEventComponent },
   { path: 'card-room', component: CardRoomPageComponent },
-  {path: 'management-event', component: ManagementEventComponent},
-  {path: 'management-profile', component: ManagementProfileComponent},
-  {path: 'management-room', component: ManagementRoomComponent},
-  {path: 'admin', component: AdminPageComponent}, //just added
+
+  // Route admin layout chứa children
+  {
+    path: 'admin',
+    component: AdminPageComponent,
+    children: [
+      { path: '', component: DashboardComponent },
+      { path: 'management-event', component: ManagementEventComponent },
+      { path: 'management-profile', component: ManagementProfileComponent },
+      { path: 'management-room', component: ManagementRoomComponent },
+    ]
+  },
+
   { path: '**', redirectTo: '' }
 ];

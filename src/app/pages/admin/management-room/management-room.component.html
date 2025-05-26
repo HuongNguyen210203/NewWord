@@ -1,112 +1,97 @@
-<app-topbar (menuClick)="toggleSidebar()"></app-topbar>
+<div class="content-wrapper">
+  <div class="toolbar">
+    <h2>Room Management</h2>
 
-<div class="main-wrapper">
-  <app-sidebar [open]="sidebarOpen" [class.collapsed]="!sidebarOpen"></app-sidebar>
-
-  <div class="main-content" [ngClass]="{ 'collapsed': !sidebarOpen }">
-    <div class="toolbar">
-      <h2>Room Management</h2>
-
-      <div class="toolbar-actions">
-        <div class="custom-search">
-          <mat-icon class="search-icon">search</mat-icon>
-          <input type="text"
-                 (input)="applyFilter($event)"
-                 placeholder="Search public content"
-                 class="search-input" />
-        </div>
-
-        <button mat-stroked-button color="accent" (click)="openCreateDialog()">
-          <mat-icon>add</mat-icon>
-          Create Room
-        </button>
+    <div class="toolbar-actions">
+      <div class="custom-search">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text"
+               (input)="applyFilter($event)"
+               placeholder="Search public content"
+               class="search-input" />
       </div>
+
+      <button mat-stroked-button color="accent" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon>
+        Create Room
+      </button>
     </div>
-
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z1" matSort>
-
-      <!-- Checkbox -->
-      <ng-container matColumnDef="select">
-        <th mat-header-cell *matHeaderCellDef>
-          <mat-checkbox
-            (change)="masterToggle()"
-            [checked]="selection.hasValue() && isAllSelected()"
-            [indeterminate]="selection.hasValue() && !isAllSelected()">
-          </mat-checkbox>
-        </th>
-        <td mat-cell *matCellDef="let row">
-          <mat-checkbox
-            (click)="$event.stopPropagation()"
-            (change)="selection.toggle(row)"
-            [checked]="selection.isSelected(row)">
-          </mat-checkbox>
-        </td>
-      </ng-container>
-
-      <!-- Room Image -->
-      <ng-container matColumnDef="image">
-        <th mat-header-cell *matHeaderCellDef>Room Picture</th>
-        <td mat-cell *matCellDef="let row">
-          <img [src]="row.image" width="100" height="60" alt="Room Image" />
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef class="col-name">Room Name</th>
-        <td mat-cell *matCellDef="let row" class="col-name">{{ truncateText(row.name, 10) }}</td>
-      </ng-container>
-
-      <!-- Description -->
-      <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef class="col-description">Description</th>
-        <td mat-cell *matCellDef="let row" class="col-description">{{ truncateText(row.description, 50) }}</td>
-      </ng-container>
-
-      <!-- Created At -->
-      <ng-container matColumnDef="createdAt">
-        <th mat-header-cell *matHeaderCellDef class="col-date">Created At</th>
-        <td mat-cell *matCellDef="let row" class="col-date">{{ row.createdAt | date:'shortDate' }}</td>
-      </ng-container>
-
-      <!-- Members -->
-      <ng-container matColumnDef="members">
-        <th mat-header-cell *matHeaderCellDef class="col-members">Active Members</th>
-        <td mat-cell *matCellDef="let row" class="col-members">{{ row.members }}</td>
-      </ng-container>
-
-      <!-- Actions -->
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let row">
-          <button mat-icon-button [matMenuTriggerFor]="roomMenu">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #roomMenu="matMenu">
-            <button mat-menu-item (click)="editRoom(row)">
-              <mat-icon>edit</mat-icon>
-              <span>Modify</span>
-            </button>
-            <button mat-menu-item (click)="deleteRoom(row)">
-              <mat-icon>delete</mat-icon>
-              <span>Delete</span>
-            </button>
-          </mat-menu>
-        </td>
-      </ng-container>
-
-      <!-- Header row -->
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-
-      <!-- Body row (only one default row definition) -->
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-      <!-- Empty state row -->
-      <tr *ngIf="dataSource.data.length === 0">
-        <td colspan="7" class="text-center">No rooms found.</td>
-      </tr>
-
-    </table>
-
-    <mat-paginator [pageSize]="3" [pageSizeOptions]="[1, 3, 5]"></mat-paginator>
   </div>
+
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z1" matSort>
+
+    <!-- Checkbox -->
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox
+          (change)="masterToggle()"
+          [checked]="selection.hasValue() && isAllSelected()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()">
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox
+          (click)="$event.stopPropagation()"
+          (change)="selection.toggle(row)"
+          [checked]="selection.isSelected(row)">
+        </mat-checkbox>
+      </td>
+    </ng-container>
+
+    <!-- Room Image -->
+    <ng-container matColumnDef="image">
+      <th mat-header-cell *matHeaderCellDef>Room Picture</th>
+      <td mat-cell *matCellDef="let row">
+        <img [src]="row.image" width="100" height="60" alt="Room Image" />
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef class="col-name">Room Name</th>
+      <td mat-cell *matCellDef="let row" class="col-name">{{ truncateText(row.name, 10) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef class="col-description">Description</th>
+      <td mat-cell *matCellDef="let row" class="col-description">{{ truncateText(row.description, 50) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="createdAt">
+      <th mat-header-cell *matHeaderCellDef class="col-date">Created At</th>
+      <td mat-cell *matCellDef="let row" class="col-date">{{ row.createdAt | date:'shortDate' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="members">
+      <th mat-header-cell *matHeaderCellDef class="col-members">Active Members</th>
+      <td mat-cell *matCellDef="let row" class="col-members">{{ row.members }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-icon-button [matMenuTriggerFor]="roomMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #roomMenu="matMenu">
+          <button mat-menu-item (click)="editRoom(row)">
+            <mat-icon>edit</mat-icon>
+            <span>Modify</span>
+          </button>
+          <button mat-menu-item (click)="deleteRoom(row)">
+            <mat-icon>delete</mat-icon>
+            <span>Delete</span>
+          </button>
+        </mat-menu>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr *ngIf="dataSource.data.length === 0">
+      <td colspan="7" class="text-center">No rooms found.</td>
+    </tr>
+
+  </table>
+
+  <mat-paginator [pageSize]="3" [pageSizeOptions]="[1, 3, 5]"></mat-paginator>
 </div>

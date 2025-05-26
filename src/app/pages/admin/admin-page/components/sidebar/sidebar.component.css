@@ -36,12 +36,18 @@
 .menu-item {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   padding: 12px 16px;
   text-decoration: none;
   color: white;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
   white-space: nowrap;
+}
+
+.sidebar.collapsed .menu-item {
+  justify-content: center;       /* ✅ Căn icon chính giữa khi thu */
+  padding: 12px 0;               /* ✅ Bỏ padding trái/phải */
 }
 
 .menu-item:hover {
@@ -60,9 +66,13 @@
 }
 
 .menu-item mat-icon {
-  margin-right: 16px;
   font-size: 20px;
+  margin-right: 16px;
   transition: margin 0.3s ease;
+}
+
+.sidebar.collapsed .menu-item mat-icon {
+  margin-right: 0; /* ✅ Xoá khoảng cách khi thu */
 }
 
 .menu-text {
