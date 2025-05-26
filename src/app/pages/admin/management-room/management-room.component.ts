@@ -67,22 +67,18 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
 
 
   async loadRoomsFromSupabase() {
-    const { data, error } = await supabase
-      .from('chat_rooms')
-      .select('*')
-      .order('created_at', { ascending: false });
+    try {
+      const rooms = await this.chatService.getAllRooms();
 
-    if (error) {
+      this.dataSource.data = rooms.map(room => ({
+        ...room,
+        image: room.image_url,
+        createdAt: new Date(room.created_at!),
+        members: room.members ?? 0
+      }));
+    } catch (error) {
       console.error('Lỗi khi tải phòng:', error);
-      return;
     }
-
-    this.dataSource.data = (data || []).map(room => ({
-      ...room,
-      image: room.image_url,
-      createdAt: new Date(room.created_at),
-      members: room.members ?? 0
-    }));
   }
 
   ngAfterViewInit() {
