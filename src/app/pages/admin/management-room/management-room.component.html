@@ -74,7 +74,6 @@
         <td mat-cell *matCellDef="let row" class="col-members">{{ row.members }}</td>
       </ng-container>
 
-
       <!-- Actions -->
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
@@ -95,15 +94,17 @@
         </td>
       </ng-container>
 
-      <!-- Render header -->
+      <!-- Header row -->
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
-      <!-- Render body using @if + @for -->
-      @if (roomList.length > 0) {
-        @for (row of roomList; track row) {
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        }
-      }
+      <!-- Body row (only one default row definition) -->
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- Empty state row -->
+      <tr *ngIf="dataSource.data.length === 0">
+        <td colspan="7" class="text-center">No rooms found.</td>
+      </tr>
+
     </table>
 
     <mat-paginator [pageSize]="3" [pageSizeOptions]="[1, 3, 5]"></mat-paginator>
