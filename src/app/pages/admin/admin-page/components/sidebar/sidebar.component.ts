@@ -1,30 +1,26 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {NavigationEnd, Router, RouterLink, RouterLinkActive} from '@angular/router';
-import {MatIcon} from '@angular/material/icon';
-import {AuthService} from '../../../../../../Services/auth.service';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { Subscription } from 'rxjs';
+import { AuthService } from '../../../../../../Services/auth.service';
 
 interface MenuItem {
-  icon: string
-  label: string
-  route: string
+  icon: string;
+  label: string;
+  route: string;
 }
+
 @Component({
   selector: 'app-sidebar',
-  imports: [
-    MatIcon,
-    MatIcon,
-    RouterLink,
-    MatIcon,
-    RouterLinkActive
-  ],
+  standalone: true,
+  imports: [RouterModule, MatIconModule],
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css'
+  styleUrls: ['./sidebar.component.css']
 })
-export class SidebarComponent implements OnInit {
-  @Input() open = true;
-  activeItem = '';
-
-  constructor(private router: Router, private authService: AuthService) {}
+export class SidebarComponent implements OnInit, OnDestroy {
+  @Input() open: boolean = true;
+  activeItem: string = '';
+  routerSubscription!: Subscription;
 
   menuItems: MenuItem[] = [
     { icon: 'dashboard', label: 'Dashboard', route: '/admin' },
@@ -33,20 +29,29 @@ export class SidebarComponent implements OnInit {
     { icon: 'forum', label: 'Manage Room', route: '/management-room' }
   ];
 
-  ngOnInit() {
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
     this.activeItem = this.router.url;
-    this.router.events.subscribe(event => {
+    this.routerSubscription = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.activeItem = event.urlAfterRedirects;
       }
     });
   }
 
-  setActive(itemRoute: string) {
-    this.activeItem = itemRoute;
+  ngOnDestroy(): void {
+    this.routerSubscription?.unsubscribe();
   }
 
-  handleLogout() {
+  setActive(route: string): void {
+    this.activeItem = route;
+  }
+
+  handleLogout(): void {
     this.authService.signOut().then(() => {
       this.router.navigate(['/signin']);
     });
