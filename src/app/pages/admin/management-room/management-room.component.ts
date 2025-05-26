@@ -1,3 +1,4 @@
+
 import {
   Component,
   OnInit,
@@ -5,8 +6,8 @@ import {
   AfterViewInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { supabase } from '../../../supabase.client';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,10 +22,10 @@ import { SidebarComponent } from '../admin-page/components/sidebar/sidebar.compo
 import { TopbarComponent } from '../admin-page/components/topbar/topbar.component';
 import { CreateRoomComponent } from '../../../dialog/create-room/create-room.component';
 import { EditRoomDialogComponent } from './components/edit-room-dialog/edit-room-dialog.component';
-import {FormsModule} from '@angular/forms';
-import {MatSortModule} from '@angular/material/sort';
-import {ChatService} from '../../../../Services/chat.service';
-import {Router} from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { ChatService } from '../../../../Services/chat.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-management-room',
@@ -50,43 +51,60 @@ import {Router} from '@angular/router';
 })
 export class ManagementRoomComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   sidebarOpen = true;
   searchTerm: string = '';
-  displayedColumns: string[] = ['select', 'image', 'name', 'description', 'createdAt', 'members', 'actions'];
+  displayedColumns: string[] = [
+    'select',
+    'image',
+    'name',
+    'description',
+    'createdAt',
+    'members',
+    'actions'
+  ];
   dataSource = new MatTableDataSource<any>([]);
 
   constructor(
     private dialog: MatDialog,
     private chatService: ChatService,
-    public router : Router) {}
+    public router: Router
+  ) {}
 
   ngOnInit() {
     this.loadRoomsFromSupabase();
   }
 
-
-  async loadRoomsFromSupabase() {
-    try {
-      const rooms = await this.chatService.getAllRooms();
-
-      this.dataSource.data = rooms.map(room => ({
-        ...room,
-        image: room.image_url,
-        createdAt: new Date(room.created_at!),
-        members: room.members ?? 0
-      }));
-    } catch (error) {
-      console.error('Lỗi khi tải phòng:', error);
-    }
-  }
-
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
+    // Optional: custom filter function based on name or description
+    this.dataSource.filterPredicate = (data, filter) => {
+      const name = data.name?.toLowerCase() || '';
+      const desc = data.description?.toLowerCase() || '';
+      return name.includes(filter) || desc.includes(filter);
+    };
   }
 
-  get roomList() {
-    return this.dataSource?.data ?? [];
+  async loadRoomsFromSupabase() {
+    const { data, error } = await supabase
+      .from('chat_rooms')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Lỗi khi tải phòng:', error);
+      return;
+    }
+
+    this.dataSource.data = (data || []).map(room => ({
+      ...room,
+      image: room.image_url,
+      createdAt: new Date(room.created_at),
+      members: room.members ?? 0
+    }));
   }
 
   toggleSidebar() {
@@ -107,17 +125,20 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Checkbox logic
   selection = {
     selected: [] as any[],
-    toggle(row: any) {
-      const index = this.selected.indexOf(row);
-      index === -1 ? this.selected.push(row) : this.selected.splice(index, 1);
+    toggle: (row: any) => {
+      const index = this.selection.selected.indexOf(row);
+      index === -1
+        ? this.selection.selected.push(row)
+        : this.selection.selected.splice(index, 1);
     },
-    isSelected(row: any) {
-      return this.selected.includes(row);
+    isSelected: (row: any) => {
+      return this.selection.selected.includes(row);
     },
-    hasValue() {
-      return this.selected.length > 0;
+    hasValue: () => {
+      return this.selection.selected.length > 0;
     }
   };
 
@@ -135,6 +156,7 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.dataSource.filter = filterValue;
   }
+
   editRoom(row: any): void {
     const dialogRef = this.dialog.open(EditRoomDialogComponent, {
       width: '600px',
@@ -143,26 +165,29 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        const index = this.dataSource.data.indexOf(row);
-        window.location.reload();
-          if (index !== -1) {
-            this.dataSource.data[index] = result;
-            this.dataSource.data = [...this.dataSource.data];
-          }
+        const index = this.dataSource.data.findIndex(r => r.id === result.id);
+        if (index !== -1) {
+          this.dataSource.data[index] = result;
+          this.dataSource.data = [...this.dataSource.data];
         }
+      }
     });
   }
 
   deleteRoom(row: any): void {
     const confirmDelete = confirm(`Are you sure you want to delete room "${row.name}"?`);
     if (confirmDelete) {
-      this.dataSource.data = this.dataSource.data.filter(item => item !== row);
+      this.dataSource.data = this.dataSource.data.filter(item => item.id !== row.id);
     }
   }
+
   truncateText(text: string, wordLimit: number = 40): string {
     if (!text) return '';
     const words = text.split(' ');
     return words.length > wordLimit ? words.slice(0, wordLimit).join(' ') + '...' : text;
   }
 
+  get roomList() {
+    return this.dataSource.data;
+  }
 }
