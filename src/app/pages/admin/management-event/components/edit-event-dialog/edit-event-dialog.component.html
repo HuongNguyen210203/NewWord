@@ -1,12 +1,12 @@
 <h2 mat-dialog-title class="dialog-title">
   <mat-icon class="dialog-icon">edit_calendar</mat-icon>
-  <span>Chỉnh sửa sự kiện</span>
+  <span>Edit Event</span>
 </h2>
 
 <div class="edit-event-container">
   <div class="upload-section">
     <img *ngIf="eventImage" [src]="eventImage" class="cover-img" />
-    <div *ngIf="!eventImage" class="cover-placeholder">Chưa có ảnh sự kiện</div>
+    <div *ngIf="!eventImage" class="cover-placeholder">No event image</div>
     <button mat-icon-button (click)="fileInput.click()" class="upload-btn" aria-label="Upload image">
       <mat-icon>cloud_upload</mat-icon>
     </button>
@@ -15,54 +15,54 @@
 
   <form class="form-grid">
     <mat-form-field appearance="outline">
-      <mat-label>Tên sự kiện</mat-label>
+      <mat-label>Event Title</mat-label>
       <input matInput [(ngModel)]="data.title" name="name" />
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Mô tả</mat-label>
+      <mat-label>Description</mat-label>
       <textarea matInput rows="3" [(ngModel)]="data.description" name="description"></textarea>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Ngày bắt đầu</mat-label>
+      <mat-label>Start Date</mat-label>
       <input matInput [matDatepicker]="startPicker" [(ngModel)]="data.startDate" name="startDate" />
       <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
       <mat-datepicker #startPicker></mat-datepicker>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Giờ bắt đầu</mat-label>
+      <mat-label>Start Time</mat-label>
       <input matInput type="time" [(ngModel)]="data.startTime" name="startTime" />
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Ngày kết thúc</mat-label>
+      <mat-label>End Date</mat-label>
       <input matInput [matDatepicker]="endPicker" [(ngModel)]="data.endDate" name="endDate" />
       <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
       <mat-datepicker #endPicker></mat-datepicker>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Giờ kết thúc</mat-label>
+      <mat-label>End Time</mat-label>
       <input matInput type="time" [(ngModel)]="data.endTime" name="endTime" />
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Hạn đăng ký</mat-label>
+      <mat-label>Registration Date</mat-label>
       <input matInput [matDatepicker]="registerPicker" [(ngModel)]="data.registerDeadline" name="registerDeadline" />
       <mat-datepicker-toggle matSuffix [for]="registerPicker"></mat-datepicker-toggle>
       <mat-datepicker #registerPicker></mat-datepicker>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Số người tối đa</mat-label>
+      <mat-label>Max Participants</mat-label>
       <input matInput type="number" [(ngModel)]="data.participants" name="participants" />
     </mat-form-field>
   </form>
 
   <div class="dialog-actions">
-    <button mat-stroked-button color="warn" (click)="cancel()">Hủy</button>
-    <button mat-raised-button color="primary" (click)="save()">Lưu thay đổi</button>
+    <button mat-stroked-button class="cancel-button" (click)="cancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="save()">Save Changes</button>
   </div>
 </div>

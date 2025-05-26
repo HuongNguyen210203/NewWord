@@ -18,9 +18,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   menuItems = [
     { label: 'Dashboard', icon: 'dashboard', route: '/admin' },
-    { label: 'Manage Event', icon: 'event', route: '/management-event' },
-    { label: 'Manage Profile', icon: 'group', route: '/management-profile' },
-    { label: 'Manage Room', icon: 'chat', route: '/management-room' },
+    { label: 'Manage Event', icon: 'event', route: '/admin/management-event' },
+    { label: 'Manage Profile', icon: 'group', route: '/admin/management-profile' },
+    { label: 'Manage Room', icon: 'chat', route: '/admin/management-room' },
   ];
 
   constructor(

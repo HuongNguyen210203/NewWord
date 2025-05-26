@@ -64,3 +64,14 @@ mat-form-field {
   gap: 12px;
   margin-top: 24px;
 }
+.cancel-button {
+  color: #CD5656;
+  border-color: #CD5656;
+  background-color: #f9faf3;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.cancel-button:hover {
+  background-color: #CD5656;
+  color: white;
+}

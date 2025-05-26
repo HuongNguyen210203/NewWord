@@ -1,8 +1,8 @@
 import { Component, HostListener } from '@angular/core';
 import { NgClass } from '@angular/common';
-import {SidebarComponent} from './components/sidebar/sidebar.component';
-import {TopbarComponent} from './components/topbar/topbar.component';
-import {DashboardComponent} from './components/dashboard/dashboard.component';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { TopbarComponent } from './components/topbar/topbar.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-admin-page',
@@ -13,25 +13,9 @@ import {DashboardComponent} from './components/dashboard/dashboard.component';
     NgClass,
     SidebarComponent,
     TopbarComponent,
-    SidebarComponent,
-    TopbarComponent,
-    DashboardComponent
+    RouterOutlet
   ]
 })
-// export class AdminPageComponent {
-//   sidebarOpen = true;
-//
-//   toggleSidebar() {
-//     this.sidebarOpen = !this.sidebarOpen;
-//   }
-//
-//   @HostListener('window:resize', ['$event'])
-//   onResize(event: any) {
-//     if (event.target.innerWidth < 768) {
-//       this.sidebarOpen = false;
-//     }
-//   }
-// }
 export class AdminPageComponent {
   sidebarOpen = true;
 
