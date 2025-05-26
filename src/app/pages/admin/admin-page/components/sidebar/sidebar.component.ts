@@ -2,6 +2,7 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
+import {AuthService} from '../../../../../../Services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -22,7 +23,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
     { label: 'Manage Room', icon: 'chat', route: '/management-room' },
   ];
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService) {}
 
   ngOnInit() {
     // Cập nhật activeItem mỗi khi route thay đổi
@@ -42,7 +45,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.activeItem = route;
   }
 
-  handleLogout() {
-    this.router.navigate(['login']);
+  async handleLogout() {
+    try {
+      await this.authService.signOut();
+      this.router.navigate(['/signin']); // hoặc '/login' nếu bạn dùng tên đó
+    } catch (error) {
+      console.error('Đăng xuất thất bại:', error);
+    }
   }
+
 }
