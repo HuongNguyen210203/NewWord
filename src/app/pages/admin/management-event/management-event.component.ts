@@ -47,6 +47,7 @@ import { AppEvent } from '../../../../Models/event.model';
   ]
 })
 export class ManagementEventComponent implements OnInit {
+  sidebarOpen = true;
   dataSource: AppEvent[] = [];
   displayedColumns: string[] = [
     'select',
@@ -64,8 +65,6 @@ export class ManagementEventComponent implements OnInit {
   pageSize = 3;
   pageIndex = 0;
   pageSizeOptions = [3, 5, 10];
-
-  sidebarOpen = true;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 

@@ -25,84 +25,93 @@
     </div>
 
 
-      <table mat-table [dataSource]="filteredData" matSort class="mat-elevation-z1">
+    <table mat-table [dataSource]="filteredData" matSort class="mat-elevation-z1">
 
+      <!-- Select Column -->
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox
+            (change)="masterToggle()"
+            [checked]="isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()"></mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox
+            (click)="$event.stopPropagation()"
+            (change)="selection.toggle(row)"
+            [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
 
-        <ng-container matColumnDef="select">
-          <th mat-header-cell *matHeaderCellDef>
-            <mat-checkbox
-              (change)="masterToggle()"
-              [checked]="isAllSelected()"
-              [indeterminate]="selection.hasValue() && !isAllSelected()"></mat-checkbox>
-          </th>
-          <td mat-cell *matCellDef="let row">
-            <mat-checkbox
-              (click)="$event.stopPropagation()"
-              (change)="selection.toggle(row)"
-              [checked]="selection.isSelected(row)">
-            </mat-checkbox>
-          </td>
-        </ng-container>
+      <!-- Image Column -->
+      <ng-container matColumnDef="image">
+        <th mat-header-cell *matHeaderCellDef class="col-image">Image</th>
+        <td mat-cell *matCellDef="let row" class="col-image">
+          <img [src]="row.image" width="100" height="60" />
+        </td>
+      </ng-container>
 
-        <ng-container matColumnDef="image">
-          <th mat-header-cell *matHeaderCellDef class="col-image">Image</th>
-          <td mat-cell *matCellDef="let row" class="col-image">
-            <img [src]="row.image" width="100" height="60" />
-          </td>
-        </ng-container>
+      <!-- Event Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef class="col-name">Event</th>
+        <td mat-cell *matCellDef="let row" class="col-name">{{ truncateText(row.title, 20) }}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef class="col-name">Event</th>
-          <td mat-cell *matCellDef="let row" class="col-name">{{ truncateText(row.title, 20) }}</td>
-        </ng-container>
+      <!-- Description Column -->
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef class="col-description">Description</th>
+        <td mat-cell *matCellDef="let row" class="col-description">{{ truncateText(row.description, 35) }}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef class="col-description">Description</th>
-          <td mat-cell *matCellDef="let row" class="col-description">{{ truncateText(row.description, 35) }}</td>
-        </ng-container>
+      <!-- Register Date Column -->
+      <ng-container matColumnDef="registerStart">
+        <th mat-header-cell *matHeaderCellDef class="col-date">Register Date</th>
+        <td mat-cell *matCellDef="let row" class="col-date">{{ row.registerStart | date:'shortDate' }}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="registerStart">
-          <th mat-header-cell *matHeaderCellDef class="col-date">Start</th>
-          <td mat-cell *matCellDef="let row" class="col-date">{{ row.registerStart | date:'shortDate' }}</td>
-        </ng-container>
+      <!-- Event Start Column -->
+      <ng-container matColumnDef="eventDate">
+        <th mat-header-cell *matHeaderCellDef class="col-date">Event Start</th>
+        <td mat-cell *matCellDef="let row" class="col-date">{{ row.eventDate | date:'shortDate' }}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="registerEnd">
-          <th mat-header-cell *matHeaderCellDef class="col-date">End</th>
-          <td mat-cell *matCellDef="let row" class="col-date">{{ row.registerEnd | date:'shortDate' }}</td>
-        </ng-container>
+      <!-- Event End Column -->
+      <ng-container matColumnDef="registerEnd">
+        <th mat-header-cell *matHeaderCellDef class="col-date">Event End</th>
+        <td mat-cell *matCellDef="let row" class="col-date">{{ row.registerEnd | date:'shortDate' }}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="eventDate">
-          <th mat-header-cell *matHeaderCellDef class="col-date">Event Date</th>
-          <td mat-cell *matCellDef="let row" class="col-date">{{ row.eventDate | date:'shortDate' }}</td>
-        </ng-container>
+      <!-- Participants Column -->
+      <ng-container matColumnDef="participants">
+        <th mat-header-cell *matHeaderCellDef class="col-participants">Participants</th>
+        <td mat-cell *matCellDef="let row" class="col-participants">{{ row.participants }}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="participants">
-          <th mat-header-cell *matHeaderCellDef class="col-participants">Participants</th>
-          <td mat-cell *matCellDef="let row" class="col-participants">{{ row.participants }}</td>
-        </ng-container>
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="openEditDialog(row)">
+              <mat-icon>edit</mat-icon>
+              <span>Modify</span>
+            </button>
+            <button mat-menu-item (click)="deleteEvent(row)">
+              <mat-icon>delete</mat-icon>
+              <span>Delete</span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
 
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let row">
-            <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
-            <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="openEditDialog(row)">
-                <mat-icon>edit</mat-icon>
-                <span>Modify</span>
-              </button>
-              <button mat-menu-item (click)="deleteEvent(row)">
-                <mat-icon>delete</mat-icon>
-                <span>Delete</span>
-              </button>
-            </mat-menu>
-          </td>
-        </ng-container>
+      <!-- Header and Row Definitions -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-
-      <mat-paginator
+    <mat-paginator
         [length]="dataSource.length"
         [pageSize]="pageSize"
         [pageSizeOptions]="pageSizeOptions"
