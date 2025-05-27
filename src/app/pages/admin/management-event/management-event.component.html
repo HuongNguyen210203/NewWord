@@ -102,7 +102,7 @@
   </table>
 
   <mat-paginator
-    [length]="dataSource.length"
+    [length]="dataSource.data.length"
     [pageSize]="pageSize"
     [pageSizeOptions]="pageSizeOptions"
     (page)="onPageChange($event)">

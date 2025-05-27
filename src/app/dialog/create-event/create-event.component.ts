@@ -107,9 +107,7 @@ export class CreateEventComponent {
         return;
       }
     }
-
-    // 👇 Gửi định dạng local ISO không timezone để tránh lệch
-    this.dialogRef.close({
+    await this.eventService.createEvent({
       title: this.event.title,
       description: this.event.description,
       location: this.event.location,
@@ -120,6 +118,8 @@ export class CreateEventComponent {
       image_url: imageUrl,
       created_by: userId,
     });
+    this.dialogRef.close(); // đóng sau khi tạo
+
   }
 
   combineDateAndTime(date: Date, time: string): Date | null {

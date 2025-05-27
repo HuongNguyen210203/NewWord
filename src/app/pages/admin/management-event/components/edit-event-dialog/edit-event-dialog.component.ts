@@ -85,7 +85,7 @@ export class EditEventDialogComponent {
     let imageUrl = this.data.image_url;
 
     const updatePayload = {
-      title: this.data.name,
+      title: this.data.title,
       description: this.data.description,
       location: this.data.location,
       start_time: start.toISOString(),
@@ -97,8 +97,6 @@ export class EditEventDialogComponent {
 
     this.dialogRef.close(updatePayload);
   }
-
-
 
   cancel() {
     this.dialogRef.close();

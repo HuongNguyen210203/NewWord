@@ -46,7 +46,7 @@ import { AppEvent } from '../../../../Models/event.model';
 })
 export class ManagementEventComponent implements OnInit {
   sidebarOpen = true;
-  dataSource: AppEvent[] = [];
+  dataSource = new MatTableDataSource<AppEvent>();
   displayedColumns: string[] = [
     'select',
     'image',
@@ -78,7 +78,7 @@ export class ManagementEventComponent implements OnInit {
   async loadEventsFromSupabase() {
     try {
       const events = await this.eventService.getAllEvents();
-      this.dataSource = events.map(event => ({
+      this.dataSource.data = events.map(event => ({
         ...event,
         image: event.image_url,
         participants: 0,
@@ -91,8 +91,8 @@ export class ManagementEventComponent implements OnInit {
     }
   }
 
-  get filteredData() {
-    const filtered = this.dataSource.filter(item =>
+  get filteredData(): AppEvent[] {
+    const filtered = this.dataSource.data.filter((item: AppEvent) =>
       item.title.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
 
@@ -126,8 +126,8 @@ export class ManagementEventComponent implements OnInit {
 
       try {
         const created = await this.eventService.createEvent(result);
-
-        this.dataSource = [
+        window.location.reload();
+        this.dataSource.data = [
           {
             ...(created as any),
             image: created.image_url,
@@ -136,7 +136,7 @@ export class ManagementEventComponent implements OnInit {
             registerEnd: new Date(created.end_time),
             participants: 0
           },
-          ...this.dataSource,
+          ...this.dataSource.data,
         ];
       } catch (error) {
         console.error('Lỗi khi tạo sự kiện:', error);
@@ -178,7 +178,7 @@ export class ManagementEventComponent implements OnInit {
     if (!confirmed) return;
 
     this.eventService.deleteEvent(event.id).then(() => {
-      this.dataSource = this.dataSource.filter(e => e.id !== event.id);
+      this.dataSource.data = this.dataSource.data.filter((e: AppEvent) => e.id !== event.id);
     }).catch(() => alert('Xoá thất bại.'));
   }
 
