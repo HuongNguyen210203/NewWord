@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { NgFor } from '@angular/common';
+import {NgClass, NgFor} from '@angular/common';
 import {SidebarComponent} from '../../components/sidebar/sidebar.component'; // để dùng *ngFor
 import {TopbarComponent} from '../../components/topbar/topbar.component'; // để dùng *ngFor
 @Component({
@@ -28,7 +28,15 @@ import {TopbarComponent} from '../../components/topbar/topbar.component'; // đ�
     MatButtonModule,
     NgFor,
     TopbarComponent,
-    SidebarComponent
+    SidebarComponent,
+    NgClass
   ]
 })
-export class ProfilePageComponent {}
+export class ProfilePageComponent {
+  sidebarOpen = true;
+
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+}
