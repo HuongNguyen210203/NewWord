@@ -12,12 +12,18 @@
 }
 
 app-sidebar {
-  width: 200px;
+  /*width: 200px;*/
   flex-shrink: 0;
   position: fixed;
   top: 64px;
   left: 0;
   height: calc(100vh - 64px);
+  transition: width 0.3s ease;
+}
+
+
+.layout-wrapper.collapsed app-sidebar {
+  width: 70px;
 }
 
 .profile-content {
@@ -28,7 +34,14 @@ app-sidebar {
   box-sizing: border-box;
   flex: 1;
   background-color: #fff;
+  transition: margin-left 0.3s ease;
 }
+
+
+.layout-wrapper.collapsed .profile-content {
+  margin-left: 70px;
+}
+
 
 mat-toolbar {
   position: sticky;

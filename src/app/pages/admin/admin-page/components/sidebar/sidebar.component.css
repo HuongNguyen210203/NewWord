@@ -72,7 +72,7 @@
 }
 
 .sidebar.collapsed .menu-item mat-icon {
-  margin-right: 0; /* ✅ Xoá khoảng cách khi thu */
+  margin-right: 0;
 }
 
 .menu-text {
