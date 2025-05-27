@@ -7,6 +7,8 @@ import {ChatRoom} from '../../../Models/chat-room.model';
 import {AppEvent} from '../../../Models/event.model';
 import {EventService} from '../../../Services/event.service';
 import {ChatService} from '../../../Services/chat.service';
+import {NgClass} from '@angular/common';
+import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-home',
@@ -16,11 +18,17 @@ import {ChatService} from '../../../Services/chat.service';
     SidebarComponent,
     CardEventComponent,
     CardRoomComponent,
+    NgClass,
+    MatButton,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
 export class HomeComponent implements OnInit {
+  sidebarOpen = true;
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
   rooms: ChatRoom[] = [];
   events: AppEvent[] = [];
 

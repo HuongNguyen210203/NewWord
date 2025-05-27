@@ -1,37 +1,36 @@
-<app-topbar></app-topbar>
+<app-topbar (menuClick)="toggleSidebar()"></app-topbar>
 
-<div class="chat-layout">
+<div class="chat-wrapper">
+  <app-sidebar [open]="sidebarOpen"></app-sidebar>
 
-  <app-sidebar></app-sidebar>
-
-
-  <aside class="chat-room-list">
-    <h3>Conversations</h3>
-    <div class="chat-list">
-
-      <div class="chat-scroll">
-        <div
-          *ngFor="let room of chatRooms"
-          class="chat-item"
-          [class.active]="room.active"
-          (click)="selectRoom(room)"
-        >
-          <img [src]="room.avatar" class="avatar" />
-          <div class="chat-info">
-            <div class="name">{{ room.name }}</div>
-            <div class="preview">{{ room.preview }}</div>
+  <main class="chat-main" [ngClass]="{ 'collapsed': !sidebarOpen }">
+    <aside class="chat-room-list">
+      <h3>Conversations</h3>
+      <div class="chat-list">
+        <div class="chat-scroll">
+          <div
+            *ngFor="let room of chatRooms"
+            class="chat-item"
+            [class.active]="room.active"
+            (click)="selectRoom(room)"
+          >
+            <img [src]="room.avatar" class="avatar" />
+            <div class="chat-info">
+              <div class="name">{{ room.name }}</div>
+              <div class="preview">{{ room.preview }}</div>
+            </div>
+            <div class="time">{{ room.time }}</div>
           </div>
-          <div class="time">{{ room.time }}</div>
         </div>
       </div>
-    </div>
-  </aside>
+    </aside>
 
-  <!-- Nội dung chat -->
-  <main class="chat-main">
-    <div class="chat-header">{{ activeRoom?.name || 'Chọn cuộc trò chuyện' }}</div>
+    <section class="chat-content-wrapper">
+      <div class="chat-header">
+        <img class="chat-header-avatar" [src]="activeRoom?.avatar" />
+        <span class="chat-header-name">{{ activeRoom?.name || 'Chọn cuộc trò chuyện' }}</span>
+      </div>
 
-    <div class="chat-content-wrapper">
       <div class="chat-content">
         <div
           *ngFor="let msg of messages"
@@ -42,24 +41,24 @@
           <div class="bubble">{{ msg.text }}</div>
         </div>
       </div>
-    </div>
 
-    <div class="suggestions">
-      <button *ngFor="let s of suggestions" (click)="sendSuggestion(s)">
-        {{ s }}
-      </button>
-    </div>
+      <div class="suggestions">
+        <button *ngFor="let s of suggestions" (click)="sendSuggestion(s)">
+          {{ s }}
+        </button>
+      </div>
 
-    <div class="chat-input">
-      <mat-icon>add</mat-icon>
-      <mat-icon>sentiment_satisfied</mat-icon>
-      <input
-        type="text"
-        [(ngModel)]="inputMessage"
-        placeholder="Aa"
-        (keyup.enter)="sendMessage()"
-      />
-      <mat-icon (click)="sendMessage()">mic</mat-icon>
-    </div>
+      <div class="chat-input">
+        <mat-icon class="icon">add</mat-icon>
+        <mat-icon class="icon">sentiment_satisfied</mat-icon>
+        <input
+          type="text"
+          [(ngModel)]="inputMessage"
+          placeholder="Aa"
+          (keyup.enter)="sendMessage()"
+        />
+        <mat-icon class="icon" (click)="sendMessage()">mic</mat-icon>
+      </div>
+    </section>
   </main>
 </div>

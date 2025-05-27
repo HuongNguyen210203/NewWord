@@ -23,6 +23,10 @@ import {SidebarComponent} from '../../components/sidebar/sidebar.component';
 })
 
 export class RoomChatPageComponent {
+  sidebarOpen = true;
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
   // Gợi ý tin nhắn nhanh
   suggestions: string[] = ['Let’s do it', 'Great!', 'Great!'];
 
@@ -93,18 +97,26 @@ export class RoomChatPageComponent {
     }
   ];
 
-  // Gửi tin nhắn
-  sendMessage() {
-    if (this.inputMessage.trim()) {
+  sendMessage(): void {
+    const trimmedMessage = this.inputMessage.trim();
+    if (trimmedMessage) {
       this.messages.push({
         from: 'me',
         avatar: 'https://i.pravatar.cc/40?img=10',
-        text: this.inputMessage
+        text: trimmedMessage
       });
+
+      const index = this.chatRooms.findIndex(room => room.name === this.activeRoom.name);
+      if (index !== -1) {
+        this.chatRooms[index].preview = `Bạn: ${trimmedMessage}`;
+        this.chatRooms[index].time = 'Vừa xong'; // tùy chỉnh theo timestamp thực tế nếu có
+      }
+
       this.inputMessage = '';
       setTimeout(() => this.scrollToBottom(), 100);
     }
   }
+
 
   // Gửi nhanh gợi ý
   sendSuggestion(text: string) {
@@ -120,7 +132,6 @@ export class RoomChatPageComponent {
     }
   }
 
-  // Chọn phòng chat
   selectRoom(room: any) {
     this.chatRooms.forEach(r => r.active = false);
     room.active = true;

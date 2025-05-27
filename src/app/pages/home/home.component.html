@@ -1,25 +1,29 @@
-<app-topbar></app-topbar>
+<app-topbar (menuClick)="toggleSidebar()"></app-topbar>
 
 <div class="home-wrapper">
-  <app-sidebar></app-sidebar>
+  <app-sidebar [open]="sidebarOpen"></app-sidebar>
 
-  <main class="home-content">
+  <main class="home-content" [ngClass]="{ 'collapsed': !sidebarOpen }">
     <section class="section">
-      <h2>Discussion</h2>
+      <div class="section-header">
+        <h2>Discussion</h2>
+        <button mat-button class="see-more">See more</button>
+      </div>
       <div class="card-list">
-        @for (room of rooms; track $index) {
+        @for (room of rooms; track room.id) {
           <app-card-room [room]="room" />
         }
       </div>
     </section>
 
     <section class="section">
-      <h2>Event</h2>
+      <div class="section-header">
+        <h2>Event</h2>
+        <button mat-button class="see-more">See more</button>
+      </div>
       <div class="card-list">
         @for (event of events; track event.id) {
-          <app-card-event
-            [label]="event.title"
-            [imageUrl]="event.image_url ?? ''"/>
+          <app-card-event [label]="event.title" [imageUrl]="event.image_url ?? ''" />
         }
       </div>
     </section>

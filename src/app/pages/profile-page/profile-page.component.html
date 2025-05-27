@@ -1,7 +1,8 @@
-<app-topbar></app-topbar>
+<app-topbar (menuClick)="toggleSidebar()"></app-topbar>
 
-<div class="layout-wrapper">
-  <app-sidebar></app-sidebar>
+<div class="layout-wrapper" [ngClass]="{ 'collapsed': !sidebarOpen }">
+  <app-sidebar [open]="sidebarOpen"></app-sidebar>
+
 
   <main class="profile-content">
     <mat-toolbar color="primary">

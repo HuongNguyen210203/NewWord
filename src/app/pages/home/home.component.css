@@ -3,21 +3,26 @@
   display: block;
   height: 100vh;
   overflow: hidden;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f4f6f8;
 }
 
 .home-wrapper {
   display: flex;
   height: 100vh;
-  padding-top: 64px; /* chiều cao của topbar */
+  padding-top: 64px; /* height of topbar */
 }
 
 app-sidebar {
-  width: 200px;
   flex-shrink: 0;
   height: calc(100vh - 64px);
   position: fixed;
   top: 64px;
   left: 0;
+  background-color: #ffffff;
+  border-right: 1px solid #e0e0e0;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
+  z-index: 10;
 }
 
 .home-content {
@@ -28,18 +33,32 @@ app-sidebar {
   background-color: #f9f9f9;
   height: calc(100vh - 64px);
   box-sizing: border-box;
+  transition: margin-left 0.3s ease;
+}
+
+.home-content.collapsed {
+  margin-left: 70px;
+  width: calc(100% - 70px);
 }
 
 .section {
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
 
 .section h2 {
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   color: #2e7d32;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
+
 }
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
 
 .card-list {
   display: flex;
