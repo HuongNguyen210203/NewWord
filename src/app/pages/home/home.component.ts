@@ -5,11 +5,10 @@ import { TopbarComponent } from '../../components/topbar/topbar.component';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import {ChatRoom} from '../../../Models/chat-room.model';
 import {AppEvent} from '../../../Models/event.model';
-import {ChatRoomService} from '../../../Services/chat-room.service';
 import {EventService} from '../../../Services/event.service';
-import * as Console from 'node:console';
-import {MatButton} from '@angular/material/button';
+import {ChatService} from '../../../Services/chat.service';
 import {NgClass} from '@angular/common';
+import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-home',
@@ -19,8 +18,8 @@ import {NgClass} from '@angular/common';
     SidebarComponent,
     CardEventComponent,
     CardRoomComponent,
-    MatButton,
     NgClass,
+    MatButton,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
@@ -34,12 +33,12 @@ export class HomeComponent implements OnInit {
   events: AppEvent[] = [];
 
   constructor(
-    private chatRoomService: ChatRoomService,
+    private chatService: ChatService,
     private eventService: EventService
   ) {}
 
   async ngOnInit() {
-    this.rooms = await this.chatRoomService.getAllRooms();
+    this.rooms = await this.chatService.getAllRooms();
     this.events = await this.eventService.getAllEvents();
     console.log('[EVENTS]', this.events);
 
