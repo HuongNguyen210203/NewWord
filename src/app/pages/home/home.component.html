@@ -1,4 +1,3 @@
-
 <app-topbar></app-topbar>
 
 <div class="home-wrapper">
@@ -8,14 +7,20 @@
     <section class="section">
       <h2>Discussion</h2>
       <div class="card-list">
-        <app-card-room *ngFor="let room of rooms"></app-card-room>
+        @for (room of rooms; track $index) {
+          <app-card-room [room]="room" />
+        }
       </div>
     </section>
 
     <section class="section">
       <h2>Event</h2>
       <div class="card-list">
-        <app-card-event *ngFor="let event of events" [label]="event.label"></app-card-event>
+        @for (event of events; track event.id) {
+          <app-card-event
+            [label]="event.title"
+            [imageUrl]="event.image_url ?? ''"/>
+        }
       </div>
     </section>
   </main>

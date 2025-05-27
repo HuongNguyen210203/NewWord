@@ -1,5 +1,7 @@
-<div class="card-event">
-  <div class="card-shape">
+<div
+  class="card-event"
+  [ngStyle]="{ 'background-image': 'url(' + safeImageUrl + ')' }">
+  <div class="card-overlay">
     <span class="label">{{ label }}</span>
   </div>
 </div>

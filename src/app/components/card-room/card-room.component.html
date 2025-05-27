@@ -1,9 +1,12 @@
 <div class="card-room">
-  <div class="card-image"></div>
+  <div class="card-image">
+    @if (room.image_url) {
+      <img [src]="room.image_url" alt="Room Image" />
+    }
+  </div>
   <div class="card-body">
-    <h3>Title</h3>
-    <p>123 People</p>
-    <p>2 Events</p>
+    <h3>{{ room.name || 'Unnamed Room' }}</h3>
+    <p>{{ room.active_members || 0 }} People</p>
     <button mat-stroked-button color="primary">Join</button>
   </div>
 </div>
