@@ -5,9 +5,8 @@ import { TopbarComponent } from '../../components/topbar/topbar.component';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import {ChatRoom} from '../../../Models/chat-room.model';
 import {AppEvent} from '../../../Models/event.model';
-import {ChatRoomService} from '../../../Services/chat-room.service';
 import {EventService} from '../../../Services/event.service';
-import * as Console from 'node:console';
+import {ChatService} from '../../../Services/chat.service';
 
 @Component({
   selector: 'app-home',
@@ -26,12 +25,12 @@ export class HomeComponent implements OnInit {
   events: AppEvent[] = [];
 
   constructor(
-    private chatRoomService: ChatRoomService,
+    private chatService: ChatService,
     private eventService: EventService
   ) {}
 
   async ngOnInit() {
-    this.rooms = await this.chatRoomService.getAllRooms();
+    this.rooms = await this.chatService.getAllRooms();
     this.events = await this.eventService.getAllEvents();
     console.log('[EVENTS]', this.events);
 
