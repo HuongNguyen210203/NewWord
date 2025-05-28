@@ -6,6 +6,7 @@ import {User} from '../../../../Models/user.model';
 import {MaterialModule} from '../../../modules/material/material.module';
 import {ChangeAvatarDialogComponent} from './change-avatar-dialog/change-avatar-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
+import {NgForOf} from '@angular/common';
 
 @Component({
   selector: 'app-profile-page',
@@ -18,7 +19,8 @@ import {MatDialog} from '@angular/material/dialog';
     MatInput,
     MatSuffix,
     MatFormField,
-    MaterialModule
+    MaterialModule,
+    NgForOf
   ]
 })
 export class ProfilePageComponent implements OnInit {
@@ -72,21 +74,24 @@ export class ProfilePageComponent implements OnInit {
     },
   ];
 
+
+
   ngOnInit(): void {
     // Load user and data here if needed (e.g. from Supabase)
   }
 
   filteredEvents() {
-    return this.events.filter((e) =>
-      e.title.toLowerCase().includes(this.eventSearch.toLowerCase())
+    return this.events.filter(e =>
+      e.title.toLowerCase().includes(this.eventSearch?.toLowerCase() || '')
     );
   }
 
   filteredRooms() {
-    return this.rooms.filter((r) =>
-      r.name.toLowerCase().includes(this.roomSearch.toLowerCase())
+    return this.rooms.filter(r =>
+      r.name.toLowerCase().includes(this.roomSearch?.toLowerCase() || '')
     );
   }
+
 
   constructor(private dialog: MatDialog) {}
 

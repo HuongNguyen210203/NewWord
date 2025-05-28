@@ -1,4 +1,5 @@
 <div class="profile-container">
+  <!-- USER INFO -->
   <div class="user-info">
     <div class="user-meta">
       <img [src]="user.avatar_url || 'https://via.placeholder.com/120'" class="avatar" />
@@ -15,49 +16,38 @@
 
   <div class="section-header">
     <h3>Participated Events</h3>
-    <div class="search-bar">
-      <mat-form-field appearance="outline" class="search-field">
-        <mat-label>Search events</mat-label>
-        <input matInput [(ngModel)]="eventSearch">
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
-      <button mat-stroked-button class="see-more-button">
-        <mat-icon>arrow_forward</mat-icon>
-        See more
-      </button>
+    <div class="section-actions">
+      <div class="custom-search">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input class="search-input" [(ngModel)]="eventSearch" placeholder="Search event..." />
+      </div>
+      <button mat-button class="see-more-btn">See more</button>
     </div>
   </div>
 
   <div class="media-grid">
-    @for (event of filteredEvents(); track event.id) {
-      <div class="media-card">
-        <img [src]="event.image" />
-        <div class="overlay-text">{{ event.title }}</div>
-      </div>
-    }
+    <div *ngFor="let event of filteredEvents()" class="media-card">
+      <img [src]="event.image || 'https://via.placeholder.com/240x140'" />
+      <div class="overlay-text">{{ event.title }}</div>
+    </div>
   </div>
+
 
   <div class="section-header">
     <h3>Participated Rooms</h3>
-    <div class="search-bar">
-      <mat-form-field appearance="outline" class="search-field">
-        <mat-label>Search rooms</mat-label>
-        <input matInput [(ngModel)]="roomSearch">
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
-      <button mat-stroked-button class="see-more-button">
-        <mat-icon>arrow_forward</mat-icon>
-        See more
-      </button>
+    <div class="section-actions">
+      <div class="custom-search">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input class="search-input" [(ngModel)]="roomSearch" placeholder="Search room..." />
+      </div>
+      <button mat-button class="see-more-btn">See more</button>
     </div>
   </div>
 
   <div class="media-grid">
-    @for (room of filteredRooms(); track room.id) {
-      <div class="media-card">
-        <img [src]="room.image" />
-        <div class="overlay-text">{{ room.name }}</div>
-      </div>
-    }
+    <div *ngFor="let room of filteredRooms()" class="media-card">
+      <img [src]="room.image || 'https://via.placeholder.com/240x140'" />
+      <div class="overlay-text">{{ room.name }}</div>
+    </div>
   </div>
 </div>
