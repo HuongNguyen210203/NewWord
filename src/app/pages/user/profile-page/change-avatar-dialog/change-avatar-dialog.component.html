@@ -1,1 +1,40 @@
-<p>change-avatar-dialog works!</p>
+<div class="edit-profile-container">
+  <h2>Edit Profile</h2>
+
+  <div class="upload-section">
+    <img [src]="previewUrl || data.user.avatar_url || 'https://via.placeholder.com/100'" class="preview-img" />
+
+    <div class="upload-text">
+      <div class="upload-label-icon">
+        <span class="upload-title">Upload PNG only</span>
+
+        <!-- Hidden real input -->
+        <input type="file" #fileInput accept="image/png" (change)="onFileSelected($event)" hidden />
+
+        <!-- Styled icon button -->
+        <button mat-icon-button class="upload-icon" (click)="fileInput.click()" matTooltip="Upload PNG">
+          <mat-icon class="upload-icon-inner">upload</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <mat-form-field appearance="outline" class="field">
+    <mat-label>Full Name</mat-label>
+    <input matInput [(ngModel)]="data.user.name">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="field">
+    <mat-label>Date of Birth</mat-label>
+    <input matInput [matDatepicker]="picker" [(ngModel)]="data.user.dob">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <div class="action-buttons">
+    <button mat-stroked-button color="warn" (click)="dialogRef.close()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="saveChanges()">Save</button>
+  </div>
+</div>

@@ -4,6 +4,8 @@ import {MatFormField, MatInput, MatSuffix} from '@angular/material/input';
 import {MatIcon} from '@angular/material/icon';
 import {User} from '../../../../Models/user.model';
 import {MaterialModule} from '../../../modules/material/material.module';
+import {ChangeAvatarDialogComponent} from './change-avatar-dialog/change-avatar-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-profile-page',
@@ -84,5 +86,16 @@ export class ProfilePageComponent implements OnInit {
     return this.rooms.filter((r) =>
       r.name.toLowerCase().includes(this.roomSearch.toLowerCase())
     );
+  }
+
+  constructor(private dialog: MatDialog) {}
+
+  openEditProfileDialog() {
+    this.dialog.open(ChangeAvatarDialogComponent, {
+      width: '500px',
+      data: {
+        user: this.user,
+      },
+    });
   }
 }
