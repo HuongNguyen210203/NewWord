@@ -8,7 +8,6 @@
 .home-content {
   margin-left: 200px;
   flex: 1;
-  padding: 24px;
   background-color: #f9f9f9;
   overflow-y: auto;
   height: 100%;

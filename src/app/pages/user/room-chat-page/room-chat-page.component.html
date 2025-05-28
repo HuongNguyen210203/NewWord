@@ -1,26 +1,23 @@
-<app-topbar (menuClick)="toggleSidebar()"></app-topbar>
-
 <div class="chat-wrapper">
-  <app-sidebar [open]="sidebarOpen"></app-sidebar>
-
-  <main class="chat-main" [ngClass]="{ 'collapsed': !sidebarOpen }">
+  <main class="chat-main">
     <aside class="chat-room-list">
       <h3>Conversations</h3>
       <div class="chat-list">
         <div class="chat-scroll">
-          <div
-            *ngFor="let room of chatRooms"
-            class="chat-item"
-            [class.active]="room.active"
-            (click)="selectRoom(room)"
-          >
-            <img [src]="room.avatar" class="avatar" />
-            <div class="chat-info">
-              <div class="name">{{ room.name }}</div>
-              <div class="preview">{{ room.preview }}</div>
+          @for (room of chatRooms; track room.name) {
+            <div
+              class="chat-item"
+              [class.active]="room.active"
+              (click)="selectRoom(room)"
+            >
+              <img [src]="room.avatar" class="avatar" />
+              <div class="chat-info">
+                <div class="name">{{ room.name }}</div>
+                <div class="preview">{{ room.preview }}</div>
+              </div>
+              <div class="time">{{ room.time }}</div>
             </div>
-            <div class="time">{{ room.time }}</div>
-          </div>
+          }
         </div>
       </div>
     </aside>
@@ -28,24 +25,26 @@
     <section class="chat-content-wrapper">
       <div class="chat-header">
         <img class="chat-header-avatar" [src]="activeRoom?.avatar" />
-        <span class="chat-header-name">{{ activeRoom?.name || 'Chọn cuộc trò chuyện' }}</span>
+        <span class="chat-header-name">
+          {{ activeRoom?.name || 'Chọn cuộc trò chuyện' }}
+        </span>
       </div>
 
       <div class="chat-content">
-        <div
-          *ngFor="let msg of messages"
-          class="message"
-          [ngClass]="msg.from === 'me' ? 'right' : 'left'"
-        >
-          <img class="msg-avatar" [src]="msg.avatar" />
-          <div class="bubble">{{ msg.text }}</div>
-        </div>
+        @for (msg of messages; track msg.text) {
+          <div class="message" [ngClass]="msg.from === 'me' ? 'right' : 'left'">
+            <img class="msg-avatar" [src]="msg.avatar" />
+            <div class="bubble">{{ msg.text }}</div>
+          </div>
+        }
       </div>
 
       <div class="suggestions">
-        <button *ngFor="let s of suggestions" (click)="sendSuggestion(s)">
-          {{ s }}
-        </button>
+        @for (s of suggestions; track s) {
+          <button (click)="sendSuggestion(s)">
+            {{ s }}
+          </button>
+        }
       </div>
 
       <div class="chat-input">
