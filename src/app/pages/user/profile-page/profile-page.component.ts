@@ -1,59 +1,88 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
+import {MatButton} from '@angular/material/button';
+import {MatFormField, MatInput, MatSuffix} from '@angular/material/input';
+import {MatIcon} from '@angular/material/icon';
 import {User} from '../../../../Models/user.model';
-import {UserService} from '../../../../Services/user.service';
+import {MaterialModule} from '../../../modules/material/material.module';
 
 @Component({
   selector: 'app-profile-page',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule
-  ],
   templateUrl: './profile-page.component.html',
-  styleUrls: ['./profile-page.component.css']
+  styleUrls: ['./profile-page.component.css'],
+  imports: [
+    MatIcon,
+    MatButton,
+    MatFormField,
+    MatInput,
+    MatSuffix,
+    MatFormField,
+    MaterialModule
+  ]
 })
 export class ProfilePageComponent implements OnInit {
   user: User = {
-    id: '',
-    name: '',
-    email: '',
+    id: '1',
+    name: 'Diego',
+    email: 'kiet@gmail.com',
     avatar_url: '',
-    role: '',
+    role: 'user',
     is_hidden: false,
-    joinedRooms: 0,
-    events: 0
+    joinedRooms: 3,
+    events: 4,
   };
 
-  events: { title: string }[] = [];
+  eventSearch: string = '';
+  roomSearch: string = '';
 
-  constructor(private userService: UserService) {}
+  events = [
+    {
+      id: 'e1',
+      title: 'Bay cho',
+      image: 'https://i.ibb.co/0Kkz9C6/event1.jpg',
+    },
+    {
+      id: 'e2',
+      title: 'Miku',
+      image: 'https://i.ibb.co/WDWS2yH/event2.jpg',
+    },
+    {
+      id: 'e3',
+      title: 'Ohana is family',
+      image: 'https://i.ibb.co/0htQv7G/event3.jpg',
+    },
+  ];
 
-  async ngOnInit() {
-    const users = await this.userService.getAllUsers();
-    if (users.length > 0) {
-      this.user = users[0];
-    }
-    this.loadEvents();
+  rooms = [
+    {
+      id: 'r1',
+      name: 'English class',
+      image: 'https://i.ibb.co/Y8bnVkn/room1.jpg',
+    },
+    {
+      id: 'r2',
+      name: 'Meo Room',
+      image: 'https://i.ibb.co/ZLzLS7c/room2.jpg',
+    },
+    {
+      id: 'r3',
+      name: 'Chim Loi',
+      image: 'https://i.ibb.co/VxTL6f1/room3.jpg',
+    },
+  ];
+
+  ngOnInit(): void {
+    // Load user and data here if needed (e.g. from Supabase)
   }
 
-  async loadEvents() {
-    // Tạm thời giả lập sự kiện nếu không có API cụ thể
-    this.events = [
-      { title: 'Event A' },
-      { title: 'Event B' },
-      { title: 'Event C' }
-    ];
+  filteredEvents() {
+    return this.events.filter((e) =>
+      e.title.toLowerCase().includes(this.eventSearch.toLowerCase())
+    );
+  }
+
+  filteredRooms() {
+    return this.rooms.filter((r) =>
+      r.name.toLowerCase().includes(this.roomSearch.toLowerCase())
+    );
   }
 }

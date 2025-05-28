@@ -1,44 +1,63 @@
 <div class="profile-container">
   <div class="user-info">
     <div class="user-meta">
-      <img class="avatar" [src]="user?.avatar_url || 'https://via.placeholder.com/100'" alt="User avatar">
+      <img [src]="user.avatar_url || 'https://via.placeholder.com/120'" class="avatar" />
       <div>
-        <h2>{{ user?.name }}</h2>
-        <p>{{ user?.email }}</p>
+        <h2>{{ user.name }}</h2>
+        <p>{{ user.email }}</p>
       </div>
     </div>
-    <button mat-flat-button color="primary" class="edit-button">
+    <button mat-raised-button color="primary" class="edit-button">
       <mat-icon>edit</mat-icon>
       Edit
     </button>
   </div>
 
-  <div class="form-container">
-    <mat-form-field appearance="fill">
-      <mat-label>Name</mat-label>
-      <input matInput [(ngModel)]="user.name">
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Email</mat-label>
-      <input matInput [(ngModel)]="user.email">
-    </mat-form-field>
-
+  <div class="section-header">
+    <h3>Participated Events</h3>
+    <div class="search-bar">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search events</mat-label>
+        <input matInput [(ngModel)]="eventSearch">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <button mat-stroked-button class="see-more-button">
+        <mat-icon>arrow_forward</mat-icon>
+        See more
+      </button>
+    </div>
   </div>
 
-  <div class="participated-events">
-    <h3>Participated Events</h3>
-    <div class="event-row">
-      @for (event of events; track event.title) {
-        <div class="event-card">
-          {{ event.title }}
-        </div>
-      }
-    </div>
+  <div class="media-grid">
+    @for (event of filteredEvents(); track event.id) {
+      <div class="media-card">
+        <img [src]="event.image" />
+        <div class="overlay-text">{{ event.title }}</div>
+      </div>
+    }
+  </div>
 
-    <button mat-stroked-button class="see-more-button">
-      <mat-icon>arrow_forward</mat-icon>
-      See more
-    </button>
+  <div class="section-header">
+    <h3>Participated Rooms</h3>
+    <div class="search-bar">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search rooms</mat-label>
+        <input matInput [(ngModel)]="roomSearch">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <button mat-stroked-button class="see-more-button">
+        <mat-icon>arrow_forward</mat-icon>
+        See more
+      </button>
+    </div>
+  </div>
+
+  <div class="media-grid">
+    @for (room of filteredRooms(); track room.id) {
+      <div class="media-card">
+        <img [src]="room.image" />
+        <div class="overlay-text">{{ room.name }}</div>
+      </div>
+    }
   </div>
 </div>
