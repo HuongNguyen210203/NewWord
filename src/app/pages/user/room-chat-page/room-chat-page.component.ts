@@ -13,12 +13,9 @@ import {SidebarComponent} from '../../../components/sidebar/sidebar.component';
   styleUrls: ['./room-chat-page.component.css'],
   imports: [
     CommonModule,
-    NgFor,
     FormsModule,
     MatIconModule,
     MatButtonModule,
-    TopbarComponent,
-    SidebarComponent
   ]
 })
 
