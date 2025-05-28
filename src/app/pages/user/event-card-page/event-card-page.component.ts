@@ -9,8 +9,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 
-import { TopbarComponent } from '../../components/topbar/topbar.component';
-import { SidebarComponent } from '../../components/sidebar/sidebar.component';
+import { TopbarComponent } from '../../../components/topbar/topbar.component';
+import { SidebarComponent } from '../../../components/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-event-room-page',

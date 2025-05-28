@@ -1,29 +1,6 @@
 :host {
   display: block;
-  height: 100vh;
-  overflow: hidden;
   background-color: #f4f6f8;
-}
-
-.layout-wrapper {
-  display: flex;
-  height: 100vh;
-  padding-top: 64px;
-}
-
-app-sidebar {
-  /*width: 200px;*/
-  flex-shrink: 0;
-  position: fixed;
-  top: 64px;
-  left: 0;
-  height: calc(100vh - 64px);
-  transition: width 0.3s ease;
-}
-
-
-.layout-wrapper.collapsed app-sidebar {
-  width: 70px;
 }
 
 .profile-content {
@@ -37,17 +14,14 @@ app-sidebar {
   transition: margin-left 0.3s ease;
 }
 
-
 .layout-wrapper.collapsed .profile-content {
   margin-left: 70px;
 }
-
 
 mat-toolbar {
   position: sticky;
   top: 0;
   z-index: 10;
-  border-radius: 0;
   font-weight: 600;
 }
 

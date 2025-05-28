@@ -1,24 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { CardEventComponent } from '../../components/card-event/card-event.component';
-import { CardRoomComponent } from '../../components/card-room/card-room.component';
-import { TopbarComponent } from '../../components/topbar/topbar.component';
-import { SidebarComponent } from '../../components/sidebar/sidebar.component';
-import {ChatRoom} from '../../../Models/chat-room.model';
-import {AppEvent} from '../../../Models/event.model';
-import {EventService} from '../../../Services/event.service';
-import {ChatService} from '../../../Services/chat.service';
-import {NgClass} from '@angular/common';
+import { CardEventComponent } from '../../../components/card-event/card-event.component';
+import { CardRoomComponent } from '../../../components/card-room/card-room.component';
+import {ChatRoom} from '../../../../Models/chat-room.model';
+import {AppEvent} from '../../../../Models/event.model';
+import {EventService} from '../../../../Services/event.service';
+import {ChatService} from '../../../../Services/chat.service';
 import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
-    TopbarComponent,
-    SidebarComponent,
     CardEventComponent,
     CardRoomComponent,
-    NgClass,
     MatButton,
   ],
   templateUrl: './home.component.html',
