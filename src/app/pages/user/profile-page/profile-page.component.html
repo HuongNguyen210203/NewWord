@@ -1,0 +1,44 @@
+<div class="profile-container">
+  <div class="user-info">
+    <div class="user-meta">
+      <img class="avatar" [src]="user?.avatar_url || 'https://via.placeholder.com/100'" alt="User avatar">
+      <div>
+        <h2>{{ user?.name }}</h2>
+        <p>{{ user?.email }}</p>
+      </div>
+    </div>
+    <button mat-flat-button color="primary" class="edit-button">
+      <mat-icon>edit</mat-icon>
+      Edit
+    </button>
+  </div>
+
+  <div class="form-container">
+    <mat-form-field appearance="fill">
+      <mat-label>Name</mat-label>
+      <input matInput [(ngModel)]="user.name">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput [(ngModel)]="user.email">
+    </mat-form-field>
+
+  </div>
+
+  <div class="participated-events">
+    <h3>Participated Events</h3>
+    <div class="event-row">
+      @for (event of events; track event.title) {
+        <div class="event-card">
+          {{ event.title }}
+        </div>
+      }
+    </div>
+
+    <button mat-stroked-button class="see-more-button">
+      <mat-icon>arrow_forward</mat-icon>
+      See more
+    </button>
+  </div>
+</div>

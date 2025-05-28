@@ -97,7 +97,6 @@ export class ChatService {
         joined_at: new Date().toISOString()
       }
     ]);
-
     return !error;
   }
 
@@ -128,7 +127,6 @@ export class ChatService {
         sent_at: new Date().toISOString()
       }
     ]);
-
     return !error;
   }
 
@@ -146,10 +144,7 @@ export class ChatService {
   }
 
   async getMessagesNeedingReply(): Promise<number> {
-    const { data, error } = await supabase
-      .from('messages')
-      .select('*');
-
+    const { data, error } = await supabase.from('messages').select('*');
     if (error) {
       console.error('❌ Error loading messages:', error.message);
       return 0;

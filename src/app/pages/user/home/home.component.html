@@ -1,0 +1,23 @@
+<section class="section">
+  <div class="section-header">
+    <h2>Discussion</h2>
+    <button mat-button class="see-more">See more</button>
+  </div>
+  <div class="card-list">
+    @for (room of rooms; track room.id) {
+      <app-card-room [room]="room" />
+    }
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-header">
+    <h2>Event</h2>
+    <button mat-button class="see-more">See more</button>
+  </div>
+  <div class="card-list">
+    @for (event of events; track event.id) {
+      <app-card-event [label]="event.title" [imageUrl]="event.image_url ?? ''" />
+    }
+  </div>
+</section>

@@ -10,8 +10,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-import { TopbarComponent } from '../../components/topbar/topbar.component';
-import { SidebarComponent } from '../../components/sidebar/sidebar.component';
+import { TopbarComponent } from '../../../components/topbar/topbar.component';
+import { SidebarComponent } from '../../../components/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-card-room-page',
