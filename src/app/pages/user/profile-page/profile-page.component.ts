@@ -15,10 +15,6 @@ import {NgForOf} from '@angular/common';
   imports: [
     MatIcon,
     MatButton,
-    MatFormField,
-    MatInput,
-    MatSuffix,
-    MatFormField,
     MaterialModule,
     NgForOf
   ]
