@@ -1,5 +1,4 @@
 <div class="profile-container">
-  <!-- USER INFO -->
   <div class="user-info">
     <div class="user-meta">
       <img [src]="user.avatar_url || 'https://via.placeholder.com/120'" class="avatar" />
@@ -14,6 +13,7 @@
     </button>
   </div>
 
+
   <div class="section-header">
     <h3>Participated Events</h3>
     <div class="section-actions">
@@ -25,11 +25,17 @@
     </div>
   </div>
 
-  <div class="media-grid">
-    <div *ngFor="let event of filteredEvents()" class="media-card">
-      <img [src]="event.image || 'https://via.placeholder.com/240x140'" />
-      <div class="overlay-text">{{ event.title }}</div>
+  <div class="scroll-container">
+    <button class="scroll-btn left" (click)="scrollLeft(eventScrollRef)">&#x276E;</button>
+    <div #eventScrollRef class="scroll-wrapper">
+      <div class="media-grid horizontal-scroll">
+        <div *ngFor="let event of filteredEvents()" class="media-card">
+          <img [src]="event.image || 'https://via.placeholder.com/240x140'" />
+          <div class="overlay-text">{{ event.title }}</div>
+        </div>
+      </div>
     </div>
+    <button class="scroll-btn right" (click)="scrollRight(eventScrollRef)">&#x276F;</button>
   </div>
 
 
@@ -44,10 +50,16 @@
     </div>
   </div>
 
-  <div class="media-grid">
-    <div *ngFor="let room of filteredRooms()" class="media-card">
-      <img [src]="room.image || 'https://via.placeholder.com/240x140'" />
-      <div class="overlay-text">{{ room.name }}</div>
+  <div class="scroll-container">
+    <button class="scroll-btn left" (click)="scrollLeft(roomScrollRef)">&#x276E;</button>
+    <div #roomScrollRef class="scroll-wrapper">
+      <div class="media-grid horizontal-scroll">
+        <div *ngFor="let room of filteredRooms()" class="media-card">
+          <img [src]="room.image || 'https://via.placeholder.com/240x140'" />
+          <div class="overlay-text">{{ room.name }}</div>
+        </div>
+      </div>
     </div>
+    <button class="scroll-btn right" (click)="scrollRight(roomScrollRef)">&#x276F;</button>
   </div>
 </div>
