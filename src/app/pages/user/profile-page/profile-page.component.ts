@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import {MatButton} from '@angular/material/button';
-import {MatFormField, MatInput, MatSuffix} from '@angular/material/input';
 import {MatIcon} from '@angular/material/icon';
 import {User} from '../../../../Models/user.model';
 import {MaterialModule} from '../../../modules/material/material.module';
@@ -35,6 +34,21 @@ export class ProfilePageComponent implements OnInit {
   roomSearch: string = '';
 
   events = [
+    {
+      id: 'e1',
+      title: 'Bay cho',
+      image: 'https://i.ibb.co/0Kkz9C6/event1.jpg',
+    },
+    {
+      id: 'e1',
+      title: 'Bay cho',
+      image: 'https://i.ibb.co/0Kkz9C6/event1.jpg',
+    },
+    {
+      id: 'e1',
+      title: 'Bay cho',
+      image: 'https://i.ibb.co/0Kkz9C6/event1.jpg',
+    },
     {
       id: 'e1',
       title: 'Bay cho',
@@ -98,5 +112,13 @@ export class ProfilePageComponent implements OnInit {
         user: this.user,
       },
     });
+  }
+
+  scrollLeft(container: HTMLElement) {
+    container.scrollBy({ left: -300, behavior: 'smooth' });
+  }
+
+  scrollRight(container: HTMLElement) {
+    container.scrollBy({ left: 300, behavior: 'smooth' });
   }
 }

@@ -17,3 +17,7 @@
 .home-content.collapsed {
   margin-left: 70px;
 }
+mat-sidenav-content {
+  background-color: transparent; /* Không chặn màu bên trong */
+  height: 100%;
+}
