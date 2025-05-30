@@ -5,6 +5,7 @@
       <div>
         <h2>{{ user.name }}</h2>
         <p>{{ user.email }}</p>
+        <p>{{ user.birth | date:'dd/MM/yyyy' }}</p>
       </div>
     </div>
     <button mat-raised-button color="primary" class="edit-button" (click)="openEditProfileDialog()">

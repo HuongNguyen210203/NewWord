@@ -9,7 +9,7 @@
         <span class="upload-title">Upload PNG only</span>
 
         <!-- Hidden real input -->
-        <input type="file" #fileInput accept="image/png" (change)="onFileSelected($event)" hidden />
+        <input type="file" #fileInput accept="image/*" (change)="onFileSelected($event)" hidden />
 
         <!-- Styled icon button -->
         <button mat-icon-button class="upload-icon" (click)="fileInput.click()" matTooltip="Upload PNG">
@@ -28,7 +28,7 @@
 
   <mat-form-field appearance="outline" class="field">
     <mat-label>Date of Birth</mat-label>
-    <input matInput [matDatepicker]="picker" [(ngModel)]="data.user.dob">
+    <input matInput [matDatepicker]="picker" [(ngModel)]="data.user.birth">
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>

@@ -37,12 +37,6 @@ export class UserService {
       } as User;
     });
   }
-
-  /**
-   * Cập nhật trạng thái ẩn/hiện người dùng
-   * @param id user.id
-   * @param is_hidden true/false
-   */
   async updateVisibility(id: string, is_hidden: boolean): Promise<void> {
     const { error } = await supabase
       .from('users')
@@ -51,6 +45,21 @@ export class UserService {
 
     if (error) {
       console.error('❌ Lỗi khi cập nhật is_hidden:', error.message);
+      throw error;
+    }
+  }
+  async updateUser(user: User): Promise<void> {
+    const { error } = await supabase
+      .from('users')
+      .update({
+        name: user.name,
+        birth: user.birth,
+        avatar_url: user.avatar_url
+      })
+      .eq('id', user.id);
+
+    if (error) {
+      console.error('❌ Lỗi khi cập nhật người dùng:', error.message);
       throw error;
     }
   }

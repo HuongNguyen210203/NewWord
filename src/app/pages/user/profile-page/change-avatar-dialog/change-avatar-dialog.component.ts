@@ -39,15 +39,18 @@ export class ChangeAvatarDialogComponent {
 
   onFileSelected(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
-    if (file && file.type === 'image/png') {
+    if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = () => {
         this.previewUrl = reader.result;
         this.data.user.avatar_url = this.previewUrl;
       };
       reader.readAsDataURL(file);
+    } else {
+      alert('Vui lòng chọn một tệp hình ảnh hợp lệ.');
     }
   }
+
 
   saveChanges() {
     this.dialogRef.close(this.data.user);
