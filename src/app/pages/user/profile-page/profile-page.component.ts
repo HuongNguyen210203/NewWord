@@ -1,54 +1,35 @@
 import { Component, OnInit } from '@angular/core';
-import {MatButton} from '@angular/material/button';
-import {MatIcon} from '@angular/material/icon';
-import {User} from '../../../../Models/user.model';
-import {MaterialModule} from '../../../modules/material/material.module';
-import {ChangeAvatarDialogComponent} from './change-avatar-dialog/change-avatar-dialog.component';
-import {MatDialog} from '@angular/material/dialog';
-import {NgForOf} from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import {CommonModule, NgForOf} from '@angular/common';
+
+import { User } from '../../../../Models/user.model';
+import { ChangeAvatarDialogComponent } from './change-avatar-dialog/change-avatar-dialog.component';
+import {supabase} from '../../../supabase.client';
+import {UserService} from '../../../../Services/user.service';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-profile-page',
   templateUrl: './profile-page.component.html',
   styleUrls: ['./profile-page.component.css'],
+  standalone: true,
   imports: [
+    CommonModule,
     MatIcon,
     MatButton,
-    MaterialModule,
-    NgForOf
+    NgForOf,
+    FormsModule,
   ]
 })
 export class ProfilePageComponent implements OnInit {
-  user: User = {
-    id: '1',
-    name: 'Diego',
-    email: 'kiet@gmail.com',
-    avatar_url: '',
-    role: 'user',
-    is_hidden: false,
-    joinedRooms: 3,
-    events: 4,
-  };
+  user!: User;
 
   eventSearch: string = '';
   roomSearch: string = '';
 
   events = [
-    {
-      id: 'e1',
-      title: 'Bay cho',
-      image: 'https://i.ibb.co/0Kkz9C6/event1.jpg',
-    },
-    {
-      id: 'e1',
-      title: 'Bay cho',
-      image: 'https://i.ibb.co/0Kkz9C6/event1.jpg',
-    },
-    {
-      id: 'e1',
-      title: 'Bay cho',
-      image: 'https://i.ibb.co/0Kkz9C6/event1.jpg',
-    },
     {
       id: 'e1',
       title: 'Bay cho',
@@ -84,33 +65,60 @@ export class ProfilePageComponent implements OnInit {
     },
   ];
 
+  constructor(
+    private dialog: MatDialog,
+    private userService: UserService
+  ) {}
 
+  async ngOnInit() {
+    const { data: authData, error } = await supabase.auth.getUser();
 
-  ngOnInit(): void {
-    // Load user and data here if needed (e.g. from Supabase)
+    if (error || !authData.user) {
+      console.error('❌ Không tìm thấy người dùng đăng nhập:', error);
+      return;
+    }
+
+    const uid = authData.user.id;
+    const allUsers = await this.userService.getAllUsers();
+    const currentUser = allUsers.find(u => u.id === uid);
+
+    if (currentUser) {
+      this.user = currentUser;
+    } else {
+      console.error('❌ Không tìm thấy thông tin người dùng trong bảng users');
+    }
   }
 
   filteredEvents() {
     return this.events.filter(e =>
-      e.title.toLowerCase().includes(this.eventSearch?.toLowerCase() || '')
+      e.title.toLowerCase().includes(this.eventSearch.toLowerCase())
     );
   }
 
   filteredRooms() {
     return this.rooms.filter(r =>
-      r.name.toLowerCase().includes(this.roomSearch?.toLowerCase() || '')
+      r.name.toLowerCase().includes(this.roomSearch.toLowerCase())
     );
   }
 
-
-  constructor(private dialog: MatDialog) {}
-
   openEditProfileDialog() {
-    this.dialog.open(ChangeAvatarDialogComponent, {
+    const dialogRef = this.dialog.open(ChangeAvatarDialogComponent, {
       width: '500px',
       data: {
-        user: this.user,
+        user: { ...this.user }, // clone để tránh sửa trực tiếp
       },
+    });
+
+    dialogRef.afterClosed().subscribe(async (updatedUser: User | undefined) => {
+      if (updatedUser) {
+        this.user = updatedUser;
+        try {
+          await this.userService.updateUser(updatedUser);
+          console.log('✅ Thông tin người dùng đã được cập nhật.');
+        } catch (error) {
+          console.error('❌ Không thể cập nhật người dùng:', error);
+        }
+      }
     });
   }
 
