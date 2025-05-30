@@ -7,7 +7,7 @@ import { User } from '../Models/user.model';
 })
 export class UserService {
   async getAllUsers(): Promise<User[]> {
-    const { data: users, error } = await supabase
+    const {data: users, error} = await supabase
       .from('users')
       .select('id, email, name, role, avatar_url, birth, is_hidden');
 
@@ -18,11 +18,11 @@ export class UserService {
 
     const filteredUsers = users.filter((u: any) => u.role !== 'admin');
 
-    const { data: roomParticipants } = await supabase
+    const {data: roomParticipants} = await supabase
       .from('room_participants')
       .select('user_id');
 
-    const { data: eventParticipants } = await supabase
+    const {data: eventParticipants} = await supabase
       .from('event_participants')
       .select('user_id');
 
@@ -37,10 +37,11 @@ export class UserService {
       } as User;
     });
   }
+
   async updateVisibility(id: string, is_hidden: boolean): Promise<void> {
-    const { error } = await supabase
+    const {error} = await supabase
       .from('users')
-      .update({ is_hidden })
+      .update({is_hidden})
       .eq('id', id);
 
     if (error) {
@@ -48,8 +49,16 @@ export class UserService {
       throw error;
     }
   }
+
   async updateUser(user: User): Promise<void> {
-    const { error } = await supabase
+    // Lấy thông tin người dùng hiện tại từ Supabase Auth
+    const {data: {user: authUser}, error: authError} = await supabase.auth.getUser();
+
+    if (authError) {
+      console.error('❌ Lỗi khi lấy auth user:', authError.message);
+      return;
+    }
+    const {error} = await supabase
       .from('users')
       .update({
         name: user.name,
@@ -64,3 +73,4 @@ export class UserService {
     }
   }
 }
+
