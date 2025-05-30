@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { JoinRoomComponent } from './join-room.component';
+import { JoinEventDialogComponent } from './join-event-dialog.component';
 
-describe('JoinRoomComponent', () => {
-  let component: JoinRoomComponent;
-  let fixture: ComponentFixture<JoinRoomComponent>;
+describe('JoinEventDialogComponent', () => {
+  let component: JoinEventDialogComponent;
+  let fixture: ComponentFixture<JoinEventDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [JoinRoomComponent]
+      imports: [JoinEventDialogComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(JoinRoomComponent);
+    fixture = TestBed.createComponent(JoinEventDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
