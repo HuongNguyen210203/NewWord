@@ -117,6 +117,7 @@ export class CreateEventComponent {
       max_participants: this.event.maxAttendees,
       image_url: imageUrl,
       created_by: userId,
+      current_participants: 0,
     });
     this.dialogRef.close(); // đóng sau khi tạo
 

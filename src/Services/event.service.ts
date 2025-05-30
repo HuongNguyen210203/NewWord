@@ -4,16 +4,31 @@ import { AppEvent } from '../Models/event.model';
 
 @Injectable({ providedIn: 'root' })
 export class EventService {
-
-  // ✅ Lấy danh sách tất cả sự kiện (order by created_at)
   async getAllEvents(): Promise<AppEvent[]> {
-    const { data, error } = await supabase
+    const { data: events, error } = await supabase
       .from('events')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select('*');
 
-    if (error) throw error;
-    return data;
+    if (error) {
+      console.error('❌ Lỗi khi lấy danh sách sự kiện:', error);
+      return [];
+    }
+
+    return await Promise.all(events.map(async (event: any) => {
+      const { count, error: countError } = await supabase
+        .from('event_participants')
+        .select('id', { count: 'exact', head: true })
+        .eq('event_id', event.id);
+
+      if (countError) {
+        console.error(`❌ Lỗi khi đếm participants của event ${event.id}:`, countError);
+      }
+
+      return {
+        ...event,
+        current_participants: count || 0
+      } as AppEvent;
+    }));
   }
 
   // ✅ Tạo một sự kiện mới
