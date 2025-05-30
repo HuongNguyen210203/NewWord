@@ -6,12 +6,9 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-
-import { SidebarComponent } from '../admin-page/components/sidebar/sidebar.component';
-import { TopbarComponent } from '../admin-page/components/topbar/topbar.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatSidenavModule, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -81,7 +78,6 @@ export class ManagementEventComponent implements OnInit {
       this.dataSource.data = events.map(event => ({
         ...event,
         image: event.image_url,
-        participants: 0,
         registerStart: new Date(event.registration_deadline),
         registerEnd: new Date(event.end_time),
         eventDate: new Date(event.start_time)
@@ -126,18 +122,7 @@ export class ManagementEventComponent implements OnInit {
 
       try {
         const created = await this.eventService.createEvent(result);
-        window.location.reload();
-        this.dataSource.data = [
-          {
-            ...(created as any),
-            image: created.image_url,
-            registerStart: new Date(created.registration_deadline),
-            eventDate: new Date(created.start_time),
-            registerEnd: new Date(created.end_time),
-            participants: 0
-          },
-          ...this.dataSource.data,
-        ];
+        await this.loadEventsFromSupabase(); // refresh list after creation
       } catch (error) {
         console.error('Lỗi khi tạo sự kiện:', error);
         alert('Không thể tạo sự kiện. Vui lòng thử lại.');
@@ -162,9 +147,7 @@ export class ManagementEventComponent implements OnInit {
       if (result) {
         try {
           await this.eventService.updateEvent(event.id, result);
-
           await this.loadEventsFromSupabase();
-
         } catch (err) {
           console.error('Cập nhật thất bại:', err);
           alert('Cập nhật thất bại.');

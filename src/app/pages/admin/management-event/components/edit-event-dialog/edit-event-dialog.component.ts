@@ -10,6 +10,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconButton } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import {EventService} from '../../../../../../Services/event.service';
+import {supabase} from '../../../../../supabase.client';
 
 @Component({
   selector: 'app-edit-event-dialog',
@@ -53,9 +54,6 @@ export class EditEventDialogComponent {
     }
   }
 
-  /**
-   * Lưu thay đổi sự kiện
-   */
   async save() {
     const { startDate, startTime, endDate, endTime, registerDeadline } = this.data;
 
@@ -78,12 +76,42 @@ export class EditEventDialogComponent {
       return;
     }
 
+    // Chuyển sang UTC (nếu cần offset +7)
     start.setHours(start.getHours() + 7);
     end.setHours(end.getHours() + 7);
     deadline.setHours(deadline.getHours() + 7);
 
+    // Xử lý upload ảnh nếu có file mới
     let imageUrl = this.data.image_url;
+    if (this.data.image instanceof File) {
+      const file = this.data.image;
+      const filePath = `events/${Date.now()}_${file.name}`;
+      const { data, error } = await supabase.storage
+        .from('event-images')
+        .upload(filePath, file);
 
+      if (error) {
+        console.error('Lỗi khi tải ảnh lên:', error.message);
+        alert('Không thể tải ảnh lên. Vui lòng thử lại.');
+        return;
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from('event-images')
+        .getPublicUrl(filePath);
+
+      imageUrl = publicUrlData.publicUrl;
+    }
+
+    // Kiểm tra và chuyển đổi participants
+    const maxParticipants = Number(this.data.participants);
+    if (isNaN(maxParticipants) || maxParticipants <= 0) {
+      alert('Số lượng người tham gia phải là số dương.');
+      return;
+    }
+
+
+    // Trả dữ liệu
     const updatePayload = {
       title: this.data.title,
       description: this.data.description,
@@ -91,12 +119,13 @@ export class EditEventDialogComponent {
       start_time: start.toISOString(),
       end_time: end.toISOString(),
       registration_deadline: deadline.toISOString(),
-      max_participants: this.data.participants,
+      max_participants: Number(this.data.participants),
       image_url: imageUrl
     };
 
     this.dialogRef.close(updatePayload);
   }
+
 
   cancel() {
     this.dialogRef.close();
