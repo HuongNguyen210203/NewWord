@@ -1,16 +1,17 @@
 <div class="chat-wrapper">
   <main class="chat-main">
+    <!-- SIDEBAR: Conversations -->
     <aside class="chat-room-list">
       <h3>Conversations</h3>
       <div class="chat-list">
         <div class="chat-scroll">
-          @for (room of chatRooms; track room.name) {
+          @for (room of chatRooms; track room.id) {
             <div
               class="chat-item"
               [class.active]="room.active"
               (click)="selectRoom(room)"
             >
-              <img [src]="room.avatar" class="avatar" />
+              <img [src]="room.avatar" class="avatar" (error)="onImgError($event)" />
               <div class="chat-info">
                 <div class="name">{{ room.name }}</div>
                 <div class="preview">{{ room.preview }}</div>
@@ -22,42 +23,54 @@
       </div>
     </aside>
 
-    <section class="chat-content-wrapper">
+    <!-- MAIN CHAT SECTION -->
+    <section class="chat-content-wrapper" *ngIf="activeRoom; else noRoomSelected">
+      <!-- HEADER -->
       <div class="chat-header">
-        <img class="chat-header-avatar" [src]="activeRoom?.avatar" />
-        <span class="chat-header-name">
-          {{ activeRoom?.name || 'Chọn cuộc trò chuyện' }}
-        </span>
+        <img class="chat-header-avatar" [src]="activeRoom?.avatar" (error)="onImgError($event)" />
+        <span class="chat-header-name">{{ activeRoom?.name || 'Chọn cuộc trò chuyện' }}</span>
       </div>
 
+      <!-- CHAT CONTENT -->
       <div class="chat-content">
         @for (msg of messages; track msg.text) {
           <div class="message" [ngClass]="msg.from === 'me' ? 'right' : 'left'">
-            <img class="msg-avatar" [src]="msg.avatar" />
-            <div class="bubble">{{ msg.text }}</div>
+            <img class="msg-avatar" [src]="msg.avatar" alt="avatar" (error)="onImgError($event)" />
+            <div class="bubble-wrapper">
+              <div class="msg-name">{{ msg.name }}</div>
+              <div class="bubble">{{ msg.text }}</div>
+            </div>
           </div>
         }
       </div>
 
-      <div class="suggestions">
-        @for (s of suggestions; track s) {
-          <button (click)="sendSuggestion(s)">
-            {{ s }}
+      <!-- JOIN OR INPUT -->
+      @if (isJoined) {
+        <div class="chat-input">
+          <mat-icon class="icon">add</mat-icon>
+          <mat-icon class="icon">sentiment_satisfied</mat-icon>
+          <input
+            type="text"
+            [(ngModel)]="inputMessage"
+            placeholder="Aa"
+            (keyup.enter)="sendMessage()"
+          />
+          <mat-icon class="icon" (click)="sendMessage()">mic</mat-icon>
+        </div>
+      } @else {
+        <div class="join-chat-box">
+          <button mat-raised-button color="primary" class="join-button" (click)="joinRoom()">
+            Join to Chat
           </button>
-        }
-      </div>
-
-      <div class="chat-input">
-        <mat-icon class="icon">add</mat-icon>
-        <mat-icon class="icon">sentiment_satisfied</mat-icon>
-        <input
-          type="text"
-          [(ngModel)]="inputMessage"
-          placeholder="Aa"
-          (keyup.enter)="sendMessage()"
-        />
-        <mat-icon class="icon" (click)="sendMessage()">mic</mat-icon>
-      </div>
+        </div>
+      }
     </section>
+
+    <!-- Fallback if no room is selected -->
+    <ng-template #noRoomSelected>
+      <div class="chat-content-wrapper no-room">
+        <p class="no-room-text">Vui lòng chọn một phòng để bắt đầu trò chuyện</p>
+      </div>
+    </ng-template>
   </main>
 </div>

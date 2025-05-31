@@ -1,7 +1,7 @@
 .edit-profile-container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
   padding: 24px;
   max-width: 100%;
 }
@@ -13,22 +13,43 @@
 }
 
 .preview-img {
-  width: 80px;
-  height: 80px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #81c784;
-}
-.upload-text {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  border: 2px solid #4caf50;
 }
 
 .upload-title {
   font-weight: 600;
   color: #2e7d32;
   font-size: 16px;
+}
+
+.avatar-choices {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.avatar-choice {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.avatar-choice:hover {
+  border-color: #81c784;
+}
+
+.avatar-choice.selected {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px #a5d6a7;
 }
 
 .field {
@@ -38,31 +59,5 @@
 .action-buttons {
   display: flex;
   justify-content: flex-end;
-  gap: 16px;
-}
-
-.upload-icon {
-  background-color: #81c784;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  transition: background-color 0.3s ease;
-}
-
-.upload-icon-inner {
-  color: black;
-  transition: color 0.3s ease;
-}
-
-.upload-icon:hover {
-  background-color: #66bb6a;
-}
-
-.upload-icon:hover .upload-icon-inner {
-  color: white;
-}
-.upload-label-icon {
-  display: flex;
-  align-items: center;
   gap: 16px;
 }

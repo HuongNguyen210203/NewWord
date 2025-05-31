@@ -1,38 +1,44 @@
 <div class="edit-profile-container">
   <h2>Edit Profile</h2>
 
+  <!-- Avatar Preview -->
   <div class="upload-section">
-    <img [src]="previewUrl || data.user.avatar_url || 'https://via.placeholder.com/100'" class="preview-img" />
+    <img [src]="previewUrl" class="preview-img" alt="Avatar preview" />
 
     <div class="upload-text">
       <div class="upload-label-icon">
-        <span class="upload-title">Upload PNG only</span>
-
-        <!-- Hidden real input -->
-        <input type="file" #fileInput accept="image/*" (change)="onFileSelected($event)" hidden />
-
-        <!-- Styled icon button -->
-        <button mat-icon-button class="upload-icon" (click)="fileInput.click()" matTooltip="Upload PNG">
-          <mat-icon class="upload-icon-inner">upload</mat-icon>
-        </button>
+        <span class="upload-title">Choose your Avatar</span>
       </div>
     </div>
   </div>
 
+  <!-- Selectable Avatars -->
+  <div class="avatar-choices">
+    @for (avatar of availableAvatars; track avatar) {
+      <img
+        [src]="avatar"
+        class="avatar-choice"
+        [class.selected]="avatar === previewUrl"
+        (click)="selectAvatar(avatar)"
+        alt="Available avatar"
+      />
+    }
+  </div>
 
-
+  <!-- Form fields -->
   <mat-form-field appearance="outline" class="field">
     <mat-label>Full Name</mat-label>
-    <input matInput [(ngModel)]="data.user.name">
+    <input matInput [(ngModel)]="data.user.name" />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="field">
     <mat-label>Date of Birth</mat-label>
-    <input matInput [matDatepicker]="picker" [(ngModel)]="data.user.birth">
+    <input matInput [matDatepicker]="picker" [(ngModel)]="data.user.birth" />
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>
 
+  <!-- Buttons -->
   <div class="action-buttons">
     <button mat-stroked-button color="warn" (click)="dialogRef.close()">Cancel</button>
     <button mat-raised-button color="primary" (click)="saveChanges()">Save</button>

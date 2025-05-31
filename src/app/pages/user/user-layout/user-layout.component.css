@@ -1,15 +1,30 @@
+html, body, app-root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+:host {
+  display: block;
+  height: 100vh;
+  overflow: hidden;
+}
+
 .home-wrapper {
   display: flex;
   flex-direction: row;
   margin-top: 64px;
-  height: calc(100vh - 64px);
+  height: calc(100vh - 70px);
+  overflow: hidden;
 }
 
 .home-content {
   margin-left: 200px;
   flex: 1;
   background-color: #f9f9f9;
-  overflow-y: auto;
+  overflow: auto;
+  Display: flex;
   height: 100%;
   transition: margin-left 0.3s ease;
 }
