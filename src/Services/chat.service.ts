@@ -65,8 +65,19 @@ export class ChatService {
   }
 
   async deleteRoom(id: string) {
-    const { error } = await supabase.from('chat_rooms').delete().eq('id', id);
-    if (error) throw error;
+    // Xoá người tham gia trước
+    const { error: participantError } = await supabase
+      .from('room_participants')
+      .delete()
+      .eq('room_id', id);
+    if (participantError) throw participantError;
+
+    // Rồi mới xoá phòng
+    const { error: roomError } = await supabase
+      .from('chat_rooms')
+      .delete()
+      .eq('id', id);
+    if (roomError) throw roomError;
   }
 
   async uploadRoomImage(file: File): Promise<string> {
@@ -152,4 +163,27 @@ export class ChatService {
 
     return data.filter((m: any) => !m.content?.toLowerCase().includes('replied')).length;
   }
+  async deleteRoomCompletely(id: string): Promise<void> {
+    // Xoá tất cả messages của phòng
+    const { error: messageError } = await supabase
+      .from('messages')
+      .delete()
+      .eq('room_id', id);
+    if (messageError) throw new Error(`Failed to delete messages: ${messageError.message}`);
+
+    // Xoá tất cả participants của phòng
+    const { error: participantError } = await supabase
+      .from('room_participants')
+      .delete()
+      .eq('room_id', id);
+    if (participantError) throw new Error(`Failed to delete participants: ${participantError.message}`);
+
+    // Xoá phòng
+    const { error: roomError } = await supabase
+      .from('chat_rooms')
+      .delete()
+      .eq('id', id);
+    if (roomError) throw new Error(`Failed to delete room: ${roomError.message}`);
+  }
+
 }

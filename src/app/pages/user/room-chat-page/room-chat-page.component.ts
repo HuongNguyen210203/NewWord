@@ -10,13 +10,14 @@ import { FormsModule } from '@angular/forms';
 import { supabase } from '../../../supabase.client';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { ChatRoom } from '../../../../Models/chat-room.model';
+import {MatTooltip} from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-room-chat-page',
   standalone: true,
   templateUrl: './room-chat-page.component.html',
   styleUrls: ['./room-chat-page.component.css'],
-  imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule],
+  imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule, MatTooltip],
 })
 export class RoomChatPageComponent implements OnInit, OnDestroy {
   sidebarOpen = true;
@@ -30,6 +31,7 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
     avatar?: string;
     active?: boolean;
     joined?: boolean;
+    hover?: boolean;
   })[] = [];
 
   activeRoom: any = null;
@@ -49,6 +51,7 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
       time: '',
       joined: false,
       active: false,
+      hover: false,
     }));
 
     const user = await supabase.auth.getUser();
@@ -93,6 +96,7 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
       time: 'Vừa xong',
       joined: hasJoined,
       active: false,
+      hover: false,
     };
 
     const existsInList = this.chatRooms.some((r) => r.id === room.id);
@@ -291,6 +295,32 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
     const chatContent = document.querySelector('.chat-content');
     if (chatContent) {
       chatContent.scrollTop = chatContent.scrollHeight;
+    }
+  }
+  async leaveRoom(event: Event, room: any) {
+    event.stopPropagation();
+
+    const confirmed = confirm(`Bạn có chắc muốn rời khỏi "${room.name}"?`);
+    if (!confirmed || !this.currentUserId) return;
+
+    const { error } = await supabase
+      .from('room_participants')
+      .delete()
+      .eq('user_id', this.currentUserId)
+      .eq('room_id', room.id);
+
+    if (!error) {
+      // Cập nhật UI và localStorage
+      this.chatRooms = this.chatRooms.filter(r => r.id !== room.id);
+      localStorage.setItem('viewedRooms', JSON.stringify(this.chatRooms));
+
+      if (this.activeRoom?.id === room.id) {
+        this.activeRoom = null;
+        this.messages = [];
+        this.isJoined = false;
+      }
+    } else {
+      alert('Rời phòng thất bại: ' + error.message);
     }
   }
 

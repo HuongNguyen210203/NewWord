@@ -17,6 +17,17 @@
                 <div class="preview">{{ room.preview }}</div>
               </div>
               <div class="time">{{ room.time }}</div>
+
+              @if (room.joined) {
+                <button
+                  class="leave-btn"
+                  mat-icon-button
+                  matTooltip="Rời phòng"
+                  (click)="leaveRoom($event, room)"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+              }
             </div>
           }
         </div>
@@ -24,53 +35,73 @@
     </aside>
 
     <!-- MAIN CHAT SECTION -->
-    <section class="chat-content-wrapper" *ngIf="activeRoom; else noRoomSelected">
-      <!-- HEADER -->
-      <div class="chat-header">
-        <img class="chat-header-avatar" [src]="activeRoom?.avatar" (error)="onImgError($event)" />
-        <span class="chat-header-name">{{ activeRoom?.name || 'Chọn cuộc trò chuyện' }}</span>
-      </div>
+    @if (activeRoom) {
+      <section class="chat-content-wrapper">
+        <!-- HEADER -->
+        <div class="chat-header">
+          <img
+            class="chat-header-avatar"
+            [src]="activeRoom?.avatar"
+            (error)="onImgError($event)"
+          />
+          <span class="chat-header-name">
+            {{ activeRoom?.name || 'Chọn cuộc trò chuyện' }}
+          </span>
+        </div>
 
-      <!-- CHAT CONTENT -->
-      <div class="chat-content">
-        @for (msg of messages; track msg.text) {
-          <div class="message" [ngClass]="msg.from === 'me' ? 'right' : 'left'">
-            <img class="msg-avatar" [src]="msg.avatar" alt="avatar" (error)="onImgError($event)" />
-            <div class="bubble-wrapper">
-              <div class="msg-name">{{ msg.name }}</div>
-              <div class="bubble">{{ msg.text }}</div>
+        <!-- CHAT CONTENT -->
+        <div class="chat-content">
+          @for (msg of messages; track msg.text) {
+            <div
+              class="message"
+              [ngClass]="msg.from === 'me' ? 'right' : 'left'"
+            >
+              <img
+                class="msg-avatar"
+                [src]="msg.avatar"
+                alt="avatar"
+                (error)="onImgError($event)"
+              />
+              <div class="bubble-wrapper">
+                <div class="msg-name">{{ msg.name }}</div>
+                <div class="bubble">{{ msg.text }}</div>
+              </div>
             </div>
+          }
+        </div>
+
+        <!-- JOIN OR INPUT -->
+        @if (isJoined) {
+          <div class="chat-input">
+            <mat-icon class="icon">add</mat-icon>
+            <mat-icon class="icon">sentiment_satisfied</mat-icon>
+            <input
+              type="text"
+              [(ngModel)]="inputMessage"
+              placeholder="Aa"
+              (keyup.enter)="sendMessage()"
+            />
+            <mat-icon class="icon" (click)="sendMessage()">mic</mat-icon>
+          </div>
+        } @else {
+          <div class="join-chat-box">
+            <button
+              mat-raised-button
+              color="primary"
+              class="join-button"
+              (click)="joinRoom()"
+            >
+              Join to Chat
+            </button>
           </div>
         }
-      </div>
-
-      <!-- JOIN OR INPUT -->
-      @if (isJoined) {
-        <div class="chat-input">
-          <mat-icon class="icon">add</mat-icon>
-          <mat-icon class="icon">sentiment_satisfied</mat-icon>
-          <input
-            type="text"
-            [(ngModel)]="inputMessage"
-            placeholder="Aa"
-            (keyup.enter)="sendMessage()"
-          />
-          <mat-icon class="icon" (click)="sendMessage()">mic</mat-icon>
-        </div>
-      } @else {
-        <div class="join-chat-box">
-          <button mat-raised-button color="primary" class="join-button" (click)="joinRoom()">
-            Join to Chat
-          </button>
-        </div>
-      }
-    </section>
-
-    <!-- Fallback if no room is selected -->
-    <ng-template #noRoomSelected>
+      </section>
+    } @else {
       <div class="chat-content-wrapper no-room">
-        <p class="no-room-text">Vui lòng chọn một phòng để bắt đầu trò chuyện</p>
+        <p class="no-room-text">
+          Vui lòng chọn một phòng để bắt đầu trò chuyện
+        </p>
       </div>
-    </ng-template>
+    }
   </main>
 </div>
