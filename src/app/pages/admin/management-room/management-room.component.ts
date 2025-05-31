@@ -180,9 +180,14 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
         this.dataSource.data = this.dataSource.data.filter(item => item.id !== row.id); // Xoá trên giao diện
       }
       catch (error) {
+        console.error('Delete room error:', error);
         let message = 'Unknown error';
         if (error instanceof Error) {
           message = error.message;
+        } else if (typeof error === 'string') {
+          message = error;
+        } else if (error && typeof error === 'object' && 'message' in error) {
+          message = (error as any).message;
         }
         alert('Failed to delete room: ' + message);
       }
