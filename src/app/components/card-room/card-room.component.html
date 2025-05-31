@@ -7,6 +7,6 @@
   <div class="card-body">
     <h3>{{ room.name || 'Unnamed Room' }}</h3>
     <p>{{ room.active_members || 0 }} People</p>
-    <button mat-stroked-button color="primary">View</button>
+    <button mat-stroked-button color="primary" (click)="goToChatRoom()">View</button>
   </div>
 </div>

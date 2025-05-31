@@ -3,14 +3,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-// Các module Angular Material cần thiết
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import {MatTooltip} from '@angular/material/tooltip';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-change-avatar-dialog',
@@ -26,31 +25,31 @@ import {MatTooltip} from '@angular/material/tooltip';
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatTooltip
-  ]
+    MatTooltip,
+  ],
 })
 export class ChangeAvatarDialogComponent {
-  previewUrl: string | ArrayBuffer | null = null;
+  previewUrl: string | null = null;
+
+  availableAvatars: string[] = [
+    '/assets/images/avatar.png',
+    '/assets/images/avatar1.png',
+    '/assets/images/avatar2.png',
+    '/assets/images/avatar3.png',
+    '/assets/images/avatar4.png',
+  ];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<ChangeAvatarDialogComponent>
-  ) {}
-
-  onFileSelected(event: Event) {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.previewUrl = reader.result;
-        this.data.user.avatar_url = this.previewUrl;
-      };
-      reader.readAsDataURL(file);
-    } else {
-      alert('Vui lòng chọn một tệp hình ảnh hợp lệ.');
-    }
+  ) {
+    this.previewUrl = data.user.avatar_url || '/assets/images/avatar1.png';
   }
 
+  selectAvatar(path: string) {
+    this.previewUrl = path;
+    this.data.user.avatar_url = path;
+  }
 
   saveChanges() {
     this.dialogRef.close(this.data.user);

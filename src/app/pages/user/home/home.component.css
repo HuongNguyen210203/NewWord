@@ -1,7 +1,12 @@
 section {
   margin-bottom: 40px;
 }
-
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
 .section-header {
   display: flex;
   justify-content: space-between;
