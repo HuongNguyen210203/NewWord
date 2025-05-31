@@ -32,7 +32,6 @@ export class ChangeAvatarDialogComponent {
   previewUrl: string | null = null;
 
   availableAvatars: string[] = [
-    '/assets/images/avatar.png',
     '/assets/images/avatar1.png',
     '/assets/images/avatar2.png',
     '/assets/images/avatar3.png',
@@ -43,8 +42,13 @@ export class ChangeAvatarDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<ChangeAvatarDialogComponent>
   ) {
-    this.previewUrl = data.user.avatar_url || '/assets/images/avatar1.png';
+    // Set default avatar if not set
+    this.previewUrl = data.user.avatar_url || '/assets/images/avatar.png';
+    if (!data.user.avatar_url) {
+      data.user.avatar_url = '/assets/images/avatar.png';
+    }
   }
+
 
   selectAvatar(path: string) {
     this.previewUrl = path;
