@@ -45,8 +45,6 @@ import { Router } from '@angular/router';
     MatInputModule,
     MatSidenavModule,
     MatMenuModule,
-    SidebarComponent,
-    TopbarComponent
   ]
 })
 export class ManagementRoomComponent implements OnInit, AfterViewInit {
@@ -174,10 +172,20 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
     });
   }
 
-  deleteRoom(row: any): void {
+  async deleteRoom(row: any): Promise<void> {
     const confirmDelete = confirm(`Are you sure you want to delete room "${row.name}"?`);
     if (confirmDelete) {
-      this.dataSource.data = this.dataSource.data.filter(item => item.id !== row.id);
+      try {
+        await this.chatService.deleteRoom(row.id); // Xoá trên Supabase
+        this.dataSource.data = this.dataSource.data.filter(item => item.id !== row.id); // Xoá trên giao diện
+      }
+      catch (error) {
+        let message = 'Unknown error';
+        if (error instanceof Error) {
+          message = error.message;
+        }
+        alert('Failed to delete room: ' + message);
+      }
     }
   }
 
