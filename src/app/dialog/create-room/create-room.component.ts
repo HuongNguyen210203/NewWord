@@ -84,6 +84,7 @@ export class CreateRoomComponent {
       });
 
       this.dialogRef.close(createdRoom);
+      window.location.reload();
     } catch (error) {
       console.error('Lỗi khi tạo phòng:', error);
       alert('Không thể tạo phòng. Vui lòng thử lại.');
