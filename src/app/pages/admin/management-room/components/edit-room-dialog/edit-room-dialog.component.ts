@@ -63,7 +63,7 @@ export class EditRoomDialogComponent {
         ...this.data,
         image_url: imageUrl
       });
-
+      window.location.reload();
     } catch (error) {
       console.error('Lỗi khi cập nhật phòng:', error);
       alert('Không thể cập nhật phòng. Vui lòng thử lại.');
