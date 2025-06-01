@@ -1,7 +1,17 @@
-<div
-  class="card-event"
-  [ngStyle]="{ 'background-image': 'url(' + safeImageUrl + ')' }">
-  <div class="card-overlay">
-    <span class="label">{{ label }}</span>
+<mat-card class="card-container">
+  <div class="image-wrapper">
+    <img mat-card-image [src]="safeImageUrl" alt="Event Image" />
   </div>
-</div>
+
+
+  <mat-card-content class="content">
+    <div class="date">
+      <div class="month">{{ getMonthLabel() }}</div>
+      <div class="day">{{ getDayLabel() }}</div>
+    </div>
+    <div class="info">
+      <div class="title">{{ title }}</div>
+      <div class="desc">{{ description }}</div>
+    </div>
+  </mat-card-content>
+</mat-card>

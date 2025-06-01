@@ -3,21 +3,39 @@
     <h2>Discussion</h2>
     <button mat-button class="see-more">See more</button>
   </div>
-  <div class="card-list">
-    @for (room of rooms; track room.id) {
-      <app-card-room [room]="room" />
-    }
+
+  <div class="scroll-wrapper">
+    <button class="scroll-btn left" (click)="scrollLeft('room')">❮</button>
+
+    <div class="card-list" #roomScroll>
+      <app-card-room *ngFor="let room of rooms" [room]="room"></app-card-room>
+    </div>
+
+    <button class="scroll-btn right" (click)="scrollRight('room')">❯</button>
   </div>
 </section>
 
+<!-- EVENT SECTION -->
 <section class="section">
   <div class="section-header">
     <h2>Event</h2>
     <button mat-button class="see-more">See more</button>
   </div>
-  <div class="card-list">
-    @for (event of events; track event.id) {
-      <app-card-event [label]="event.title" [imageUrl]="event.image_url ?? ''" />
-    }
+
+  <div class="scroll-wrapper">
+    <button class="scroll-btn left" (click)="scrollLeft('event')">❮</button>
+
+    <div class="card-list" #eventScroll>
+      <app-card-event
+        *ngFor="let event of events"
+        [title]="event.title"
+        [description]="event.description"
+        [date]="event.start_time"
+        [imageUrl]="event.image_url ?? ''"
+      ></app-card-event>
+
+    </div>
+
+    <button class="scroll-btn right" (click)="scrollRight('event')">❯</button>
   </div>
 </section>

@@ -1,55 +1,129 @@
-section {
-  margin-bottom: 40px;
-}
 :host {
   display: block;
-  height: 100%;
   width: 100%;
+  height: 100%;
+  background-color: #f9f9f9;
+  padding: 24px;
+  box-sizing: border-box;
   overflow: hidden;
 }
+
+.section {
+  margin-bottom: 48px;
+}
+
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
+  padding: 0 2%;
 }
 
+
 .section-header h2 {
-  font-size: 22px;
-  margin: 0;
-  color: #333;
+  font-size: 20px;
+  font-weight: bold;
+  color: #2d2d2d;
+  display: flex;
+  align-items: center;
+}
+
+.section-header h2::before {
+  content: '⭐';
+  margin-right: 8px;
 }
 
 .see-more {
+  background-color: #e5f4ea;
+  color: #388e3c;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 16px;
   font-size: 14px;
-  color: #4caf50;
-  text-transform: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.see-more:hover {
+  background-color: #cfead8;
 }
 
 .card-list {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
+  overflow-x: auto;
+  gap: 20px; /* 🔥 Tăng gap ở đây */
+  scroll-snap-type: x mandatory;
+  padding: 0 12px 10px;
 }
 
-.card-list app-card-event,
-.card-list app-card-room {
-  flex: 1 1 calc(33.333% - 16px);
-  max-width: calc(33.333% - 16px);
+.card-list::-webkit-scrollbar {
+  height: 6px;
 }
 
-@media (max-width: 1024px) {
-  .card-list app-card-event,
-  .card-list app-card-room {
-    flex: 1 1 calc(50% - 16px);
-    max-width: calc(50% - 16px);
-  }
+.card-list::-webkit-scrollbar-thumb {
+  background-color: #bbb;
+  border-radius: 10px;
 }
 
-@media (max-width: 600px) {
-  .card-list app-card-event,
-  .card-list app-card-room {
-    flex: 1 1 100%;
-    max-width: 100%;
-  }
+app-card-room,
+app-card-event {
+  flex: 0 0 auto;
+  width: 240px; /* rộng hơn cho đẹp hơn */
+  min-width: 240px;
+  scroll-snap-align: start;
+  transition: transform 0.2s ease-in-out;
+}
+
+app-card-room:hover,
+app-card-event:hover {
+  transform: scale(1.04);
+}
+
+.scroll-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.card-list {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  scroll-snap-type: x mandatory;
+  padding: 0 12px 10px;
+  scroll-behavior: smooth;
+  margin: 0 2%; /* Giữ khoảng cách với nút cuộn */
+}
+
+.scroll-btn {
+  position: absolute;
+  z-index: 10;
+  background: white;
+  border: 2px solid green;
+  color: green;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background 0.2s;
+}
+
+.scroll-btn:hover {
+  background: #e5f4ea;
+}
+
+.scroll-btn.left {
+  left: 0;
+  transform: translateX(-50%);
+}
+
+.scroll-btn.right {
+  right: 0;
+  transform: translateX(50%);
 }

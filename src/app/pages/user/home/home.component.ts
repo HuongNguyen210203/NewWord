@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { CardEventComponent } from '../../../components/card-event/card-event.component';
 import { CardRoomComponent } from '../../../components/card-room/card-room.component';
 import {ChatRoom} from '../../../../Models/chat-room.model';
@@ -6,6 +6,7 @@ import {AppEvent} from '../../../../Models/event.model';
 import {EventService} from '../../../../Services/event.service';
 import {ChatService} from '../../../../Services/chat.service';
 import {MatButton} from '@angular/material/button';
+import {NgForOf} from '@angular/common';
 
 @Component({
   selector: 'app-home',
@@ -14,6 +15,7 @@ import {MatButton} from '@angular/material/button';
     CardEventComponent,
     CardRoomComponent,
     MatButton,
+    NgForOf,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
@@ -36,5 +38,18 @@ export class HomeComponent implements OnInit {
     this.events = await this.eventService.getAllEvents();
     console.log('[EVENTS]', this.events);
 
+  }
+
+  @ViewChild('eventScroll') eventScroll!: ElementRef;
+  @ViewChild('roomScroll') roomScroll!: ElementRef;
+
+  scrollLeft(type: 'event' | 'room') {
+    const container = type === 'event' ? this.eventScroll.nativeElement : this.roomScroll.nativeElement;
+    container.scrollBy({ left: -240, behavior: 'smooth' }); // chỉnh step theo card width
+  }
+
+  scrollRight(type: 'event' | 'room') {
+    const container = type === 'event' ? this.eventScroll.nativeElement : this.roomScroll.nativeElement;
+    container.scrollBy({ left: 240, behavior: 'smooth' });
   }
 }
