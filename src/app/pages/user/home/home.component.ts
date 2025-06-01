@@ -7,6 +7,7 @@ import {EventService} from '../../../../Services/event.service';
 import {ChatService} from '../../../../Services/chat.service';
 import {MatButton} from '@angular/material/button';
 import {NgForOf} from '@angular/common';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -30,7 +31,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private chatService: ChatService,
-    private eventService: EventService
+    private eventService: EventService,
+    private router: Router
   ) {}
 
   async ngOnInit() {
@@ -51,5 +53,8 @@ export class HomeComponent implements OnInit {
   scrollRight(type: 'event' | 'room') {
     const container = type === 'event' ? this.eventScroll.nativeElement : this.roomScroll.nativeElement;
     container.scrollBy({ left: 240, behavior: 'smooth' });
+  }
+  goToEventPage() {
+    this.router.navigate(['/event-room-page']);
   }
 }

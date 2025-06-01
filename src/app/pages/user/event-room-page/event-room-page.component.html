@@ -1,0 +1,64 @@
+
+<div class="page-wrapper">
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <h2>⭐ Event</h2>
+      <div class="chip-row">
+        <mat-chip *ngFor="let tag of availableTags"
+                  (click)="filterByTag(tag)"
+                  [ngClass]="{ 'active-chip': selectedTag === tag }">
+          {{ tag }}
+        </mat-chip>
+        <mat-chip *ngIf="selectedTag" (click)="clearFilter()" color="warn">Clear</mat-chip>
+      </div>
+    </div>
+
+    <div class="toolbar-right">
+      <button mat-raised-button color="primary" class="create-btn">
+        <mat-icon>add</mat-icon> Create
+      </button>
+
+      <div class="search-bar">
+        <mat-icon>search</mat-icon>
+        <input [(ngModel)]="searchTerm" (input)="applyFilter()" placeholder="Event Searching..." />
+      </div>
+    </div>
+  </div>
+
+
+  <div class="card-area">
+    <div class="card-grid">
+
+      <mat-card class="card-container" *ngFor="let card of pagedEvents" style="cursor: pointer;">
+        <div class="image-wrapper">
+          <img mat-card-image [src]="card.image_url" alt="Event Image" />
+        </div>
+
+        <mat-card-content class="content">
+          <!-- Ngày bên trái -->
+          <div class="date">
+            <div class="month">{{ card.start_time | date: 'MMM' | uppercase }}</div>
+            <div class="day">{{ card.start_time | date: 'd' }}</div>
+          </div>
+
+          <!-- Thông tin bên phải -->
+          <div class="info">
+            <div class="title">{{ card.title }}</div>
+            <div class="desc">{{ card.description || 'Không có mô tả.' }}</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+  </div>
+
+  <!-- Paginator -->
+  <div class="paginator-wrapper">
+    <mat-paginator
+      [length]="filteredEvents.length"
+      [pageSize]="cardsPerPage"
+      [pageSizeOptions]="[12, 24, 48]"
+      (page)="onPageChange($event)">
+    </mat-paginator>
+  </div>
+</div>

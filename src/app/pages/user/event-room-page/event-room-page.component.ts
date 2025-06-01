@@ -11,6 +11,11 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { TopbarComponent } from '../../../components/topbar/topbar.component';
 import { SidebarComponent } from '../../../components/sidebar/sidebar.component';
+import {AppEvent} from '../../../../Models/event.model';
+import {EventService} from '../../../../Services/event.service';
+import {MatChip} from '@angular/material/chips';
+import { MatChipsModule } from '@angular/material/chips';
+
 
 @Component({
   selector: 'app-event-room-page',
@@ -26,45 +31,61 @@ import { SidebarComponent } from '../../../components/sidebar/sidebar.component'
     MatInputModule,
     MatCardModule,
     MatPaginatorModule,
-    MatButtonModule
+    MatButtonModule,
+    MatChipsModule
   ]
 })
 export class EventRoomPageComponent implements OnInit {
   searchTerm: string = '';
+  selectedTag: string | null = null;
+  availableTags: string[] = ['Speaking', 'Vocabulary', 'Workshop', 'Debate'];
+
+  allEvents: AppEvent[] = [];
+  filteredEvents: AppEvent[] = [];
+  pagedEvents: AppEvent[] = [];
+
   currentPage: number = 0;
   cardsPerPage: number = 12;
 
-  cards: { title: string; peopleCount: number; eventCount: number }[] = Array.from({ length: 50 }).map((_, i) => ({
-    title: `Event ${i + 1}`,
-    peopleCount: Math.floor(Math.random() * 200 + 20),
-    eventCount: Math.floor(Math.random() * 6 + 1)
-  }));
+  constructor(private eventService: EventService) {}
 
-  filteredCards: typeof this.cards = [...this.cards];
-  pagedCards: typeof this.cards = [];
+  async ngOnInit(): Promise<void> {
+    this.allEvents = await this.eventService.getAllEvents();
+    this.filteredEvents = [...this.allEvents];
+    this.updatePagedEvents();
+  }
 
-  ngOnInit(): void {
-    this.updatePagedCards();
+  applyFilter(): void {
+    const term = this.searchTerm.trim().toLowerCase();
+
+    this.filteredEvents = this.allEvents.filter(event =>
+      event.title.toLowerCase().includes(term) &&
+      (!this.selectedTag || event.title.toLowerCase().includes(this.selectedTag.toLowerCase()))
+    );
+
+    this.currentPage = 0;
+    this.updatePagedEvents();
+  }
+
+  filterByTag(tag: string): void {
+    this.selectedTag = tag;
+    this.applyFilter();
+  }
+
+  clearFilter(): void {
+    this.selectedTag = null;
+    this.applyFilter();
   }
 
   onPageChange(event: PageEvent): void {
     this.cardsPerPage = event.pageSize;
     this.currentPage = event.pageIndex;
-    this.updatePagedCards();
+    this.updatePagedEvents();
   }
 
-  applyFilter(): void {
-    const term = this.searchTerm.trim().toLowerCase();
-    this.filteredCards = this.cards.filter(card =>
-      card.title.toLowerCase().includes(term)
-    );
-    this.currentPage = 0;
-    this.updatePagedCards();
-  }
-
-  updatePagedCards(): void {
+  updatePagedEvents(): void {
     const start = this.currentPage * this.cardsPerPage;
     const end = start + this.cardsPerPage;
-    this.pagedCards = this.filteredCards.slice(start, end);
+    this.pagedEvents = this.filteredEvents.slice(start, end);
   }
 }
