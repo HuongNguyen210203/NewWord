@@ -3,6 +3,7 @@ import { HomeComponent } from './pages/user/home/home.component';
 import { ProfilePageComponent } from './pages/user/profile-page/profile-page.component';
 import { RoomChatPageComponent } from './pages/user/room-chat-page/room-chat-page.component';
 import { CardRoomPageComponent } from './pages/user/card-room-page/card-room-page.component';
+import { EventRoomPageComponent } from './pages/user/event-room-page/event-room-page.component';
 import {ManagementEventComponent} from './pages/admin/management-event/management-event.component';
 import { ManagementProfileComponent } from './pages/admin/management-profile/management-profile.component';
 import  { ManagementRoomComponent } from './pages/admin/management-room/management-room.component';
@@ -29,6 +30,7 @@ export const routes: Routes = [
       { path: 'profile', component: ProfilePageComponent },
       { path: 'chat', component: RoomChatPageComponent },
       { path: 'card-room', component: CardRoomPageComponent },
+      { path: 'event-room-page', component: EventRoomPageComponent },
       { path: 'create-room', component: CreateRoomComponent },
       { path: 'create-event', component: CreateEventComponent },
     ]
