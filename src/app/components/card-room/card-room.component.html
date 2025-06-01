@@ -1,12 +1,18 @@
-<div class="card-room">
-  <div class="card-image">
-    @if (room.image_url) {
-      <img [src]="room.image_url" alt="Room Image" />
-    }
+<mat-card class="room-card">
+  <div class="room-image" [ngStyle]="{ 'background-image': 'url(' + room.image_url + ')' }">
+<!--    <div class="room-tag">Uncategorized</div>-->
   </div>
-  <div class="card-body">
-    <h3>{{ room.name || 'Unnamed Room' }}</h3>
-    <p>{{ room.active_members || 0 }} People</p>
-    <button mat-stroked-button color="primary" (click)="goToChatRoom()">View</button>
-  </div>
-</div>
+
+  <mat-card-content>
+    <h3 class="room-title">{{ room.name|| 'Unnamed Room' }}</h3>
+    <p class="room-description">{{ room.description }}</p>
+  </mat-card-content>
+
+  <mat-card-actions class="room-footer">
+    <div class="participants">
+      <mat-icon>group</mat-icon>
+      <span>{{ room.active_members || 100 }} people </span>
+    </div>
+    <button mat-raised-button color="primary" (click)="goToChatRoom()">View</button>
+  </mat-card-actions>
+</mat-card>

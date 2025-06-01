@@ -2,10 +2,11 @@ import {Component, Input} from '@angular/core';
 import {MaterialModule} from '../../modules/material/material.module';
 import {ChatRoom} from '../../../Models/chat-room.model';
 import {Router} from '@angular/router';
+import {NgStyle} from '@angular/common';
 
 @Component({
   selector: 'app-card-room',
-  imports: [MaterialModule],
+  imports: [MaterialModule, NgStyle],
   standalone: true,
   templateUrl: './card-room.component.html',
   styleUrl: './card-room.component.css'
