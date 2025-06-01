@@ -38,7 +38,7 @@ import { MatChipsModule } from '@angular/material/chips';
 export class EventRoomPageComponent implements OnInit {
   searchTerm: string = '';
   selectedTag: string | null = null;
-  availableTags: string[] = ['Speaking', 'Vocabulary', 'Workshop', 'Debate'];
+  availableTags: string[] = ['Vocabulary', 'Workshop', 'Debate', 'Speaking'];
 
   allEvents: AppEvent[] = [];
   filteredEvents: AppEvent[] = [];
