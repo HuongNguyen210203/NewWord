@@ -4,26 +4,37 @@ import {
   OnDestroy
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RealtimeChannel } from '@supabase/supabase-js';
-
 import { supabase } from '../../../supabase.client';
 import { ChatRoom } from '../../../../Models/chat-room.model';
+import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 
 @Component({
   selector: 'app-room-chat-page',
   standalone: true,
   templateUrl: './room-chat-page.component.html',
   styleUrls: ['./room-chat-page.component.css'],
-  imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule, MatTooltip],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltip,
+    EmojiModule,
+    PickerComponent,
+  ],
 })
 export class RoomChatPageComponent implements OnInit, OnDestroy {
   sidebarOpen = true;
   inputMessage = '';
   isJoined = false;
+  showEmojiPicker = false;
+  selectedFile: File | null = null;
 
   chatRooms: (ChatRoom & {
     preview?: string;
@@ -35,38 +46,35 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
   })[] = [];
 
   activeRoom: any = null;
-  messages: { from: string; avatar: string; text: string; name: string }[] = [];
+  messages: {
+    id: string;
+    from: string;
+    avatar: string;
+    text: string;
+    name: string;
+    mediaUrl?: string;
+    mediaType?: 'image' | 'video';
+  }[] = [];
 
   private messageChannel: RealtimeChannel | null = null;
   private currentUserId: string | null = null;
   userAvatar: string = '/assets/images/avatar.png';
 
   async ngOnInit() {
-    // Lấy user đang đăng nhập
-    const { data: authData, error: authError } = await supabase.auth.getUser();
+    const { data: authData } = await supabase.auth.getUser();
     const userId = authData.user?.id;
-
-    if (!userId) {
-      console.error('❌ Không tìm thấy người dùng đăng nhập.');
-      return;
-    }
+    if (!userId) return;
 
     this.currentUserId = userId;
 
-    // 🔄 Lấy avatar từ bảng users thay vì user_metadata
-    const { data: userFromTable, error: userTableError } = await supabase
+    const { data: userFromTable } = await supabase
       .from('users')
       .select('avatar_url')
       .eq('id', this.currentUserId)
       .maybeSingle();
 
-    if (userTableError) {
-      console.warn('⚠️ Không thể lấy avatar từ bảng users:', userTableError.message);
-    }
-
     this.userAvatar = userFromTable?.avatar_url || '/assets/images/avatar.png';
 
-    // Lấy danh sách phòng từ localStorage
     const stored = JSON.parse(localStorage.getItem('viewedRooms') || '[]');
     this.chatRooms = stored.map((room: any) => ({
       ...room,
@@ -78,7 +86,6 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
       hover: false,
     }));
 
-    // Kiểm tra những phòng đã tham gia
     const { data: joinedRooms } = await supabase
       .from('room_participants')
       .select('room_id')
@@ -91,11 +98,202 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
       preview: joinedRoomIds.has(room.id) ? 'Bạn đã tham gia phòng' : 'Chưa có tin nhắn',
     }));
 
-    // Nếu điều hướng đến từ nơi khác có truyền room
     const roomFromNav = history.state?.room;
     if (roomFromNav) await this.addRoomAndSelect(roomFromNav);
+
+    document.addEventListener('click', this.closeEmojiOutside, true);
   }
 
+  ngOnDestroy() {
+    document.removeEventListener('click', this.closeEmojiOutside, true);
+    if (this.messageChannel) supabase.removeChannel(this.messageChannel);
+  }
+
+  toggleEmojiPicker(event: Event) {
+    event.stopPropagation();
+    this.showEmojiPicker = !this.showEmojiPicker;
+  }
+
+  closeEmojiOutside = (event: Event) => {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.emoji-wrapper') && !target.closest('.emoji-toggle-icon')) {
+      this.showEmojiPicker = false;
+    }
+  };
+
+  addEmoji(event: any) {
+    this.inputMessage += event.emoji.native;
+    setTimeout(() => {
+      const input = document.querySelector('.chat-input input') as HTMLInputElement;
+      input?.focus();
+    }, 50);
+  }
+
+  async sendMessage() {
+    const trimmed = this.inputMessage.trim();
+    const file = this.selectedFile;
+    const hasText = !!trimmed;
+    const hasFile = !!file;
+
+    if (!hasText && !hasFile) return;
+
+    let mediaUrl: string | undefined;
+    let mediaType: 'image' | 'video' | undefined;
+
+    if (hasFile) {
+      const ext = file.name.split('.').pop();
+      const filePath = `media/${Date.now()}_${Math.random().toString(36).substring(2)}.${ext}`;
+
+      const { error: uploadError } = await supabase
+        .storage
+        .from('chat-uploads')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        alert('❌ Upload thất bại: ' + uploadError.message);
+        return;
+      }
+
+      const { data } = supabase
+        .storage
+        .from('chat-uploads')
+        .getPublicUrl(filePath);
+
+      mediaUrl = data.publicUrl;
+      mediaType = file.type.startsWith('video/') ? 'video' : 'image';
+    }
+
+    const { error } = await supabase.from('messages').insert({
+      room_id: this.activeRoom.id,
+      sender_id: this.currentUserId,
+      content: trimmed || '',
+      media_type: mediaType || 'text',
+      media_url: mediaUrl || null,
+      sent_at: new Date().toISOString(),
+    });
+
+    if (!error) {
+      this.messages.push({
+        id: Date.now().toString(),
+        from: 'me',
+        avatar: this.userAvatar,
+        name: 'Bạn',
+        text: trimmed,
+        mediaType,
+        mediaUrl,
+      });
+
+      const index = this.chatRooms.findIndex(r => r.id === this.activeRoom.id);
+      if (index !== -1) {
+        this.chatRooms[index].preview = trimmed ? `Bạn: ${trimmed}` : `[Đã gửi ${mediaType}]`;
+        this.chatRooms[index].time = 'Vừa xong';
+      }
+
+      this.inputMessage = '';
+      this.selectedFile = null;
+      setTimeout(() => this.scrollToBottom(), 100);
+    }
+  }
+
+  async joinRoom() {
+    if (!this.activeRoom || !this.currentUserId) return alert('Vui lòng chọn một phòng.');
+
+    const { error } = await supabase
+      .from('room_participants')
+      .upsert(
+        { user_id: this.currentUserId, room_id: this.activeRoom.id },
+        { onConflict: 'user_id,room_id' }
+      );
+
+    if (!error) {
+      alert(`✅ Bạn đã tham gia phòng "${this.activeRoom.name}"`);
+      await this.selectRoom(this.activeRoom);
+    } else {
+      alert('❌ Tham gia phòng thất bại: ' + error.message);
+    }
+  }
+
+  async leaveRoom(event: Event, room: any) {
+    event.stopPropagation();
+    if (!this.currentUserId) return;
+
+    const confirmed = confirm(`Bạn có chắc muốn rời khỏi "${room.name}"?`);
+    if (!confirmed) return;
+
+    const { error } = await supabase
+      .from('room_participants')
+      .delete()
+      .match({ user_id: this.currentUserId, room_id: room.id });
+
+    if (!error) {
+      const index = this.chatRooms.findIndex(r => r.id === room.id);
+      if (index !== -1) {
+        this.chatRooms[index].joined = false;
+        this.chatRooms[index].preview = 'Bạn chưa tham gia phòng';
+        this.chatRooms[index].time = '';
+      }
+
+      if (this.activeRoom?.id === room.id) {
+        this.isJoined = false;
+        this.activeRoom.joined = false;
+        this.activeRoom.preview = 'Bạn chưa tham gia phòng';
+      }
+
+      const stored = JSON.parse(localStorage.getItem('viewedRooms') || '[]');
+      const updated = stored.filter((r: any) => r.id !== room.id);
+      localStorage.setItem('viewedRooms', JSON.stringify(updated));
+
+      alert(`🚪 Bạn đã rời khỏi phòng "${room.name}".`);
+    } else {
+      alert('❌ Lỗi khi rời phòng: ' + error.message);
+    }
+  }
+
+  removeRoom(roomId: string) {
+    this.chatRooms = this.chatRooms.filter(r => r.id !== roomId);
+
+    const stored = JSON.parse(localStorage.getItem('viewedRooms') || '[]');
+    const updated = stored.filter((r: any) => r.id !== roomId);
+    localStorage.setItem('viewedRooms', JSON.stringify(updated));
+
+    if (this.activeRoom?.id === roomId) {
+      this.activeRoom = null;
+      this.isJoined = false;
+      this.messages = [];
+    }
+
+    alert('✅ Đã xoá phòng khỏi danh sách Conversations.');
+  }
+
+
+  handleFileUpload(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    const fileType = file.type;
+
+    if (fileType.startsWith('image/')) {
+      this.selectedFile = file;
+    } else if (fileType.startsWith('video/')) {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.onloadedmetadata = () => {
+        URL.revokeObjectURL(video.src);
+        const duration = video.duration;
+        if (duration > 60) {
+          alert('❌ Video vượt quá 1 phút.');
+          return;
+        }
+        this.selectedFile = file;
+      };
+      video.src = URL.createObjectURL(file);
+    } else {
+      alert('❌ Chỉ hỗ trợ ảnh (JPG, PNG, GIF) và video (MP4, WebM)');
+    }
+
+    input.value = '';
+  }
 
   async addRoomAndSelect(room: any) {
     const { data: exists } = await supabase
@@ -146,15 +344,13 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
   }
 
   async loadMessages(roomId: string) {
-    const { data: messages, error } = await supabase
+    const { data: messages } = await supabase
       .from('messages')
       .select('*')
       .eq('room_id', roomId)
       .order('sent_at', { ascending: true });
 
-    if (error || !messages) return;
-
-    const senderIds = [...new Set(messages.map(m => m['sender_id']))];
+    const senderIds = [...new Set(messages!.map(m => m['sender_id']))];
     const { data: users } = await supabase
       .from('users')
       .select('id, avatar_url, name')
@@ -169,52 +365,21 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
       };
     });
 
-    this.messages = messages.map(msg => {
+    this.messages = messages!.map(msg => {
       const isMe = msg['sender_id'] === this.currentUserId;
       const sender = userMap[msg['sender_id']] || { avatar_url: defaultAvatar, name: 'Ẩn danh' };
       return {
+        id: msg['id'],
         from: isMe ? 'me' : 'other',
         avatar: isMe ? this.userAvatar : sender.avatar_url,
         name: isMe ? 'Bạn' : sender.name,
         text: msg['content'],
+        mediaUrl: msg['media_url'],
+        mediaType: msg['media_type'],
       };
     });
 
     setTimeout(() => this.scrollToBottom(), 100);
-  }
-
-  async sendMessage() {
-    const trimmed = this.inputMessage.trim();
-    if (!trimmed || !this.activeRoom || !this.currentUserId) return;
-
-    const { error } = await supabase.from('messages').insert({
-      room_id: this.activeRoom.id,
-      sender_id: this.currentUserId,
-      content: trimmed,
-      media_type: 'text',
-      media_url: null,
-      sent_at: new Date().toISOString(),
-    });
-
-    if (!error) {
-      this.messages.push({
-        from: 'me',
-        avatar: this.userAvatar,
-        name: 'Bạn',
-        text: trimmed,
-      });
-
-      const index = this.chatRooms.findIndex(r => r.id === this.activeRoom.id);
-      if (index !== -1) {
-        this.chatRooms[index].preview = `Bạn: ${trimmed}`;
-        this.chatRooms[index].time = 'Vừa xong';
-      }
-
-      this.inputMessage = '';
-      setTimeout(() => this.scrollToBottom(), 100);
-    } else {
-      console.error('❌ Gửi tin nhắn thất bại:', error.message);
-    }
   }
 
   subscribeToMessages(roomId: string) {
@@ -243,71 +408,19 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
             .single();
 
           this.messages.push({
+            id: msg['id'],
             from: 'other',
             avatar: user?.avatar_url || '/assets/images/avatar.png',
             name: user?.name || 'Ẩn danh',
             text: msg['content'],
+            mediaUrl: msg['media_url'],
+            mediaType: msg['media_type'],
           });
 
           setTimeout(() => this.scrollToBottom(), 100);
         }
       )
       .subscribe();
-  }
-
-  async joinRoom() {
-    if (!this.activeRoom || !this.currentUserId) return alert('Vui lòng chọn một phòng.');
-
-    const { error } = await supabase
-      .from('room_participants')
-      .upsert({ user_id: this.currentUserId, room_id: this.activeRoom.id }, { onConflict: 'user_id,room_id' });
-
-    if (!error) {
-      alert(`✅ Bạn đã tham gia phòng "${this.activeRoom.name}"`);
-      await this.selectRoom(this.activeRoom);
-    } else {
-      alert('❌ Tham gia phòng thất bại: ' + error.message);
-    }
-  }
-
-  async leaveRoom(event: Event, room: any) {
-    event.stopPropagation();
-    if (!this.currentUserId) return;
-
-    const confirmed = confirm(`Bạn có chắc muốn rời khỏi "${room.name}"?`);
-    if (!confirmed) return;
-
-    const { error } = await supabase
-      .from('room_participants')
-      .delete()
-      .match({
-        user_id: this.currentUserId,
-        room_id: room.id
-      });
-
-    if (!error) {
-      const index = this.chatRooms.findIndex(r => r.id === room.id);
-      if (index !== -1) {
-        this.chatRooms[index].joined = false;
-        this.chatRooms[index].preview = 'Bạn chưa tham gia phòng';
-        this.chatRooms[index].time = '';
-      }
-
-      if (this.activeRoom?.id === room.id) {
-        this.isJoined = false;
-        this.activeRoom.joined = false;
-        this.activeRoom.preview = 'Bạn chưa tham gia phòng';
-      }
-
-      // Xoá khỏi localStorage
-      const stored = JSON.parse(localStorage.getItem('viewedRooms') || '[]');
-      const updated = stored.filter((r: any) => r.id !== room.id);
-      localStorage.setItem('viewedRooms', JSON.stringify(updated));
-
-      await this.ngOnInit(); // Reload UI đúng preview
-    } else {
-      alert('❌ Rời phòng thất bại: ' + error.message);
-    }
   }
 
   scrollToBottom() {
@@ -322,29 +435,6 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
   sendSuggestion(text: string) {
     this.inputMessage = text;
     this.sendMessage();
-  }
-
-  removeRoom(roomId: string) {
-    // Xóa khỏi chatRooms hiển thị
-    this.chatRooms = this.chatRooms.filter(r => r.id !== roomId);
-
-    // Xóa khỏi localStorage
-    const stored = JSON.parse(localStorage.getItem('viewedRooms') || '[]');
-    const updated = stored.filter((r: any) => r.id !== roomId);
-    localStorage.setItem('viewedRooms', JSON.stringify(updated));
-
-    // Nếu phòng bị xóa là phòng đang mở, reset view
-    if (this.activeRoom?.id === roomId) {
-      this.activeRoom = null;
-      this.isJoined = false;
-      this.messages = [];
-    }
-
-    alert('✅ Đã xoá phòng khỏi danh sách Conversations.');
-  }
-
-  ngOnDestroy() {
-    if (this.messageChannel) supabase.removeChannel(this.messageChannel);
   }
 
   toggleSidebar() {

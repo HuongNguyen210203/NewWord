@@ -342,3 +342,14 @@
   background-color: #757575;
   color: white;
 }
+
+.chat-input-wrapper {
+  position: relative;
+}
+
+.emoji-wrapper {
+  position: absolute;
+  bottom: 56px; /* height of chat input + spacing */
+  left: 0;
+  z-index: 100;
+}
