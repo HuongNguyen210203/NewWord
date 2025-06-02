@@ -12,7 +12,7 @@ mat-card-image {
   height: 120px;
   width: 100%;
   object-fit: cover;
-  aspect-ratio: 4 / 3;    /* 🧠 Tạo tỉ lệ ảnh ngang cố định */
+  aspect-ratio: 4 / 3;
   display: block;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
@@ -81,7 +81,7 @@ mat-card-image {
   color: #666;
   line-height: 1.4;
   display: -webkit-box;
-  -webkit-line-clamp: 2;     /* 🔥 Hiển thị tối đa 2 dòng */
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;

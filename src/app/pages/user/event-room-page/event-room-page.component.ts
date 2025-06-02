@@ -15,6 +15,9 @@ import {AppEvent} from '../../../../Models/event.model';
 import {EventService} from '../../../../Services/event.service';
 import {MatChip} from '@angular/material/chips';
 import { MatChipsModule } from '@angular/material/chips';
+import {MatDialog} from '@angular/material/dialog';
+import {JoinEventDialogComponent} from '../../../dialog/join-event-dialog/join-event-dialog.component';
+import {CreateEventComponent} from '../../../dialog/create-event/create-event.component';
 
 
 @Component({
@@ -45,9 +48,12 @@ export class EventRoomPageComponent implements OnInit {
   pagedEvents: AppEvent[] = [];
 
   currentPage: number = 0;
-  cardsPerPage: number = 12;
+  cardsPerPage: number = 8;
 
-  constructor(private eventService: EventService) {}
+  constructor(
+    private eventService: EventService,
+    private dialog: MatDialog
+  ) {}
 
   async ngOnInit(): Promise<void> {
     this.allEvents = await this.eventService.getAllEvents();
@@ -88,4 +94,33 @@ export class EventRoomPageComponent implements OnInit {
     const end = start + this.cardsPerPage;
     this.pagedEvents = this.filteredEvents.slice(start, end);
   }
+
+  openDialog(card: any): void {
+    this.dialog.open(JoinEventDialogComponent, {
+      width: '500px',
+      data: {
+        title: card.title,
+        imageUrl: card.image_url,
+        description: card.description,
+        date: card.start_time
+      }
+    });
+  }
+
+  async reloadEvents(): Promise<void> {
+    this.allEvents = await this.eventService.getAllEvents();
+    this.applyFilter();
+  }
+
+
+  openCreateDialog(): void {
+    const dialogRef = this.dialog.open(CreateEventComponent, {
+      width: '600px',
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.reloadEvents(); // làm mới sự kiện nếu có sự thay đổi
+    });
+  }
+
 }
