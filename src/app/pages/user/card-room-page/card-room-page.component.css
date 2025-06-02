@@ -28,6 +28,7 @@
 
 .toolbar-left {
   display: flex;
+  justify-content: flex-start;
   align-items: center;
   gap: 12px;
   flex: 1 1 auto;
@@ -39,7 +40,7 @@
   font-size: 22px;
   font-weight: bold;
   white-space: nowrap;
-  margin: 0;
+  margin-right: 2%;
 }
 
 .chip-row {
@@ -211,3 +212,35 @@
     width: 100px;
   }
 }
+
+
+.back-button {
+  width: 64px;
+  height: 64px;
+  font-size: 48px;       /* icon lớn */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  border-radius: 50%;
+  margin-right: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.back-button mat-icon {
+  width: 32px;
+  height: 32px;
+  font-size: 32px;       /* icon lớn */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+
