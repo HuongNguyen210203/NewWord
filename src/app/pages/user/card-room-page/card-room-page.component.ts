@@ -15,6 +15,7 @@ import {MatChip} from '@angular/material/chips';
 import {ChatService} from '../../../../Services/chat.service';
 import {MatDialog} from '@angular/material/dialog';
 import {CreateRoomComponent} from '../../../dialog/create-room/create-room.component';
+import {MatTooltip} from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-card-room-page',
@@ -32,10 +33,9 @@ import {CreateRoomComponent} from '../../../dialog/create-room/create-room.compo
     MatPaginatorModule,
     MatButtonModule,
     MatChip,
+    MatTooltip,
   ]
 })
-
-
 
 export class CardRoomPageComponent implements OnInit {
   rooms: ChatRoom[] = [];
@@ -107,4 +107,7 @@ export class CardRoomPageComponent implements OnInit {
     });
   }
 
+  goHome() {
+    this.router.navigate(['/home']);
+  }
 }

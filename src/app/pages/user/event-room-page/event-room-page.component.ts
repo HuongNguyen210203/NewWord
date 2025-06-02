@@ -16,6 +16,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import {MatDialog} from '@angular/material/dialog';
 import {JoinEventDialogComponent} from '../../../dialog/join-event-dialog/join-event-dialog.component';
 import {CreateEventComponent} from '../../../dialog/create-event/create-event.component';
+import {Router} from '@angular/router';
+import {MatTooltip} from '@angular/material/tooltip';
 
 
 @Component({
@@ -33,7 +35,8 @@ import {CreateEventComponent} from '../../../dialog/create-event/create-event.co
     MatCardModule,
     MatPaginatorModule,
     MatButtonModule,
-    MatChipsModule
+    MatChipsModule,
+    MatTooltip
   ]
 })
 export class EventRoomPageComponent implements OnInit {
@@ -50,7 +53,8 @@ export class EventRoomPageComponent implements OnInit {
 
   constructor(
     private eventService: EventService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -119,5 +123,7 @@ export class EventRoomPageComponent implements OnInit {
       this.reloadEvents(); // làm mới sự kiện nếu có sự thay đổi
     });
   }
-
+  goHome() {
+    this.router.navigate(['/home']);
+  }
 }

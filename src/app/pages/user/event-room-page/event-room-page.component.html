@@ -2,7 +2,10 @@
 <div class="page-wrapper">
   <div class="toolbar">
     <div class="toolbar-left">
-      <h2>⭐ Event</h2>
+        <button mat-icon-button (click)="goHome()" matTooltip="Back to Home">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+      <h2>Event</h2>
       <div class="chip-row">
         <mat-chip *ngFor="let tag of availableTags"
                   (click)="filterByTag(tag)"
