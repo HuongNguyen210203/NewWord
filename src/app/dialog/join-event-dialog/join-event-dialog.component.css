@@ -1,0 +1,46 @@
+.btn-cancel {
+  background-color: #d32f2f;  /* màu đỏ của Material 'warn' */
+  color: white;
+}
+
+.btn-cancel:hover {
+  background-color: #b71c1c;
+}
+
+.btn-signup {
+  background-color: #4CAF50;  /* màu xanh của Material 'primary' */
+  color: white;
+}
+
+.btn-signup:hover {
+  background-color: #388E3C;
+}
+
+.full-slot {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+.available-slot {
+  color: #388e3c;
+  font-weight: bold;
+}
+
+.btn-cancel {
+  background-color: #d32f2f;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background-color: #b71c1c;
+}
+
+.btn-signup {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.btn-signup:hover {
+  background-color: #388E3C;
+}
+

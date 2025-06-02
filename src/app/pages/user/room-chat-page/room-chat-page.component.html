@@ -28,6 +28,17 @@
                   <mat-icon>close</mat-icon>
                 </button>
               }
+              @if (!room.joined) {
+                <button
+                  class="remove-btn"
+                  mat-icon-button
+                  matTooltip="Xoá khỏi danh sách"
+                  (click)="removeRoom(room.id)"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              }
+
             </div>
           }
         </div>
@@ -99,7 +110,7 @@
     } @else {
       <div class="chat-content-wrapper no-room">
         <p class="no-room-text">
-          Vui lòng chọn một phòng để bắt đầu trò chuyện
+          Please select a room to start chatting
         </p>
       </div>
     }

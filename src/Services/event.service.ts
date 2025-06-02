@@ -83,4 +83,38 @@ export class EventService {
     if (error) throw error;
     return data;
   }
+  // ✅ Tham gia sự kiện
+  async joinEvent(userId: string, eventId: string): Promise<void> {
+    const { error } = await supabase.from('event_participants').insert({
+      user_id: userId,
+      event_id: eventId,
+      registered_at: new Date().toISOString(),
+    });
+
+    if (error) throw error;
+  }
+
+// ✅ Hủy tham gia sự kiện
+  async leaveEvent(userId: string, eventId: string): Promise<void> {
+    const { error } = await supabase
+      .from('event_participants')
+      .delete()
+      .match({ user_id: userId, event_id: eventId });
+
+    if (error) throw error;
+  }
+
+// ✅ Kiểm tra người dùng đã tham gia sự kiện chưa
+  async hasJoined(userId: string, eventId: string): Promise<boolean> {
+    const { data, error } = await supabase
+      .from('event_participants')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('event_id', eventId)
+      .maybeSingle();
+
+    if (error) throw error;
+    return !!data;
+  }
+
 }
