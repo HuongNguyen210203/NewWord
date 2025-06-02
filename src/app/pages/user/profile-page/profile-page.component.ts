@@ -13,6 +13,7 @@ import {EventService} from '../../../../Services/event.service';
 import {ChatService} from '../../../../Services/chat.service';
 import {AppEvent} from '../../../../Models/event.model';
 import {ChatRoom} from '../../../../Models/chat-room.model';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-profile-page',
@@ -39,6 +40,7 @@ export class ProfilePageComponent implements OnInit {
     private userService: UserService,
     private eventService: EventService,
     private chatService: ChatService,
+    private router: Router,
   ) {}
 
   async ngOnInit() {
@@ -115,4 +117,13 @@ export class ProfilePageComponent implements OnInit {
   scrollRight(container: HTMLElement) {
     container.scrollBy({ left: 300, behavior: 'smooth' });
   }
+
+  goToEventPage() {
+    this.router.navigate(['/home/event-room-page']);
+  }
+
+  goToRoomPage() {
+    this.router.navigate(['/home/card-room']);
+  }
+
 }
