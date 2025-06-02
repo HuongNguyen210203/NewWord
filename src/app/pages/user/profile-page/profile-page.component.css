@@ -182,3 +182,16 @@ html, body {
   background-color: #2e7d32;
   color: white;
 }
+
+.empty-message {
+  display: flex;
+  align-items: center;       /* căn giữa theo chiều dọc */
+  justify-content: center;   /* căn giữa theo chiều ngang */
+  height: 140px;             /* hoặc auto nếu bạn dùng padding thay vì fixed height */
+  font-size: 1.2rem;         /* chữ to hơn */
+  font-style: italic;
+  color: #444;
+  text-align: center;
+  width: 100%;
+  gap: 12px;
+}

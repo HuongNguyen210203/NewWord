@@ -6,7 +6,6 @@ import {AppEvent} from '../../../../Models/event.model';
 import {EventService} from '../../../../Services/event.service';
 import {ChatService} from '../../../../Services/chat.service';
 import {MatButton} from '@angular/material/button';
-import {NgForOf} from '@angular/common';
 import {Router} from '@angular/router';
 
 @Component({
@@ -16,7 +15,6 @@ import {Router} from '@angular/router';
     CardEventComponent,
     CardRoomComponent,
     MatButton,
-    NgForOf,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
@@ -39,7 +37,6 @@ export class HomeComponent implements OnInit {
     this.rooms = await this.chatService.getAllRooms();
     this.events = await this.eventService.getAllEvents();
     console.log('[EVENTS]', this.events);
-
   }
 
   @ViewChild('eventScroll') eventScroll!: ElementRef;
@@ -55,10 +52,10 @@ export class HomeComponent implements OnInit {
     container.scrollBy({ left: 240, behavior: 'smooth' });
   }
   goToEventPage() {
-    this.router.navigate(['/event-room-page']);
+    this.router.navigate(['/home/event-room-page']);
   }
 
   goToRoomPage() {
-    this.router.navigate(['/card-room']);
+    this.router.navigate(['/home/card-room']);
   }
 }

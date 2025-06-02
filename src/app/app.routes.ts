@@ -26,11 +26,16 @@ export const routes: Routes = [
     path: '',
     component: UserLayoutComponent,
     children: [
-      { path: 'home', component: HomeComponent },
+      {
+        path: 'home',
+        children: [
+          { path: '', component: HomeComponent },
+          { path: 'event-room-page', component: EventRoomPageComponent },
+          { path: 'card-room', component: CardRoomPageComponent }
+        ]
+      },
       { path: 'profile', component: ProfilePageComponent },
       { path: 'chat', component: RoomChatPageComponent },
-      { path: 'card-room', component: CardRoomPageComponent },
-      { path: 'event-room-page', component: EventRoomPageComponent },
       { path: 'create-room', component: CreateRoomComponent },
       { path: 'create-event', component: CreateEventComponent },
     ]

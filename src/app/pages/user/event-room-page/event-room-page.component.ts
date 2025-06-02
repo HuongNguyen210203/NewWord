@@ -9,11 +9,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 
-import { TopbarComponent } from '../../../components/topbar/topbar.component';
-import { SidebarComponent } from '../../../components/sidebar/sidebar.component';
+
 import {AppEvent} from '../../../../Models/event.model';
 import {EventService} from '../../../../Services/event.service';
-import {MatChip} from '@angular/material/chips';
 import { MatChipsModule } from '@angular/material/chips';
 import {MatDialog} from '@angular/material/dialog';
 import {JoinEventDialogComponent} from '../../../dialog/join-event-dialog/join-event-dialog.component';
@@ -95,14 +93,13 @@ export class EventRoomPageComponent implements OnInit {
     this.pagedEvents = this.filteredEvents.slice(start, end);
   }
 
-  openDialog(card: any): void {
+  openDialog(card: AppEvent): void {
     this.dialog.open(JoinEventDialogComponent, {
       width: '500px',
       data: {
-        title: card.title,
-        imageUrl: card.image_url,
-        description: card.description,
-        date: card.start_time
+        ...card,
+        imageUrl: card.image_url || 'https://via.placeholder.com/300x200?text=No+Image',
+        date: card.start_time  // 👈 Đảm bảo date được truyền
       }
     });
   }

@@ -9,6 +9,10 @@ import { ChangeAvatarDialogComponent } from './change-avatar-dialog/change-avata
 import {supabase} from '../../../supabase.client';
 import {UserService} from '../../../../Services/user.service';
 import {FormsModule} from '@angular/forms';
+import {EventService} from '../../../../Services/event.service';
+import {ChatService} from '../../../../Services/chat.service';
+import {AppEvent} from '../../../../Models/event.model';
+import {ChatRoom} from '../../../../Models/chat-room.model';
 
 @Component({
   selector: 'app-profile-page',
@@ -25,54 +29,20 @@ import {FormsModule} from '@angular/forms';
 })
 export class ProfilePageComponent implements OnInit {
   user!: User;
-
   eventSearch: string = '';
   roomSearch: string = '';
-
-  events = [
-    {
-      id: 'e1',
-      title: 'Bay cho',
-      image: 'https://i.ibb.co/0Kkz9C6/event1.jpg',
-    },
-    {
-      id: 'e2',
-      title: 'Miku',
-      image: 'https://i.ibb.co/WDWS2yH/event2.jpg',
-    },
-    {
-      id: 'e3',
-      title: 'Ohana is family',
-      image: 'https://i.ibb.co/0htQv7G/event3.jpg',
-    },
-  ];
-
-  rooms = [
-    {
-      id: 'r1',
-      name: 'English class',
-      image: 'https://i.ibb.co/Y8bnVkn/room1.jpg',
-    },
-    {
-      id: 'r2',
-      name: 'Meo Room',
-      image: 'https://i.ibb.co/ZLzLS7c/room2.jpg',
-    },
-    {
-      id: 'r3',
-      name: 'Chim Loi',
-      image: 'https://i.ibb.co/VxTL6f1/room3.jpg',
-    },
-  ];
+  events: AppEvent[] = [];
+  rooms: ChatRoom[] = [];
 
   constructor(
     private dialog: MatDialog,
-    private userService: UserService
+    private userService: UserService,
+    private eventService: EventService,
+    private chatService: ChatService,
   ) {}
 
   async ngOnInit() {
     const { data: authData, error } = await supabase.auth.getUser();
-
     if (error || !authData.user) {
       console.error('❌ Không tìm thấy người dùng đăng nhập:', error);
       return;
@@ -84,6 +54,22 @@ export class ProfilePageComponent implements OnInit {
 
     if (currentUser) {
       this.user = currentUser;
+
+      // ✅ Lấy các event mà user đã tham gia
+      const { data: joinedEvents, error: eventErr } = await supabase
+        .from('event_participants')
+        .select('event_id, events(*)')
+        .eq('user_id', uid);
+
+      this.events = (joinedEvents || []).map((item: any) => item.events);
+
+      // ✅ Lấy các room mà user đã tham gia
+      const { data: joinedRooms, error: roomErr } = await supabase
+        .from('room_participants')
+        .select('room_id, chat_rooms(*)')
+        .eq('user_id', uid);
+
+      this.rooms = (joinedRooms || []).map((item: any) => item.chat_rooms);
     } else {
       console.error('❌ Không tìm thấy thông tin người dùng trong bảng users');
     }

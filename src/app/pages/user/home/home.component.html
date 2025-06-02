@@ -9,7 +9,9 @@
     <button class="scroll-btn left" (click)="scrollLeft('room')">❮</button>
 
     <div class="card-list" #roomScroll>
-      <app-card-room *ngFor="let room of rooms" [room]="room"></app-card-room>
+      @for (room of rooms; track room.id) {
+        <app-card-room [room]="room" />
+      }
     </div>
 
     <button class="scroll-btn right" (click)="scrollRight('room')">❯</button>
@@ -26,14 +28,9 @@
     <button class="scroll-btn left" (click)="scrollLeft('event')">❮</button>
 
     <div class="card-list" #eventScroll>
-      <app-card-event
-        *ngFor="let event of events"
-        [title]="event.title"
-        [description]="event.description"
-        [date]="event.start_time"
-        [imageUrl]="event.image_url ?? ''"
-      ></app-card-event>
-
+      @for (e of events; track e.id) {
+        <app-card-event [event]="e" />
+      }
     </div>
 
     <button class="scroll-btn right" (click)="scrollRight('event')">❯</button>

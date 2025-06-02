@@ -313,3 +313,32 @@
   padding: 24px;
   text-align: center;
 }
+.remove-btn {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  border: none;
+  padding: 0;
+}
+
+.chat-item:hover .remove-btn {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.remove-btn:hover {
+  background-color: #757575;
+  color: white;
+}

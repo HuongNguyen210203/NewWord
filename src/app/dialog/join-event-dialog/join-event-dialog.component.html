@@ -1,13 +1,39 @@
 <h2 mat-dialog-title>{{ data.title }}</h2>
 
 <mat-dialog-content>
-  <img [src]="data.imageUrl" style="width: 100%; margin-bottom: 12px;" alt="event image">
-  <p><strong>Date:</strong> {{ data.date | date:'fullDate' }}</p>
+  <img
+    [src]="data.image_url || 'https://via.placeholder.com/600x300?text=No+Image'"
+    style="width: 100%; margin-bottom: 12px;"
+    alt="event image"
+  />
+
+
+  <p>
+    <strong>Date:</strong> {{ data.start_time | date:'fullDate' }}
+    &nbsp;•&nbsp;
+    <span
+      [ngClass]="{
+        'full-slot': (data.current_participants || 0) >= (data.max_participants || 0),
+        'available-slot': (data.current_participants || 0) < (data.max_participants || 0)
+      }"
+    >
+      <strong>Participants:</strong>
+      {{ data.current_participants || 0 }} / {{ data.max_participants || 0 }}
+    </span>
+  </p>
+
   <p>{{ data.description }}</p>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Close</button>
-  <button mat-raised-button color="primary">Sign up</button>
-</mat-dialog-actions>
+  <button mat-stroked-button mat-dialog-close>Close</button>
 
+  <button
+    mat-flat-button
+    [ngClass]="hasJoined ? 'btn-cancel' : 'btn-signup'"
+    (click)="toggleRegistration()"
+    [disabled]="loading"
+  >
+    {{ loading ? 'Processing...' : (hasJoined ? 'Cancel' : 'Sign up') }}
+  </button>
+</mat-dialog-actions>
