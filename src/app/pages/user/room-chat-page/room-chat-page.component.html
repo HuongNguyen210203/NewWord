@@ -1,51 +1,43 @@
 <div class="chat-wrapper">
   <main class="chat-main">
-    <!-- SIDEBAR: Conversations -->
+    <!-- SIDEBAR -->
     <aside class="chat-room-list">
       <h3>Conversations</h3>
-      <div class="chat-list">
-        <div class="chat-scroll">
-          @for (room of chatRooms; track room.id) {
-            <div
-              class="chat-item"
-              [class.active]="room.active"
-              (click)="selectRoom(room)"
-            >
-              <img [src]="room.avatar" class="avatar" (error)="onImgError($event)" />
-              <div class="chat-info">
-                <div class="name">{{ room.name }}</div>
-                <div class="preview">{{ room.preview }}</div>
-              </div>
-              <div class="time">{{ room.time }}</div>
-
-              @if (room.joined) {
-                <button
-                  class="leave-btn"
-                  mat-icon-button
-                  matTooltip="Rời phòng"
-                  (click)="leaveRoom($event, room)"
-                >
-                  <mat-icon>close</mat-icon>
-                </button>
-              }
-              @if (!room.joined) {
-                <button
-                  class="remove-btn"
-                  mat-icon-button
-                  matTooltip="Xoá khỏi danh sách"
-                  (click)="removeRoom(room.id)"
-                >
-                  <mat-icon>delete</mat-icon>
-                </button>
-              }
-
+      <div class="chat-scroll">
+        @for (room of chatRooms; track room.id) {
+          <div class="chat-item" [class.active]="room.active" (click)="selectRoom(room)">
+            <img [src]="room.avatar" class="avatar" (error)="onImgError($event)" />
+            <div class="chat-info">
+              <div class="name">{{ room.name }}</div>
+              <div class="preview">{{ room.preview }}</div>
             </div>
-          }
-        </div>
+            <div class="time">{{ room.time }}</div>
+
+            @if (room.joined) {
+              <button
+                mat-icon-button
+                class="leave-btn"
+                matTooltip="Leave room"
+                (click)="leaveRoom($event, room)"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            } @else {
+              <button
+                mat-icon-button
+                class="remove-btn"
+                matTooltip="Remove from list"
+                (click)="removeRoom(room.id)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </div>
+        }
       </div>
     </aside>
 
-    <!-- MAIN CHAT SECTION -->
+    <!-- MAIN CHAT -->
     @if (activeRoom) {
       <section class="chat-content-wrapper">
         <!-- HEADER -->
@@ -56,44 +48,78 @@
             (error)="onImgError($event)"
           />
           <span class="chat-header-name">
-            {{ activeRoom?.name || 'Chọn cuộc trò chuyện' }}
+            {{ activeRoom?.name || 'Select a conversation' }}
           </span>
         </div>
 
-        <!-- CHAT CONTENT -->
+        <!-- MESSAGES -->
         <div class="chat-content">
-          @for (msg of messages; track msg.text) {
-            <div
-              class="message"
-              [ngClass]="msg.from === 'me' ? 'right' : 'left'"
-            >
-              <img
-                class="msg-avatar"
-                [src]="msg.avatar"
-                alt="avatar"
-                (error)="onImgError($event)"
-              />
+          @for (msg of messages; track msg.id) {
+            <div class="message" [ngClass]="msg.from === 'me' ? 'right' : 'left'">
+              <img class="msg-avatar" [src]="msg.avatar" alt="avatar" (error)="onImgError($event)" />
               <div class="bubble-wrapper">
                 <div class="msg-name">{{ msg.name }}</div>
-                <div class="bubble">{{ msg.text }}</div>
+                <div class="bubble">
+                  @if (msg.mediaType === 'image' && msg.mediaUrl) {
+                    <img [src]="msg.mediaUrl" alt="ảnh gửi"
+                         style="max-width: 240px; border-radius: 8px;" />
+                  } @else if (msg.mediaType === 'video' && msg.mediaUrl) {
+                    <video [src]="msg.mediaUrl" controls
+                           style="max-width: 240px; border-radius: 8px;"></video>
+                  } @else {
+                    {{ msg.text }}
+                  }
+                </div>
               </div>
             </div>
           }
         </div>
 
-        <!-- JOIN OR INPUT -->
+        <!-- CHAT INPUT -->
         @if (isJoined) {
-          <div class="chat-input">
-            <mat-icon class="icon">add</mat-icon>
-            <mat-icon class="icon">sentiment_satisfied</mat-icon>
-            <input
-              type="text"
-              [(ngModel)]="inputMessage"
-              placeholder="Aa"
-              (keyup.enter)="sendMessage()"
-            />
-            <mat-icon class="icon" (click)="sendMessage()">mic</mat-icon>
-          </div>
+          <div class="chat-input-wrapper">
+            <div class="chat-input">
+              <label class="icon upload-icon" matTooltip="Tải ảnh hoặc video (≤ 1 phút)">
+                <mat-icon>add</mat-icon>
+                <input
+                  type="file"
+                  accept="image/*,video/mp4,video/webm"
+                  hidden
+                  (change)="handleFileUpload($event)"
+                />
+              </label>
+              <mat-icon
+                class="icon emoji-toggle-icon"
+                (click)="toggleEmojiPicker($event)"
+                matTooltip="Chọn biểu cảm"
+              >sentiment_satisfied</mat-icon>
+
+              <input
+                type="text"
+                [(ngModel)]="inputMessage"
+                placeholder="Aa"
+                (keyup.enter)="sendMessage()"
+              />
+
+              <mat-icon class="icon" (click)="sendMessage()">send</mat-icon>
+            </div>
+
+            <!-- EMOJI PICKER -->
+            @if (showEmojiPicker) {
+              <div class="emoji-wrapper" (click)="$event.stopPropagation()">
+                <emoji-mart
+                  title="Pick your emoji…"
+                  emoji="point_up"
+                  [darkMode]="false"
+                  [color]="'#4caf50'"
+                  [perLine]="8"
+                  [emojiSize]="28"
+                  [style]="{ width: '340px' }"
+                  (emojiClick)="addEmoji($event)"
+                ></emoji-mart>
+              </div>
+            }
+            </div>
         } @else {
           <div class="join-chat-box">
             <button
