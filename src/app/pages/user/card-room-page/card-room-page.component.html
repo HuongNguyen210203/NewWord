@@ -1,7 +1,7 @@
 <div class="page-wrapper">
   <div class="toolbar">
     <div class="toolbar-left">
-      <h2>⭐ Rooms</h2>
+      <h2>⭐ Discussion</h2>
       <div class="chip-row">
         <mat-chip *ngFor="let label of availableLabels"
                   (click)="filterByLabel(label)"
@@ -19,7 +19,7 @@
 
       <div class="search-bar">
         <mat-icon>search</mat-icon>
-        <input [(ngModel)]="searchTerm" (input)="applyFilter()" placeholder="Search rooms..." />
+        <input [(ngModel)]="searchTerm" (input)="applyFilter()" placeholder="Search Discussions..." />
       </div>
     </div>
   </div>
