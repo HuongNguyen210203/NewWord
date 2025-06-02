@@ -54,7 +54,7 @@ export class EventRoomPageComponent implements OnInit {
   constructor(
     private eventService: EventService,
     private dialog: MatDialog,
-    private router: Router
+    private router : Router
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -123,7 +123,9 @@ export class EventRoomPageComponent implements OnInit {
       this.reloadEvents(); // làm mới sự kiện nếu có sự thay đổi
     });
   }
-  goHome() {
-    this.router.navigate(['/home']);
+
+  goBack() {
+    this.router.navigate(['/home']); // hoặc '/' tùy route chính
   }
+
 }

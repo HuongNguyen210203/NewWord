@@ -37,6 +37,8 @@ import {MatTooltip} from '@angular/material/tooltip';
   ]
 })
 
+
+
 export class CardRoomPageComponent implements OnInit {
   rooms: ChatRoom[] = [];
   filteredRooms: ChatRoom[] = [];
@@ -107,7 +109,7 @@ export class CardRoomPageComponent implements OnInit {
     });
   }
 
-  goHome() {
-    this.router.navigate(['/home']);
+  goBack() {
+    this.router.navigate(['/home']); // hoặc '/' tùy route chính
   }
 }
