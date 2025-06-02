@@ -25,4 +25,5 @@ import {MatButton} from '@angular/material/button';
 })
 export class JoinEventDialogComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
+
 }

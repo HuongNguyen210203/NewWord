@@ -57,4 +57,8 @@ export class HomeComponent implements OnInit {
   goToEventPage() {
     this.router.navigate(['/event-room-page']);
   }
+
+  goToRoomPage() {
+    this.router.navigate(['/card-room']);
+  }
 }

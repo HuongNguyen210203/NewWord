@@ -2,7 +2,7 @@
 <section class="section">
   <div class="section-header">
     <h2>Discussion</h2>
-    <button mat-button class="see-more">See more</button>
+    <button mat-button class="see-more" (click)="goToRoomPage()">See more</button>
   </div>
 
   <div class="scroll-wrapper">
@@ -22,7 +22,6 @@
     <h2>Event</h2>
     <button mat-button class="see-more" (click)="goToEventPage()">See more</button>
   </div>
-
   <div class="scroll-wrapper">
     <button class="scroll-btn left" (click)="scrollLeft('event')">❮</button>
 
