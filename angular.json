@@ -30,7 +30,8 @@
             ],
             "styles": [
               "src/custom-theme.scss",
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/@ctrl/ngx-emoji-mart/picker.css"
             ],
             "stylePreprocessorOptions": {
               "includePaths": ["src"]
@@ -94,7 +95,8 @@
             ],
             "styles": [
               "src/custom-theme.scss",
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/@ctrl/ngx-emoji-mart/picker.css"
             ],
             "stylePreprocessorOptions": {
               "includePaths": ["src"]
