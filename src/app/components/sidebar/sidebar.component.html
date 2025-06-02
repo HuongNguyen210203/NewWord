@@ -5,10 +5,8 @@
         <a
           [routerLink]="item.route"
           routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          class="menu-item"
-          [class.active]="activeItem === item.route"
-          (click)="setActive(item.route)">
+          [routerLinkActiveOptions]="{ exact: false }"
+          class="menu-item">
           <mat-icon>{{ item.icon }}</mat-icon>
           @if (open) {
             <span class="menu-text">{{ item.label }}</span>
