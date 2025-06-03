@@ -23,10 +23,15 @@ export class CardEventComponent {
 
   openDialog() {
     this.dialog.open(JoinEventDialogComponent, {
+      width: '500px',
       data: {
-        ...this.event
-      },
-      width: '500px'
+        id: this.event.id,
+        title: this.event.title,
+        description: this.event.description,
+        image_url: this.event.image_url,
+        start_time: this.event.start_time,
+        max_participants: this.event.max_participants,
+      }
     });
   }
 
