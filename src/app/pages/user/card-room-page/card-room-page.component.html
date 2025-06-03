@@ -1,10 +1,17 @@
 <div class="page-wrapper">
   <div class="toolbar">
     <div class="toolbar-left">
+<<<<<<< HEAD
+      <button mat-icon-button (click)="goBack()" class="back-button" matTooltip="Back">
+        <mat-icon fontIcon="chevron_left"></mat-icon>
+      </button>
+      <h2>Discussion</h2>
+=======
         <button mat-icon-button (click)="goBack()" class="back-button" matTooltip="Back">
           <mat-icon fontIcon="chevron_left"></mat-icon>
         </button>
         <h2>Discussion</h2>
+>>>>>>> c9b97dcd0aff96390d97d08a53cd5f02863c08d1
       <div class="chip-row">
         <mat-chip *ngFor="let label of availableLabels"
                   (click)="filterByLabel(label)"
