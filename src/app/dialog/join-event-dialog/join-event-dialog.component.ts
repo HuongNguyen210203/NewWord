@@ -43,7 +43,7 @@ export class JoinEventDialogComponent implements OnInit {
       .eq('event_id', this.data.id);
 
     if (!error) {
-      this.data.current_participants = count || 0;
+      this.data.current_participants = count ?? 0;
     } else {
       console.warn('⚠️ Không thể lấy số người tham gia:', error.message);
       this.data.current_participants = 0;
