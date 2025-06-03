@@ -7,29 +7,15 @@ export class EventService {
   async getAllEvents(): Promise<AppEvent[]> {
     const { data: events, error } = await supabase
       .from('events')
-      .select('*');
+      .select('*')
+      .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('❌ Lỗi khi lấy danh sách sự kiện:', error);
-      return [];
-    }
+    if (error) throw error;
 
-    return await Promise.all(events.map(async (event: any) => {
-      const { count, error: countError } = await supabase
-        .from('event_participants')
-        .select('id', { count: 'exact', head: true })
-        .eq('event_id', event.id);
-
-      if (countError) {
-        console.error(`❌ Lỗi khi đếm participants của event ${event.id}:`, countError);
-      }
-
-      return {
-        ...event,
-        current_participants: count || 0
-      } as AppEvent;
-    }));
+    return events as AppEvent[];
   }
+
+
 
   // ✅ Tạo một sự kiện mới
   async createEvent(event: Omit<AppEvent, 'id' | 'created_at'>): Promise<AppEvent> {

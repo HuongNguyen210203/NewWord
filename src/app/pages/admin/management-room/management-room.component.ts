@@ -87,23 +87,17 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
   }
 
   async loadRoomsFromSupabase() {
-    const { data, error } = await supabase
-      .from('chat_rooms')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Lỗi khi tải phòng:', error);
-      return;
+    try {
+      const rooms = await this.chatService.getAllRooms();
+      this.dataSource.data = rooms.map(room => ({
+        ...room,
+        created_at: new Date(room.created_at || ''),
+      }));
+    } catch (error) {
+      console.error('Lỗi khi tải danh sách phòng:', error);
     }
-
-    this.dataSource.data = (data || []).map(room => ({
-      ...room,
-      image: room.image_url,
-      createdAt: new Date(room.created_at),
-      members: room.members ?? 0
-    }));
   }
+
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
@@ -117,7 +111,7 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const updatedData = [result, ...this.dataSource.data];
-        updatedData.sort((a, b) => +b.createdAt - +a.createdAt);
+        updatedData.sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
         this.dataSource.data = updatedData;
       }
     });

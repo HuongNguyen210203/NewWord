@@ -30,6 +30,8 @@ export class ChatService {
 
     return (rooms || []).map(room => ({
       ...room,
+      image: room.image_url,
+      createdAt: room.created_at,
       members: countMap.get(room.id) || 0
     }));
   }
@@ -101,15 +103,34 @@ export class ChatService {
   }
 
   async joinRoom(roomId: string, userId: string): Promise<boolean> {
-    const { error } = await supabase.from('room_participants').insert([
-      {
+    // Bước 1: Xoá nếu user đã tham gia để tránh lỗi unique
+    const { error: deleteError } = await supabase
+      .from('room_participants')
+      .delete()
+      .match({ room_id: roomId, user_id: userId });
+
+    if (deleteError) {
+      console.warn('⚠ Không thể xóa bản ghi cũ (nếu có):', deleteError.message);
+      // Không return false ở đây vì có thể bản ghi không tồn tại — điều đó vẫn ổn
+    }
+
+    // Bước 2: Insert lại bản ghi mới (trigger sẽ chạy chắc chắn)
+    const { error: insertError } = await supabase
+      .from('room_participants')
+      .insert({
         room_id: roomId,
         user_id: userId,
-        joined_at: new Date().toISOString()
-      }
-    ]);
-    return !error;
+        joined_at: new Date().toISOString(),
+      });
+
+    if (insertError) {
+      console.error('❌ Tham gia phòng thất bại:', insertError.message);
+      return false;
+    }
+
+    return true;
   }
+
 
   // ========= Message logic =========
   async getMessages(roomId: string): Promise<Message[]> {

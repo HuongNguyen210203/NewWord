@@ -34,8 +34,6 @@ import {MatSlideToggle} from '@angular/material/slide-toggle';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    TopbarComponent,
-    SidebarComponent,
     MatSlideToggle,
   ]
 })

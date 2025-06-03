@@ -1,9 +1,16 @@
-import { Component, Input, OnChanges } from '@angular/core';
-import { MaterialModule } from '../../modules/material/material.module';
-import { ChatRoom } from '../../../Models/chat-room.model';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnChanges,
+  OnDestroy,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { NgStyle } from '@angular/common';
+import { ChatRoom } from '../../../Models/chat-room.model';
 import { supabase } from '../../supabase.client';
+import { RealtimeChannel } from '@supabase/supabase-js';
+import { MaterialModule } from '../../modules/material/material.module';
 
 @Component({
   selector: 'app-card-room',
@@ -12,33 +19,76 @@ import { supabase } from '../../supabase.client';
   styleUrl: './card-room.component.css',
   imports: [MaterialModule, NgStyle],
 })
-export class CardRoomComponent implements OnChanges {
+export class CardRoomComponent implements OnInit, OnChanges, OnDestroy {
   @Input() room!: ChatRoom;
 
-  activeCount: number = 0;
+  activeCount = 0;
+  private chatRoomChannel?: RealtimeChannel;
 
   constructor(private router: Router) {}
 
+  async ngOnInit() {
+    await this.refreshActiveCount();
+    this.subscribeToRealtime();
+  }
+
   async ngOnChanges() {
-    if (this.room?.id) {
-      this.activeCount = await this.getActiveMemberCount(this.room.id);
+    await this.refreshActiveCount();
+    this.subscribeToRealtime();
+  }
+
+  ngOnDestroy() {
+    if (this.chatRoomChannel) {
+      supabase.removeChannel(this.chatRoomChannel);
     }
+  }
+
+  async refreshActiveCount() {
+    if (!this.room?.id) return;
+
+    const { data, error } = await supabase
+      .from('chat_rooms')
+      .select('active_members')
+      .eq('id', this.room.id)
+      .single();
+
+    if (!error && data) {
+      this.activeCount = data.active_members || 0;
+    } else {
+      console.error('❌ Lỗi lấy active_members:', error?.message);
+      this.activeCount = 0;
+    }
+  }
+
+  subscribeToRealtime() {
+    if (!this.room?.id) return;
+
+    // Xóa channel cũ nếu tồn tại
+    if (this.chatRoomChannel) {
+      supabase.removeChannel(this.chatRoomChannel);
+    }
+
+    this.chatRoomChannel = supabase
+      .channel(`chat_rooms:${this.room.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'chat_rooms',
+          filter: `id=eq.${this.room.id}`,
+        },
+        (payload) => {
+          const updated = payload.new;
+          if (updated?.['active_members'] !== undefined) {
+            this.activeCount = updated['active_members'];
+          }
+        }
+      )
+      .subscribe();
   }
 
   goToChatRoom() {
     this.router.navigate(['/chat'], { state: { room: this.room } });
-  }
-
-  async getActiveMemberCount(roomId: string): Promise<number> {
-    const { count, error } = await supabase
-      .from('room_participants')
-      .select('*', { count: 'exact', head: true })
-      .eq('room_id', roomId);
-
-    if (error) {
-      console.error('Lỗi khi lấy số lượng thành viên:', error.message);
-      return 0;
-    }
-    return count || 0;
   }
 }

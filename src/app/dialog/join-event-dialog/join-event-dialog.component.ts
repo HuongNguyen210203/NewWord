@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -6,9 +6,10 @@ import {
   MatDialogContent,
   MatDialogTitle
 } from '@angular/material/dialog';
-import {CommonModule, DatePipe} from '@angular/common';
-import {MatButtonModule} from '@angular/material/button';
-import {supabase} from '../../supabase.client';
+import { CommonModule, DatePipe } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { supabase } from '../../supabase.client';
+import { RealtimeChannel } from '@supabase/supabase-js';
 
 @Component({
   standalone: true,
@@ -16,45 +17,72 @@ import {supabase} from '../../supabase.client';
   imports: [
     CommonModule,
     MatDialogContent,
-    MatButtonModule,
     MatDialogActions,
     MatDialogTitle,
     MatDialogClose,
+    MatButtonModule,
   ],
   providers: [DatePipe],
   templateUrl: './join-event-dialog.component.html',
-  styleUrl: './join-event-dialog.component.css'
+  styleUrl: './join-event-dialog.component.css',
 })
-export class JoinEventDialogComponent implements OnInit {
+export class JoinEventDialogComponent implements OnInit, OnDestroy {
   loading = false;
   hasJoined = false;
+  private channel?: RealtimeChannel;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
 
   async ngOnInit() {
     await this.checkJoined();
     await this.refreshParticipantCount();
+    this.subscribeToRealtime();
+  }
+
+  ngOnDestroy(): void {
+    if (this.channel) supabase.removeChannel(this.channel);
   }
 
   async refreshParticipantCount() {
-    const { count, error } = await supabase
-      .from('event_participants')
-      .select('*', { count: 'exact', head: true })
-      .eq('event_id', this.data.id);
+    const { data, error } = await supabase
+      .from('events')
+      .select('current_participants')
+      .eq('id', this.data.id)
+      .maybeSingle();
 
-    if (!error) {
-      this.data.current_participants = count ?? 0;
+    if (!error && data) {
+      this.data.current_participants = data.current_participants;
     } else {
-      console.warn('⚠️ Không thể lấy số người tham gia:', error.message);
       this.data.current_participants = 0;
     }
   }
 
+  subscribeToRealtime() {
+    if (!this.data?.id) return;
+
+    this.channel = supabase
+      .channel(`events:${this.data.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'events',
+          filter: `id=eq.${this.data.id}`,
+        },
+        (payload) => {
+          const updated = payload.new;
+          if (updated?.['current_participants'] !== undefined) {
+            this.data.current_participants = updated['current_participants'];
+          }
+        }
+      )
+      .subscribe();
+  }
 
   async checkJoined() {
-    const { data: authData, error: authError } = await supabase.auth.getUser();
+    const { data: authData } = await supabase.auth.getUser();
     const userId = authData.user?.id;
-
     if (!userId) return;
 
     const { data, error } = await supabase
@@ -64,12 +92,11 @@ export class JoinEventDialogComponent implements OnInit {
       .eq('event_id', this.data.id)
       .maybeSingle();
 
-    this.hasJoined = !!data;
+    this.hasJoined = !!data && !error;
   }
 
   async toggleRegistration() {
     this.loading = true;
-
     const { data: authData } = await supabase.auth.getUser();
     const userId = authData.user?.id;
 
@@ -80,21 +107,18 @@ export class JoinEventDialogComponent implements OnInit {
     }
 
     if (this.hasJoined) {
-      // ❌ Huỷ đăng ký
       const { error } = await supabase
         .from('event_participants')
         .delete()
         .match({ user_id: userId, event_id: this.data.id });
 
       if (!error) {
-        alert('❌ Bạn đã huỷ đăng ký sự kiện.');
         this.hasJoined = false;
-        this.data.current_participants = Math.max(0, this.data.current_participants - 1);
+        alert('❌ Bạn đã huỷ đăng ký sự kiện.');
       } else {
         alert('❌ Huỷ đăng ký thất bại: ' + error.message);
       }
     } else {
-      // ✅ Đăng ký
       const { error } = await supabase.from('event_participants').insert({
         user_id: userId,
         event_id: this.data.id,
@@ -104,9 +128,8 @@ export class JoinEventDialogComponent implements OnInit {
       });
 
       if (!error) {
-        alert('✅ Bạn đã đăng ký thành công!');
         this.hasJoined = true;
-        this.data.current_participants = (this.data.current_participants || 0) + 1;
+        alert('✅ Bạn đã đăng ký thành công!');
       } else {
         alert('❌ Đăng ký thất bại: ' + error.message);
       }
