@@ -36,7 +36,7 @@
       <div class="media-grid horizontal-scroll">
         @if (filteredEvents().length > 0) {
           @for (event of filteredEvents(); track event.id) {
-            <div class="media-card">
+            <div class="media-card" (click)="openEventDialog(event)" style="cursor: pointer;">
               <img [src]="event.image_url || 'https://via.placeholder.com/240x140'" />
               <div class="overlay-text">{{ event.title }}</div>
             </div>
@@ -67,7 +67,7 @@
       <div class="media-grid horizontal-scroll">
         @if (filteredRooms().length > 0) {
           @for (room of filteredRooms(); track room.id) {
-            <div class="media-card">
+            <div class="media-card" (click)="goToChatRoom(room)" style="cursor: pointer;">
               <img [src]="room.image_url || 'https://via.placeholder.com/240x140'" />
               <div class="overlay-text">{{ room.name }}</div>
             </div>

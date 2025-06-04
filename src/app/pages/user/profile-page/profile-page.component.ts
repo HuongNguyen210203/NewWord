@@ -14,6 +14,7 @@ import {ChatService} from '../../../../Services/chat.service';
 import {AppEvent} from '../../../../Models/event.model';
 import {ChatRoom} from '../../../../Models/chat-room.model';
 import {Router} from '@angular/router';
+import {JoinEventDialogComponent} from '../../../dialog/join-event-dialog/join-event-dialog.component';
 
 @Component({
   selector: 'app-profile-page',
@@ -24,7 +25,6 @@ import {Router} from '@angular/router';
     CommonModule,
     MatIcon,
     MatButton,
-    NgForOf,
     FormsModule,
   ]
 })
@@ -102,11 +102,13 @@ export class ProfilePageComponent implements OnInit {
         this.user = updatedUser;
         try {
           await this.userService.updateUser(updatedUser);
+          this.userService.setAvatarUrl(updatedUser.avatar_url || 'https://via.placeholder.com/40');
           console.log('✅ Thông tin người dùng đã được cập nhật.');
         } catch (error) {
           console.error('❌ Không thể cập nhật người dùng:', error);
         }
       }
+
     });
   }
 
@@ -125,5 +127,18 @@ export class ProfilePageComponent implements OnInit {
   goToRoomPage() {
     this.router.navigate(['/home/card-room']);
   }
+
+  goToChatRoom(room: ChatRoom) {
+    this.router.navigate(['/chat'], { state: { room } });
+  }
+
+  openEventDialog(event: AppEvent) {
+    this.dialog.open(JoinEventDialogComponent, {
+      data: event,
+      width: '600px',
+    });
+  }
+
+
 
 }
