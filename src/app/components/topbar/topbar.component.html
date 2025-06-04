@@ -3,14 +3,14 @@
     <button mat-icon-button (click)="onMenuClick()">
       <mat-icon>menu</mat-icon>
     </button>
-    <h1 class="brand">NEWWORD</h1>
+    <h1 class="brand" (click)="goToHome()" style="cursor: pointer;">NEWWORD</h1>
   </div>
 
   <div class="right-section">
     <button mat-icon-button>
       <mat-icon>notifications</mat-icon>
     </button>
-    <div class="avatar">
+    <div class="avatar" (click)="goToProfile()" style="cursor: pointer;">
       <img [src]="avatarUrl" alt="User avatar" width="40" height="40" style="border-radius: 50%;" />
     </div>
   </div>
