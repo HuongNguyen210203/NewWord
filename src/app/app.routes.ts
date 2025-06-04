@@ -15,16 +15,21 @@ import { CreateEventComponent } from './dialog/create-event/create-event.compone
 import {AdminPageComponent} from './pages/admin/admin-page/admin-page.component';
 import {DashboardComponent} from './pages/admin/admin-page/components/dashboard/dashboard.component';
 import {UserLayoutComponent} from './pages/user/user-layout/user-layout.component';
+import { AdminGuard } from './guards/admin.guard';
+import { AuthGuard } from './guards/auth.guard';
+import { GuestGuard } from './guards/guest-guard.guard';
+
 
 export const routes: Routes = [
   { path: '', redirectTo: 'signin', pathMatch: 'full' },
-  { path: 'signin', component: SignInComponent },
-  { path: 'signup', component: SignUpComponent },
+  { path: 'signin', component: SignInComponent, canActivate: [GuestGuard] },
+  { path: 'signup', component: SignUpComponent, canActivate: [GuestGuard] },
 
   // Route user layout chứa children
   {
     path: '',
     component: UserLayoutComponent,
+    canActivate: [AuthGuard], // ⬅️ bảo vệ toàn bộ user layout
     children: [
       {
         path: 'home',
@@ -41,10 +46,12 @@ export const routes: Routes = [
     ]
   },
 
+
   // Route admin layout chứa children
   {
     path: 'admin',
     component: AdminPageComponent,
+    canActivate: [AdminGuard], // ✅ Chặn người không phải admin
     children: [
       { path: '', component: DashboardComponent },
       { path: 'management-event', component: ManagementEventComponent },
@@ -53,5 +60,5 @@ export const routes: Routes = [
     ]
   },
 
-  { path: '**', redirectTo: '' }
+  { path: '**', redirectTo: '/home' }
 ];
