@@ -14,6 +14,7 @@ import {ChatService} from '../../../../Services/chat.service';
 import {AppEvent} from '../../../../Models/event.model';
 import {ChatRoom} from '../../../../Models/chat-room.model';
 import {Router} from '@angular/router';
+import {JoinEventDialogComponent} from '../../../dialog/join-event-dialog/join-event-dialog.component';
 
 @Component({
   selector: 'app-profile-page',
@@ -126,5 +127,18 @@ export class ProfilePageComponent implements OnInit {
   goToRoomPage() {
     this.router.navigate(['/home/card-room']);
   }
+
+  goToChatRoom(room: ChatRoom) {
+    this.router.navigate(['/chat'], { state: { room } });
+  }
+
+  openEventDialog(event: AppEvent) {
+    this.dialog.open(JoinEventDialogComponent, {
+      data: event,
+      width: '600px',
+    });
+  }
+
+
 
 }
