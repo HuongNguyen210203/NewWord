@@ -133,9 +133,16 @@ export class ProfilePageComponent implements OnInit {
   }
 
   openEventDialog(event: AppEvent) {
-    this.dialog.open(JoinEventDialogComponent, {
+    const dialogRef = this.dialog.open(JoinEventDialogComponent, {
       data: event,
       width: '600px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.cancelledEventId) {
+        // 🧹 Xoá event khỏi danh sách đã tham gia
+        this.events = this.events.filter(e => e.id !== result.cancelledEventId);
+      }
     });
   }
 

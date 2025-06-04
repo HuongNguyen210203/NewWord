@@ -3,7 +3,7 @@ import {
   MAT_DIALOG_DATA,
   MatDialogActions,
   MatDialogClose,
-  MatDialogContent,
+  MatDialogContent, MatDialogRef,
   MatDialogTitle
 } from '@angular/material/dialog';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -31,7 +31,8 @@ export class JoinEventDialogComponent implements OnInit, OnDestroy {
   hasJoined = false;
   private channel?: RealtimeChannel;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+              public dialogRef: MatDialogRef<JoinEventDialogComponent> ) {}
 
   async ngOnInit() {
     await this.checkJoined();
@@ -115,6 +116,7 @@ export class JoinEventDialogComponent implements OnInit, OnDestroy {
       if (!error) {
         this.hasJoined = false;
         alert('❌ Bạn đã huỷ đăng ký sự kiện.');
+        this.dialogRef.close({ cancelledEventId: this.data.id });
       } else {
         alert('❌ Huỷ đăng ký thất bại: ' + error.message);
       }
