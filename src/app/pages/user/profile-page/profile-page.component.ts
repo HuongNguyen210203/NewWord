@@ -24,7 +24,6 @@ import {Router} from '@angular/router';
     CommonModule,
     MatIcon,
     MatButton,
-    NgForOf,
     FormsModule,
   ]
 })
@@ -102,11 +101,13 @@ export class ProfilePageComponent implements OnInit {
         this.user = updatedUser;
         try {
           await this.userService.updateUser(updatedUser);
+          this.userService.setAvatarUrl(updatedUser.avatar_url || 'https://via.placeholder.com/40');
           console.log('✅ Thông tin người dùng đã được cập nhật.');
         } catch (error) {
           console.error('❌ Không thể cập nhật người dùng:', error);
         }
       }
+
     });
   }
 

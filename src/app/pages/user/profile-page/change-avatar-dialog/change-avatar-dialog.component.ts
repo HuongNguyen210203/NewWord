@@ -25,7 +25,6 @@ import { MatTooltip } from '@angular/material/tooltip';
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatTooltip,
   ],
 })
 export class ChangeAvatarDialogComponent {

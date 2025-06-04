@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {supabase} from '../app/supabase.client';
 import {User} from '../Models/user.model';
+import {BehaviorSubject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -61,6 +62,13 @@ export class UserService {
     }
   }
 
+  private avatarUrlSubject = new BehaviorSubject<string>('https://via.placeholder.com/40');
+  avatarUrl$ = this.avatarUrlSubject.asObservable();
+
+  setAvatarUrl(url: string) {
+    this.avatarUrlSubject.next(url);
+  }
+
   async updateUser(user: User): Promise<void> {
     const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
     if (authError) {
@@ -76,6 +84,10 @@ export class UserService {
         avatar_url: user.avatar_url
       })
       .eq('id', user.id);
+
+    if (user.avatar_url) {
+      this.setAvatarUrl(user.avatar_url);
+    }
 
     if (error) {
       console.error('❌ Lỗi khi cập nhật người dùng:', error.message);

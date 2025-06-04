@@ -4,6 +4,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { supabase } from '../../supabase.client';
 import {Router} from '@angular/router';
+import {UserService} from '../../../Services/user.service';
 
 @Component({
   selector: 'app-topbar',
@@ -14,11 +15,18 @@ import {Router} from '@angular/router';
 })
 export class TopbarComponent implements OnInit {
 
-  constructor ( private  router: Router) {}
+  constructor ( private  router: Router,
+                private userService: UserService) {}
   @Output() menuClick = new EventEmitter<void>();
   avatarUrl: string = 'https://via.placeholder.com/40';
 
   async ngOnInit() {
+    // 👇 Subscribe avatar khi có thay đổi từ profile
+    this.userService.avatarUrl$.subscribe(url => {
+      this.avatarUrl = url;
+    });
+
+    // 👇 Load avatar ban đầu từ Supabase
     const { data: authData, error } = await supabase.auth.getUser();
     if (error || !authData.user) return;
 
@@ -29,9 +37,10 @@ export class TopbarComponent implements OnInit {
       .maybeSingle();
 
     if (!userError && userData?.avatar_url) {
-      this.avatarUrl = userData.avatar_url;
+      this.userService.setAvatarUrl(userData.avatar_url); // 🔄 Đẩy avatar vào BehaviorSubject
     }
   }
+
 
   onMenuClick() {
     this.menuClick.emit();
@@ -44,4 +53,6 @@ export class TopbarComponent implements OnInit {
   goToProfile() {
     this.router.navigate(['/profile']);
   }
+
+
 }
