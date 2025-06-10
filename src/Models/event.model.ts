@@ -11,4 +11,5 @@ export interface AppEvent {
   image_url?: string;
   created_by: string;
   created_at?: string;
+  is_hidden: boolean;
 }

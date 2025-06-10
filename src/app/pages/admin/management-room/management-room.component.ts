@@ -92,6 +92,7 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
       this.dataSource.data = rooms.map(room => ({
         ...room,
         created_at: new Date(room.created_at || ''),
+        is_hidden: room.is_hidden ?? false,
       }));
     } catch (error) {
       console.error('Lỗi khi tải danh sách phòng:', error);

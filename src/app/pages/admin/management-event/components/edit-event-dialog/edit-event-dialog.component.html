@@ -1,9 +1,19 @@
-<h2 mat-dialog-title class="dialog-title">
-  <mat-icon class="dialog-icon">edit_calendar</mat-icon>
-  <span>Edit Event</span>
-</h2>
-
 <div class="edit-event-container">
+  <!-- Title + Toggle -->
+  <div class="edit-event-header">
+    <div class="dialog-title-left">
+      <mat-icon class="dialog-icon">edit_calendar</mat-icon>
+      <span class="dialog-label">Edit Event</span>
+    </div>
+    <mat-slide-toggle
+      [(ngModel)]="data.is_hidden"
+      class="toggle-hide"
+      color="warn">
+      {{ data.is_hidden ? 'Hidden' : 'Active' }}
+    </mat-slide-toggle>
+  </div>
+
+  <!-- Upload Section -->
   <div class="upload-section">
     <img *ngIf="eventImage" [src]="eventImage" class="cover-img" />
     <div *ngIf="!eventImage" class="cover-placeholder">No event image</div>
@@ -13,6 +23,7 @@
     <input type="file" hidden #fileInput (change)="onImageChange($event)" />
   </div>
 
+  <!-- Form -->
   <form class="form-grid">
     <mat-form-field appearance="outline">
       <mat-label>Event Title</mat-label>
@@ -61,6 +72,7 @@
     </mat-form-field>
   </form>
 
+  <!-- Actions -->
   <div class="dialog-actions">
     <button mat-stroked-button class="cancel-button" (click)="cancel()">Cancel</button>
     <button mat-raised-button color="primary" (click)="save()">Save Changes</button>

@@ -86,12 +86,12 @@
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{ 'row-inactive': row.is_hidden }"></tr>
     <tr *ngIf="dataSource.data.length === 0">
       <td colspan="7" class="text-center">No rooms found.</td>
     </tr>
 
   </table>
 
-  <mat-paginator [pageSize]="3" [pageSizeOptions]="[1, 3, 5]"></mat-paginator>
+  <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10]"></mat-paginator>
 </div>

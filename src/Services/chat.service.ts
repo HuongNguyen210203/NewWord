@@ -13,7 +13,6 @@ export class ChatService {
       .from('chat_rooms')
       .select('*')
       .order('created_at', { ascending: false });
-
     if (roomError) throw roomError;
 
     const { data: participants, error: participantError } = await supabase

@@ -118,6 +118,7 @@ export class CreateEventComponent {
       image_url: imageUrl,
       created_by: userId,
       current_participants: 0,
+      is_hidden: false,
     });
     this.dialogRef.close(); // đóng sau khi tạo
 

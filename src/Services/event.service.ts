@@ -15,8 +15,6 @@ export class EventService {
     return events as AppEvent[];
   }
 
-
-
   // ✅ Tạo một sự kiện mới
   async createEvent(event: Omit<AppEvent, 'id' | 'created_at'>): Promise<AppEvent> {
     const { data, error } = await supabase

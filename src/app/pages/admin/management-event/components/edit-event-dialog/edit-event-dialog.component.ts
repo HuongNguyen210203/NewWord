@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
 import {MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
@@ -11,6 +11,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import {EventService} from '../../../../../../Services/event.service';
 import {supabase} from '../../../../../supabase.client';
+import {MatSlideToggle} from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-edit-event-dialog',
@@ -27,23 +28,29 @@ import {supabase} from '../../../../../supabase.client';
     MatDatepickerModule,
     MatNativeDateModule,
     MatIconButton,
-    MatDialogTitle
+    MatDialogTitle,
+    MatSlideToggle
   ]
 })
-export class EditEventDialogComponent {
+export class EditEventDialogComponent implements OnInit {
   eventImage: string | ArrayBuffer | null = null;
 
   constructor(
     public dialogRef: MatDialogRef<EditEventDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private eventService: EventService
-  ) {
-    this.eventImage = data.image_url || null;
+  ) {}
+
+  ngOnInit() {
+    if (this.data.is_hidden === undefined) {
+      this.data.is_hidden = false;
+    }
+    if (this.data.participants === undefined){
+      this.data.participants = 0;
+    }
+    this.eventImage = this.data.image_url || '';
   }
 
-  /**
-   * Khi người dùng chọn file ảnh mới
-   */
   onImageChange(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
@@ -120,7 +127,8 @@ export class EditEventDialogComponent {
       end_time: end.toISOString(),
       registration_deadline: deadline.toISOString(),
       max_participants: Number(this.data.participants),
-      image_url: imageUrl
+      image_url: imageUrl,
+      is_hidden: this.data.is_hidden
     };
 
     this.dialogRef.close(updatePayload);
