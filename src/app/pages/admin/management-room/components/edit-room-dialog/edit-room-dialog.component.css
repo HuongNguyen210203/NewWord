@@ -75,3 +75,39 @@ mat-form-field {
   background-color: #CD5656;
   color: white;
 }
+
+.edit-room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.dialog-title-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dialog-icon {
+  font-size: 26px;
+  color: #2e7d32;
+}
+
+.dialog-label {
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.toggle-hide {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .edit-room-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

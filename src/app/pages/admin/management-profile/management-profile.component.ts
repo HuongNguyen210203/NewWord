@@ -48,7 +48,7 @@ export class ManagementProfileComponent implements OnInit {
 
   dataSource: User[] = [];
   searchTerm = '';
-  pageSize = 3;
+  pageSize = 5;
   currentPageIndex = 0;
 
   displayedColumns: string[] = ['select', 'email', 'name', 'joinedRooms', 'events', 'actions'];

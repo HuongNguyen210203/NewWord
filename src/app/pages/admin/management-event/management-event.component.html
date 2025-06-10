@@ -20,7 +20,7 @@
   </div>
 
   <table mat-table [dataSource]="filteredData" matSort class="mat-elevation-z1">
-    <!-- Select -->
+  <!-- Select -->
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef>
         <mat-checkbox
@@ -100,7 +100,7 @@
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{ 'row-inactive': row.is_hidden }"></tr>
   </table>
 
   <mat-paginator

@@ -7,4 +7,5 @@ export interface ChatRoom {
   image_url?: string;
   active_members?: number;
   members?: number;
+  is_hidden: boolean;
 }

@@ -57,9 +57,9 @@ export class ManagementEventComponent implements OnInit {
   ];
 
   searchTerm: string = '';
-  pageSize = 3;
+  pageSize = 5;
   pageIndex = 0;
-  pageSizeOptions = [3, 5, 10];
+  pageSizeOptions = [5, 10];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -75,9 +75,11 @@ export class ManagementEventComponent implements OnInit {
   async loadEventsFromSupabase() {
     try {
       const events = await this.eventService.getAllEvents();
+      console.log(events);
       this.dataSource.data = events.map(event => ({
         ...event,
         image: event.image_url,
+        is_hidden: event.is_hidden ?? false,
         registerStart: new Date(event.registration_deadline),
         registerEnd: new Date(event.end_time),
         eventDate: new Date(event.start_time)
@@ -91,10 +93,8 @@ export class ManagementEventComponent implements OnInit {
     const filtered = this.dataSource.data.filter((item: AppEvent) =>
       item.title.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
-
     const start = this.pageIndex * this.pageSize;
     const end = start + this.pageSize;
-
     return filtered.slice(start, end);
   }
 
@@ -135,6 +135,7 @@ export class ManagementEventComponent implements OnInit {
       width: '800px',
       data: {
         ...event,
+        participants: event.max_participants,
         startDate: new Date(event.start_time),
         startTime: this.formatTime(event.start_time),
         endDate: new Date(event.end_time),

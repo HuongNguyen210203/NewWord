@@ -138,3 +138,12 @@ td button.mat-icon-button {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.col-actions {
+  min-width: 100px;
+  max-width: 120px;
+  text-align: center;
+}
+.row-inactive {
+  opacity: 0.5;
+}
+

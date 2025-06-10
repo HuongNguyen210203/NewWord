@@ -23,8 +23,6 @@ import {MatIcon} from '@angular/material/icon';
     MatOption,
     NgForOf,
     StatCardComponent,
-    MatIcon,
-    MatInput
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
