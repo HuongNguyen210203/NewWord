@@ -5,7 +5,11 @@
       <mat-icon class="dialog-icon">edit</mat-icon>
       <span class="dialog-label">Edit Room</span>
     </div>
-    <mat-slide-toggle [(ngModel)]="data.is_hidden" class="toggle-hide" color="warn">
+    <mat-slide-toggle
+      [checked]="!data.is_hidden"
+      (change)="data.is_hidden = !$event.checked"
+      color="primary"
+      class="toggle-hide">
       {{ data.is_hidden ? 'Hidden' : 'Active' }}
     </mat-slide-toggle>
   </div>

@@ -60,6 +60,10 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
   private currentUserId: string | null = null;
   userAvatar: string = '/assets/images/avatar.png';
 
+  normalizeHidden(value: any): boolean {
+    return value === true || value === 'true';
+  }
+
   async ngOnInit() {
     const { data: authData } = await supabase.auth.getUser();
     const userId = authData.user?.id;
@@ -76,15 +80,20 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
     this.userAvatar = userFromTable?.avatar_url || '/assets/images/avatar.png';
     const key = `viewedRooms-${this.currentUserId}`;
     const stored = JSON.parse(localStorage.getItem(key) || '[]');
-    this.chatRooms = stored.map((room: any) => ({
-      ...room,
-      avatar: room.image_url || '/assets/images/avatar.png',
-      preview: 'Chưa có tin nhắn',
-      time: '',
-      joined: false,
-      active: false,
-      hover: false,
-    }));
+    this.chatRooms = stored.map((room: any) => {
+      const isHidden = room.is_hidden === true || room.is_hidden === 'true'; // xử lý rõ ràng
+      console.log('🌐 [localStorage] Room:', room.name, 'is_hidden:', room.is_hidden, '=>', isHidden, typeof room.is_hidden);
+      return {
+        ...room,
+        avatar: room.image_url || '/assets/images/avatar.png',
+        preview: 'Chưa có tin nhắn',
+        time: '',
+        joined: false,
+        active: false,
+        hover: false,
+        is_hidden: isHidden
+      };
+    });
 
     const { data: joinedRooms } = await supabase
       .from('room_participants')
@@ -96,12 +105,14 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
       ...room,
       joined: joinedRoomIds.has(room.id),
       preview: joinedRoomIds.has(room.id) ? 'Bạn đã tham gia phòng' : 'Chưa có tin nhắn',
+      is_hidden: String(room.is_hidden) === 'true' || room.is_hidden === true,
     }));
 
     const roomFromNav = history.state?.room;
     if (roomFromNav) await this.addRoomAndSelect(roomFromNav);
 
     document.addEventListener('click', this.closeEmojiOutside, true);
+    this.subscribeToRoomUpdates();
   }
 
   ngOnDestroy() {
@@ -109,6 +120,46 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
     if (this.messageChannel) supabase.removeChannel(this.messageChannel);
   }
 
+  subscribeToRoomUpdates() {
+    this.messageChannel = supabase
+      .channel('room-hidden-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'chat_rooms',
+        },
+        payload => {
+          const updated = payload.new;
+          const updatedId = updated['id'];
+          const updatedHidden = this.normalizeHidden(updated['is_hidden']);
+
+          const index = this.chatRooms.findIndex((r: any) => r['id'] === updatedId);
+          if (index !== -1) {
+            this.chatRooms[index]['is_hidden'] = updatedHidden;
+          }
+
+          if (this.activeRoom?.id === updatedId) {
+            this.activeRoom.is_hidden = updatedHidden;
+          }
+
+          const key = `viewedRooms-${this.currentUserId}`;
+          const stored: any[] = JSON.parse(localStorage.getItem(key) || '[]');
+          const updatedStored = stored.map((r: any) =>
+            r['id'] === updatedId ? { ...r, is_hidden: updatedHidden } : r
+          );
+          localStorage.setItem(key, JSON.stringify(updatedStored));
+
+          if (this.activeRoom?.id === updatedId && updatedHidden && this.isJoined) {
+            alert('🚫 Phòng này đã bị admin ẩn. Bạn không thể gửi tin nhắn.');
+          }
+
+          console.log(`[Realtime] Room ${updated['name']} updated is_hidden →`, updatedHidden);
+        }
+      )
+      .subscribe();
+  }
 
   toggleEmojiPicker(event: Event) {
     event.stopPropagation();
@@ -131,6 +182,10 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
   }
 
   async sendMessage() {
+    if (this.activeRoom?.is_hidden) {
+      alert('Phòng này đã bị ẩn. Bạn không thể gửi tin nhắn.');
+      return;
+    }
     const trimmed = this.inputMessage.trim();
     const file = this.selectedFile;
     const hasText = !!trimmed;
@@ -195,6 +250,7 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
       setTimeout(() => this.scrollToBottom(), 100);
     }
   }
+
 
   async joinRoom() {
     if (!this.activeRoom || !this.currentUserId) {
@@ -344,6 +400,7 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
     const roomData = {
       ...room,
       avatar: room.image_url || '/assets/images/avatar.png',
+      is_hidden: room.is_hidden ?? false,
       preview: hasJoined ? 'Bạn đã tham gia phòng' : 'Bạn chưa tham gia phòng',
       time: 'Vừa xong',
       joined: hasJoined,

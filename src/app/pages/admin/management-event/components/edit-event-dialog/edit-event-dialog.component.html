@@ -6,9 +6,10 @@
       <span class="dialog-label">Edit Event</span>
     </div>
     <mat-slide-toggle
-      [(ngModel)]="data.is_hidden"
-      class="toggle-hide"
-      color="warn">
+      [checked]="!data.is_hidden"
+      (change)="data.is_hidden = !$event.checked"
+      color="primary"
+      class="toggle-hide">
       {{ data.is_hidden ? 'Hidden' : 'Active' }}
     </mat-slide-toggle>
   </div>

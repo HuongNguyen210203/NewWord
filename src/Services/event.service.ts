@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import {supabase} from '../app/supabase.client';
 import { AppEvent } from '../Models/event.model';
+import {RealtimeChannel} from '@supabase/supabase-js';
 
 @Injectable({ providedIn: 'root' })
 export class EventService {
+  private eventChannel?: RealtimeChannel;
   async getAllEvents(): Promise<AppEvent[]> {
     const { data: events, error } = await supabase
       .from('events')
@@ -99,6 +101,26 @@ export class EventService {
 
     if (error) throw error;
     return !!data;
+  }
+
+  subscribeToEvents(onUpdate: () => void) {
+    this.eventChannel = supabase.channel('events-channel')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'events'
+      }, payload => {
+        console.log('📡 Event change detected:', payload);
+        onUpdate(); // reload danh sách sự kiện
+      })
+      .subscribe();
+  }
+
+  unsubscribeEvents() {
+    if (this.eventChannel) {
+      supabase.removeChannel(this.eventChannel);
+      this.eventChannel = undefined;
+    }
   }
 
 }

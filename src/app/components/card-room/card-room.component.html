@@ -1,11 +1,13 @@
-<mat-card class="room-card">
+<mat-card class="room-card" [ngClass]="{ 'card-inactive': room.is_hidden }">
   <div class="room-image" [ngStyle]="{ 'background-image': 'url(' + room.image_url + ')' }">
-    <!--    <div class="room-tag">Uncategorized</div>-->
+    <!-- <div class="room-tag">Uncategorized</div> -->
   </div>
 
   <mat-card-content>
-    <h3 class="room-title">{{ room.name|| 'Unnamed Room' }}</h3>
-    <p class="room-description">{{ room.description }}</p>
+    <h3 class="room-title">
+      {{ room.name || 'Unnamed Room' }}
+    </h3>
+    <p class="room-description">{{ room.description || 'No description.' }}</p>
   </mat-card-content>
 
   <mat-card-actions class="room-footer">
@@ -13,6 +15,11 @@
       <mat-icon>group</mat-icon>
       <span>{{ activeCount }} people</span>
     </div>
-    <button mat-raised-button color="primary" (click)="goToChatRoom()">View</button>
+
+    @if (room.is_hidden) {
+      <button mat-raised-button color="warn" disabled>Hidden</button>
+    } @else {
+      <button mat-raised-button color="primary" (click)="goToChatRoom()">View</button>
+    }
   </mat-card-actions>
 </mat-card>

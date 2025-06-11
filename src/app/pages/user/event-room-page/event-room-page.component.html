@@ -1,4 +1,3 @@
-
 <div class="page-wrapper">
   <div class="toolbar">
     <div class="toolbar-left">
@@ -7,12 +6,16 @@
       </button>
       <h2>Event</h2>
       <div class="chip-row">
-        <mat-chip *ngFor="let tag of availableTags"
-                  (click)="filterByTag(tag)"
-                  [ngClass]="{ 'active-chip': selectedTag === tag }">
-          {{ tag }}
-        </mat-chip>
-        <mat-chip *ngIf="selectedTag" (click)="clearFilter()" color="warn">Clear</mat-chip>
+        @for (tag of availableTags; track tag) {
+          <mat-chip
+            (click)="filterByTag(tag)"
+            [ngClass]="{ 'active-chip': selectedTag === tag }">
+            {{ tag }}
+          </mat-chip>
+        }
+        @if (selectedTag) {
+          <mat-chip (click)="clearFilter()" color="warn">Clear</mat-chip>
+        }
       </div>
     </div>
 
@@ -28,40 +31,44 @@
     </div>
   </div>
 
-
   <div class="card-area">
     <div class="card-grid">
-      <mat-card
-        class="card-container"
-        *ngFor="let card of pagedEvents"
-        (click)="openDialog(card)"
-        style="cursor: pointer;">
-        <div class="image-wrapper">
-          <img mat-card-image [src]="card.image_url" alt="Event Image" />
-        </div>
-
-        <mat-card-content class="content">
-          <div class="date">
-            <div class="month">{{ card.start_time | date: 'MMM' | uppercase }}</div>
-            <div class="day">{{ card.start_time | date: 'd' }}</div>
+      @for (card of pagedEvents; track card.id) {
+        <mat-card
+          class="card-container"
+          [ngClass]="{ 'card-inactive': card.is_hidden }"
+          (click)="openDialog(card)"
+          style="cursor: pointer;"
+        >
+          <div class="image-wrapper">
+            <img mat-card-image [src]="card.image_url" alt="Event Image" />
           </div>
-          <div class="info">
-            <div class="title">{{ card.title }}</div>
-            <div class="desc">{{ card.description || 'Không có mô tả.' }}</div>
-          </div>
-        </mat-card-content>
-      </mat-card>
 
+          <mat-card-content class="content">
+            <div class="date">
+              <div class="month">{{ card.start_time | date: 'MMM' | uppercase }}</div>
+              <div class="day">{{ card.start_time | date: 'd' }}</div>
+            </div>
 
+            <div class="info">
+              <div class="title">{{ card.title }}</div>
+              <div class="desc">{{ card.description || 'No description.' }}</div>
+
+              @if (card.is_hidden) {
+                <div class="hidden-label">Hidden Event</div>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
     </div>
   </div>
 
-  <!-- Paginator -->
   <div class="paginator-wrapper">
     <mat-paginator
       [length]="filteredEvents.length"
       [pageSize]="cardsPerPage"
-      [pageSizeOptions]="[2, 4, 8]"
+      [pageSizeOptions]="[4, 8]"
       (page)="onPageChange($event)">
     </mat-paginator>
   </div>

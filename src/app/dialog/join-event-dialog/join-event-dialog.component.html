@@ -3,24 +3,32 @@
 <mat-dialog-content>
   <img
     [src]="data.image_url || 'https://via.placeholder.com/600x300?text=No+Image'"
-    style="width: 100%; margin-bottom: 12px;"
+    class="event-image"
     alt="event image"
   />
+  <p>
+    <strong>Date:</strong> {{ data.start_time | date: 'fullDate' }}
+  </p>
+
+  <p>
+    <mat-icon style="font-size: 16px; vertical-align: middle;">schedule</mat-icon>
+    <strong>Time:</strong>
+    {{ data.start_time | date: 'shortTime' }} - {{ data.end_time | date: 'shortTime' }}
+  </p>
 
 
   <p>
-    <strong>Date:</strong> {{ data.start_time | date:'fullDate' }}
-    &nbsp;•&nbsp;
+    <strong>Participants:</strong>
     <span
       [ngClass]="{
-        'full-slot': (data.current_participants || 0) >= (data.max_participants || 0),
-        'available-slot': (data.current_participants || 0) < (data.max_participants || 0)
-      }"
+      'full-slot': (data.current_participants || 0) >= (data.max_participants || 0),
+      'available-slot': (data.current_participants || 0) < (data.max_participants || 0)
+    }"
     >
-      <strong>Participants:</strong>
-      {{ data.current_participants || 0 }} / {{ data.max_participants || 0 }}
-    </span>
+    {{ data.current_participants || 0 }} / {{ data.max_participants || 0 }}
+  </span>
   </p>
+
 
   <p>{{ data.description }}</p>
 </mat-dialog-content>
@@ -28,12 +36,18 @@
 <mat-dialog-actions align="end">
   <button mat-stroked-button mat-dialog-close>Close</button>
 
-  <button
-    mat-flat-button
-    [ngClass]="hasJoined ? 'btn-cancel' : 'btn-signup'"
-    (click)="toggleRegistration()"
-    [disabled]="loading"
-  >
-    {{ loading ? 'Processing...' : (hasJoined ? 'Cancel' : 'Sign up') }}
-  </button>
+  @if (data.is_hidden) {
+    <button mat-flat-button color="warn" disabled>
+      This event is temporarily hidden
+    </button>
+  } @else {
+    <button
+      mat-flat-button
+      [ngClass]="hasJoined ? 'btn-cancel' : 'btn-signup'"
+      (click)="toggleRegistration()"
+      [disabled]="loading"
+    >
+      {{ loading ? 'Processing...' : (hasJoined ? 'Cancel Registration' : 'Sign Up') }}
+    </button>
+  }
 </mat-dialog-actions>

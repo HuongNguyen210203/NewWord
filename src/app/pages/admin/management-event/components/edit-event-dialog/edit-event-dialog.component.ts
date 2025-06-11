@@ -28,7 +28,6 @@ import {MatSlideToggle} from '@angular/material/slide-toggle';
     MatDatepickerModule,
     MatNativeDateModule,
     MatIconButton,
-    MatDialogTitle,
     MatSlideToggle
   ]
 })

@@ -1,9 +1,12 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MaterialModule } from '../../modules/material/material.module';
 import { JoinEventDialogComponent } from '../../dialog/join-event-dialog/join-event-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AppEvent } from '../../../Models/event.model';
+import { NgClass } from '@angular/common';
+import { RealtimeChannel } from '@supabase/supabase-js';
+import { supabase } from '../../supabase.client';
 
 @Component({
   selector: 'app-card-event',
@@ -13,24 +16,56 @@ import { AppEvent } from '../../../Models/event.model';
     MatCardContent,
     MatCard,
     MaterialModule,
+    NgClass,
   ],
   styleUrls: ['./card-event.component.scss']
 })
-export class CardEventComponent {
+export class CardEventComponent implements OnInit, OnDestroy {
   @Input() event!: AppEvent;
+  private eventChannel?: RealtimeChannel;
 
   constructor(private dialog: MatDialog) {}
+
+  ngOnInit(): void {
+    this.subscribeToEventChanges();
+  }
+
+  ngOnDestroy(): void {
+    if (this.eventChannel) {
+      supabase.removeChannel(this.eventChannel);
+    }
+  }
+
+  subscribeToEventChanges() {
+    if (!this.event?.id) return;
+
+    this.eventChannel = supabase
+      .channel(`events:${this.event.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'events',
+          filter: `id=eq.${this.event.id}`
+        },
+        (payload) => {
+          const updated = payload.new as Partial<AppEvent>;
+          if (updated) {
+            this.event.is_hidden = updated.is_hidden ?? this.event.is_hidden;
+            this.event.current_participants = updated.current_participants ?? this.event.current_participants;
+            console.log('[CardEvent] Real-time update:', this.event);
+          }
+        }
+      )
+      .subscribe();
+  }
 
   openDialog() {
     this.dialog.open(JoinEventDialogComponent, {
       width: '500px',
       data: {
-        id: this.event.id,
-        title: this.event.title,
-        description: this.event.description,
-        image_url: this.event.image_url,
-        start_time: this.event.start_time,
-        max_participants: this.event.max_participants,
+        ...this.event
       }
     });
   }

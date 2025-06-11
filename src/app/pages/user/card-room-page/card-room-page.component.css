@@ -243,4 +243,9 @@
   transition: background-color 0.2s ease;
 }
 
+.card-inactive {
+  opacity: 0.4;
+  filter: grayscale(0.4);
+}
+
 
