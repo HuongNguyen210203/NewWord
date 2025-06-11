@@ -1,4 +1,5 @@
 <div class="profile-container">
+  <!-- USER INFO -->
   <div class="user-info">
     <div class="user-meta">
       @if (user) {
@@ -18,7 +19,7 @@
     </button>
   </div>
 
-
+  <!-- PARTICIPATED EVENTS -->
   <div class="section-header">
     <h3>Participated Events</h3>
     <div class="section-actions">
@@ -36,9 +37,16 @@
       <div class="media-grid horizontal-scroll">
         @if (filteredEvents().length > 0) {
           @for (event of filteredEvents(); track event.id) {
-            <div class="media-card" (click)="openEventDialog(event)" style="cursor: pointer;">
+            <div
+              class="media-card"
+              [class.hidden-card]="event.is_hidden"
+              (click)="openEventDialog(event)"
+            >
               <img [src]="event.image_url || 'https://via.placeholder.com/240x140'" />
               <div class="overlay-text">{{ event.title }}</div>
+              @if (event.is_hidden) {
+                <div class="badge-hidden">(Hidden)</div>
+              }
             </div>
           }
         } @else {
@@ -49,7 +57,7 @@
     <button class="scroll-btn right" (click)="scrollRight(eventScrollRef)">&#x276F;</button>
   </div>
 
-
+  <!-- PARTICIPATED ROOMS -->
   <div class="section-header">
     <h3>Participated Rooms</h3>
     <div class="section-actions">
@@ -67,16 +75,22 @@
       <div class="media-grid horizontal-scroll">
         @if (filteredRooms().length > 0) {
           @for (room of filteredRooms(); track room.id) {
-            <div class="media-card" (click)="goToChatRoom(room)" style="cursor: pointer;">
+            <div
+              class="media-card"
+              [class.hidden-card]="room.is_hidden"
+              (click)="goToChatRoom(room)"
+            >
               <img [src]="room.image_url || 'https://via.placeholder.com/240x140'" />
               <div class="overlay-text">{{ room.name }}</div>
+              @if (room.is_hidden) {
+                <div class="badge-hidden">(Hidden)</div>
+              }
             </div>
           }
         } @else {
           <div class="empty-message">You haven't joined any rooms yet.</div>
         }
       </div>
-
     </div>
     <button class="scroll-btn right" (click)="scrollRight(roomScrollRef)">&#x276F;</button>
   </div>

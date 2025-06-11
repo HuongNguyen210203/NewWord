@@ -16,6 +16,8 @@ import {ChatService} from '../../../../Services/chat.service';
 import {MatDialog} from '@angular/material/dialog';
 import {CreateRoomComponent} from '../../../dialog/create-room/create-room.component';
 import {MatTooltip} from '@angular/material/tooltip';
+import {RealtimeChannel} from '@supabase/supabase-js';
+import {supabase} from '../../../supabase.client';
 
 @Component({
   selector: 'app-card-room-page',
@@ -37,12 +39,12 @@ import {MatTooltip} from '@angular/material/tooltip';
   ]
 })
 
-
-
 export class CardRoomPageComponent implements OnInit {
   rooms: ChatRoom[] = [];
   filteredRooms: ChatRoom[] = [];
   pagedRooms: ChatRoom[] = [];
+
+  private roomChannel?: RealtimeChannel;
 
   searchTerm: string = '';
   selectedLabel: string | null = null;
@@ -59,8 +61,36 @@ export class CardRoomPageComponent implements OnInit {
     this.rooms = await this.chatService.getAllRooms();
     this.filteredRooms = [...this.rooms];
     this.updatePagedRooms();
+    await this.loadRooms();
+    this.subscribeToRoomChanges();
   }
-
+  ngOnDestroy() {
+    if (this.roomChannel) {
+      supabase.removeChannel(this.roomChannel);
+    }
+  }
+  async loadRooms() {
+    this.rooms = await this.chatService.getAllRooms();
+    this.applyFilter();
+  }
+  subscribeToRoomChanges() {
+    this.roomChannel = supabase
+      .channel(`chat_rooms:client`)
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'chat_rooms',
+      }, (payload) => {
+        console.log('📡 Room updated:', payload);
+        const updated = payload.new as ChatRoom;
+        const index = this.rooms.findIndex(r => r.id === updated.id);
+        if (index !== -1) {
+          this.rooms[index] = { ...this.rooms[index], ...updated };
+        }
+        this.applyFilter();
+      })
+      .subscribe();
+  }
   applyFilter() {
     const term = this.searchTerm.trim().toLowerCase();
     this.filteredRooms = this.rooms.filter(room =>

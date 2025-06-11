@@ -5,10 +5,18 @@
       <h3>Conversations</h3>
       <div class="chat-scroll">
         @for (room of chatRooms; track room.id) {
-          <div class="chat-item" [class.active]="room.active" (click)="selectRoom(room)">
-            <img [src]="room.avatar" class="avatar" (error)="onImgError($event)" />
+          <div class="chat-item"
+               [class.active]="room.active"
+               [class.hidden]="room.is_hidden"
+               (click)="!room.is_hidden && selectRoom(room)">
+          <img [src]="room.avatar" class="avatar" (error)="onImgError($event)" />
             <div class="chat-info">
-              <div class="name">{{ room.name }}</div>
+              <div class="name">
+                  {{ room.name }}
+                  @if (room.is_hidden) {
+                    <span class="hidden-badge">Hidden</span>
+                  }
+              </div>
               <div class="preview">{{ room.preview }}</div>
             </div>
             <div class="time">{{ room.time }}</div>
@@ -77,6 +85,11 @@
 
         <!-- CHAT INPUT -->
         @if (isJoined) {
+          @if (activeRoom?.is_hidden) {
+            <div class="room-warning-banner">
+              🚫 This room is currently hidden. You can no longer send messages.
+            </div>
+          }
           <div class="chat-input-wrapper">
             <div class="chat-input">
               <label class="icon upload-icon" matTooltip="Tải ảnh hoặc video (≤ 1 phút)">
@@ -86,25 +99,29 @@
                   accept="image/*,video/mp4,video/webm"
                   hidden
                   (change)="handleFileUpload($event)"
+                  [disabled]="activeRoom?.is_hidden"
                 />
               </label>
+
               <mat-icon
                 class="icon emoji-toggle-icon"
                 (click)="toggleEmojiPicker($event)"
                 matTooltip="Chọn biểu cảm"
-              >sentiment_satisfied</mat-icon>
+              >
+                sentiment_satisfied
+              </mat-icon>
 
               <input
                 type="text"
                 [(ngModel)]="inputMessage"
                 placeholder="Aa"
                 (keyup.enter)="sendMessage()"
+                [disabled]="activeRoom?.is_hidden"
               />
 
               <mat-icon class="icon" (click)="sendMessage()">send</mat-icon>
             </div>
 
-            <!-- EMOJI PICKER -->
             @if (showEmojiPicker) {
               <div class="emoji-wrapper" (click)="$event.stopPropagation()">
                 <emoji-mart
@@ -119,18 +136,24 @@
                 ></emoji-mart>
               </div>
             }
-            </div>
-        } @else {
-          <div class="join-chat-box">
-            <button
-              mat-raised-button
-              color="primary"
-              class="join-button"
-              (click)="joinRoom()"
-            >
-              Join to Chat
-            </button>
           </div>
+        } @else {
+          @if (activeRoom?.is_hidden) {
+            <div class="room-warning-banner">
+              🚫 This room is currently hidden. You need permission to join.
+            </div>
+          } @else {
+            <div class="join-chat-box">
+              <button
+                mat-raised-button
+                color="primary"
+                class="join-button"
+                (click)="joinRoom()"
+              >
+                Join to Chat
+              </button>
+            </div>
+          }
         }
       </section>
     } @else {
