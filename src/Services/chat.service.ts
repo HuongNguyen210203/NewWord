@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { supabase } from '../app/supabase.client';
 import { ChatRoom } from '../Models/chat-room.model';
 import { Message } from '../Models/message.model';
+import {RealtimeChannel} from '@supabase/supabase-js';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
@@ -204,6 +205,32 @@ export class ChatService {
       .delete()
       .eq('id', id);
     if (roomError) throw new Error(`Failed to delete room: ${roomError.message}`);
+  }
+
+  private roomChannel?: RealtimeChannel;
+  subscribeToRoomChanges(onUpdate: (updatedRoom: Partial<ChatRoom>) => void, roomId: string) {
+    this.roomChannel = supabase
+      .channel(`chat_rooms:${roomId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'chat_rooms',
+          filter: `id=eq.${roomId}`,
+        },
+        (payload) => {
+          onUpdate(payload.new as Partial<ChatRoom>);
+        }
+      )
+      .subscribe();
+  }
+
+  unsubscribeRoomChanges() {
+    if (this.roomChannel) {
+      supabase.removeChannel(this.roomChannel);
+      this.roomChannel = undefined;
+    }
   }
 
 }

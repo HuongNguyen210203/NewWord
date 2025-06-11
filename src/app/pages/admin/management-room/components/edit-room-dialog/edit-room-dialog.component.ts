@@ -70,12 +70,19 @@ export class EditRoomDialogComponent {
       image_url: imageUrl,
       is_hidden: this.data.is_hidden
     };
+    try {
+      await this.chatService.updateRoom(this.data.id, updatePayload);
 
-    this.dialogRef.close({
-      ...this.data,
-      ...updatePayload,
-      image_url: imageUrl
-    });
+      this.dialogRef.close({
+        ...this.data,
+        ...updatePayload,
+        image_url: imageUrl
+      });
+
+    } catch (error) {
+      alert('Cập nhật phòng thất bại.');
+      console.error(error);
+    }
   }
 
   cancel() {

@@ -1,4 +1,4 @@
-<mat-card class="room-card">
+<mat-card class="room-card" [ngClass]="{ 'card-inactive': room.is_hidden }">
   <div class="room-image" [ngStyle]="{ 'background-image': 'url(' + room.image_url + ')' }">
     <!--    <div class="room-tag">Uncategorized</div>-->
   </div>

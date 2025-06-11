@@ -241,3 +241,15 @@
   transition: background-color 0.2s ease;
 }
 
+.card-inactive {
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
+
+.hidden-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #CD5656;
+  margin-top: 4px;
+  font-style: italic;
+}

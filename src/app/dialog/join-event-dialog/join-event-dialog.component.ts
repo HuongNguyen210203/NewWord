@@ -10,6 +10,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { supabase } from '../../supabase.client';
 import { RealtimeChannel } from '@supabase/supabase-js';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   standalone: true,
@@ -21,6 +22,7 @@ import { RealtimeChannel } from '@supabase/supabase-js';
     MatDialogTitle,
     MatDialogClose,
     MatButtonModule,
+    MatIcon,
   ],
   providers: [DatePipe],
   templateUrl: './join-event-dialog.component.html',

@@ -6,7 +6,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgStyle } from '@angular/common';
+import { NgClass, NgStyle } from '@angular/common';
 import { ChatRoom } from '../../../Models/chat-room.model';
 import { supabase } from '../../supabase.client';
 import { RealtimeChannel } from '@supabase/supabase-js';
@@ -17,7 +17,7 @@ import { MaterialModule } from '../../modules/material/material.module';
   standalone: true,
   templateUrl: './card-room.component.html',
   styleUrl: './card-room.component.css',
-  imports: [MaterialModule, NgStyle],
+  imports: [MaterialModule, NgStyle, NgClass],
 })
 export class CardRoomComponent implements OnInit, OnChanges, OnDestroy {
   @Input() room!: ChatRoom;
@@ -28,12 +28,12 @@ export class CardRoomComponent implements OnInit, OnChanges, OnDestroy {
   constructor(private router: Router) {}
 
   async ngOnInit() {
-    await this.refreshActiveCount();
+    await this.refreshRoomStatus();
     this.subscribeToRealtime();
   }
 
   async ngOnChanges() {
-    await this.refreshActiveCount();
+    await this.refreshRoomStatus();
     this.subscribeToRealtime();
   }
 
@@ -43,27 +43,26 @@ export class CardRoomComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  async refreshActiveCount() {
+  async refreshRoomStatus() {
     if (!this.room?.id) return;
 
     const { data, error } = await supabase
       .from('chat_rooms')
-      .select('active_members')
+      .select('active_members, is_hidden')
       .eq('id', this.room.id)
       .single();
 
     if (!error && data) {
       this.activeCount = data.active_members || 0;
+      this.room.is_hidden = data.is_hidden ?? false;
     } else {
-      console.error('❌ Lỗi lấy active_members:', error?.message);
-      this.activeCount = 0;
+      console.error('❌ Lỗi lấy trạng thái phòng:', error?.message);
     }
   }
 
   subscribeToRealtime() {
     if (!this.room?.id) return;
 
-    // Xóa channel cũ nếu tồn tại
     if (this.chatRoomChannel) {
       supabase.removeChannel(this.chatRoomChannel);
     }
@@ -79,9 +78,15 @@ export class CardRoomComponent implements OnInit, OnChanges, OnDestroy {
           filter: `id=eq.${this.room.id}`,
         },
         (payload) => {
-          const updated = payload.new;
-          if (updated?.['active_members'] !== undefined) {
-            this.activeCount = updated['active_members'];
+          const updated = payload.new as Partial<ChatRoom>;
+
+          if (updated.active_members !== undefined) {
+            this.activeCount = updated.active_members;
+          }
+
+          if (updated.is_hidden !== undefined) {
+            this.room.is_hidden = updated.is_hidden;
+            console.log('[CardRoom] is_hidden updated:', updated.is_hidden);
           }
         }
       )

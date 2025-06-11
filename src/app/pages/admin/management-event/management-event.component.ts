@@ -70,7 +70,16 @@ export class ManagementEventComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadEventsFromSupabase();
+
+    this.eventService.subscribeToEvents(() => {
+      this.loadEventsFromSupabase();
+    });
   }
+
+  ngOnDestroy(): void {
+    this.eventService.unsubscribeEvents();
+  }
+
 
   async loadEventsFromSupabase() {
     try {
