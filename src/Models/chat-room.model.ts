@@ -1,4 +1,6 @@
 export interface ChatRoom {
+  active: boolean;
+  joined: boolean;
   id: string;
   name: string;
   description?: string;

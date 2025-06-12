@@ -7,9 +7,45 @@
   </div>
 
   <div class="right-section">
-    <button mat-icon-button>
-      <mat-icon>notifications</mat-icon>
-    </button>
+    <div class="notification-wrapper">
+      <button mat-icon-button (click)="toggleNotifications()">
+        <mat-icon>notifications</mat-icon>
+      </button>
+      @if (hasUnread) {
+        <span class="dot"></span>
+      }
+
+      @if (showNotifications) {
+        <div class="notification-popup">
+          <div class="noti-header">
+            Notifications
+            <button mat-button (click)="markAllAsRead()">Mark all as read</button>
+          </div>
+          <div class="noti-list">
+            @if (notifications.length > 0) {
+              @for (n of notifications; track n.id) {
+                <div class="noti-item">
+                  <div class="noti-content">
+                    <p class="noti-title">{{ n.title }}</p>
+                    <div class="noti-thumbnail">
+                      <img [src]="n.target_image || 'https://via.placeholder.com/60'" alt="thumbnail" class="noti-img" style="width: 160px;"/>
+                      <button mat-icon-button color="warn" (click)="deleteNotification(n.id)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                    <p class="noti-msg" [innerHTML]="n.message"></p>
+                    <p class="noti-time">{{ n.created_at | date:'short' }}</p>
+                  </div>
+                </div>
+              }
+            } @else {
+              <p class="no-noti-text">You have no notifications.</p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
     <div class="avatar" (click)="goToProfile()" style="cursor: pointer;">
       <img [src]="avatarUrl" alt="User avatar" width="40" height="40" style="border-radius: 50%;" />
     </div>
