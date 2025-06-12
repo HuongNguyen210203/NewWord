@@ -3,14 +3,16 @@ import {
   MAT_DIALOG_DATA,
   MatDialogActions,
   MatDialogClose,
-  MatDialogContent, MatDialogRef,
+  MatDialogContent,
+  MatDialogRef,
   MatDialogTitle
 } from '@angular/material/dialog';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { supabase } from '../../supabase.client';
+import { MatIcon } from '@angular/material/icon';
 import { RealtimeChannel } from '@supabase/supabase-js';
-import {MatIcon} from '@angular/material/icon';
+import { supabase } from '../../supabase.client';
+import { EventService } from '../../../Services/event.service';
 
 @Component({
   standalone: true,
@@ -33,8 +35,11 @@ export class JoinEventDialogComponent implements OnInit, OnDestroy {
   hasJoined = false;
   private channel?: RealtimeChannel;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
-              public dialogRef: MatDialogRef<JoinEventDialogComponent> ) {}
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<JoinEventDialogComponent>,
+    private eventService: EventService
+  ) {}
 
   async ngOnInit() {
     await this.checkJoined();
@@ -88,14 +93,7 @@ export class JoinEventDialogComponent implements OnInit, OnDestroy {
     const userId = authData.user?.id;
     if (!userId) return;
 
-    const { data, error } = await supabase
-      .from('event_participants')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('event_id', this.data.id)
-      .maybeSingle();
-
-    this.hasJoined = !!data && !error;
+    this.hasJoined = await this.eventService.hasJoined(userId, this.data.id);
   }
 
   async toggleRegistration() {
@@ -109,34 +107,19 @@ export class JoinEventDialogComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.hasJoined) {
-      const { error } = await supabase
-        .from('event_participants')
-        .delete()
-        .match({ user_id: userId, event_id: this.data.id });
-
-      if (!error) {
+    try {
+      if (this.hasJoined) {
+        await this.eventService.leaveEvent(userId, this.data.id);
         this.hasJoined = false;
         alert('❌ Bạn đã huỷ đăng ký sự kiện.');
         this.dialogRef.close({ cancelledEventId: this.data.id });
       } else {
-        alert('❌ Huỷ đăng ký thất bại: ' + error.message);
-      }
-    } else {
-      const { error } = await supabase.from('event_participants').insert({
-        user_id: userId,
-        event_id: this.data.id,
-        status: 'active',
-        is_moderator: false,
-        registered_at: new Date().toISOString(),
-      });
-
-      if (!error) {
+        await this.eventService.joinEvent(userId, this.data.id);
         this.hasJoined = true;
         alert('✅ Bạn đã đăng ký thành công!');
-      } else {
-        alert('❌ Đăng ký thất bại: ' + error.message);
       }
+    } catch (error: any) {
+      alert(`❌ Hành động thất bại: ${error.message}`);
     }
 
     this.loading = false;

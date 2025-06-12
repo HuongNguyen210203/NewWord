@@ -2,13 +2,16 @@ import { Injectable } from '@angular/core';
 import { supabase } from '../app/supabase.client';
 import { ChatRoom } from '../Models/chat-room.model';
 import { Message } from '../Models/message.model';
-import {RealtimeChannel} from '@supabase/supabase-js';
+import { RealtimeChannel } from '@supabase/supabase-js';
+import { NotificationService } from './notification.service';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
-  constructor() {}
+  private roomChannel?: RealtimeChannel;
 
-  // ========= Room logic =========
+  constructor(private notificationService: NotificationService) {}
+
+  // ======== ROOM LOGIC ========
   async getAllRooms(): Promise<ChatRoom[]> {
     const { data: rooms, error: roomError } = await supabase
       .from('chat_rooms')
@@ -19,7 +22,6 @@ export class ChatService {
     const { data: participants, error: participantError } = await supabase
       .from('room_participants')
       .select('room_id');
-
     if (participantError) throw participantError;
 
     const countMap = new Map<string, number>();
@@ -61,25 +63,54 @@ export class ChatService {
     return data;
   }
 
-  async updateRoom(id: string, updates: { name?: string; description?: string; image_url?: string }) {
+  async updateRoom(id: string, updates: { name?: string; description?: string; image_url?: string; is_hidden?: boolean }) {
+    const { data: originalRoom } = await supabase
+      .from('chat_rooms')
+      .select('name, is_hidden')
+      .eq('id', id)
+      .maybeSingle();
+
     const { error } = await supabase.from('chat_rooms').update(updates).eq('id', id);
     if (error) throw error;
+
+    const { data: participants } = await supabase
+      .from('room_participants')
+      .select('user_id')
+      .eq('room_id', id);
+
+    const participantIds = participants?.map(p => p.user_id) || [];
+
+    // Gửi thông báo tùy theo trạng thái
+    if (updates.is_hidden === true && originalRoom?.is_hidden === false) {
+      await this.notificationService.notifyParticipants(participantIds, {
+        type: 'room',
+        action: 'locked',
+        target_id: id,
+        title: 'Room Locked',
+        message: `Room <b>${originalRoom?.name}</b> has been locked.`,
+      });
+    } else if (updates.is_hidden === false && originalRoom?.is_hidden === true) {
+      await this.notificationService.notifyParticipants(participantIds, {
+        type: 'room',
+        action: 'unlocked',
+        target_id: id,
+        title: 'Room Reopened',
+        message: `Room <b>${originalRoom?.name}</b> has been reopened.`,
+      });
+    } else if (originalRoom?.is_hidden === false || originalRoom?.is_hidden === undefined) {
+      await this.notificationService.notifyParticipants(participantIds, {
+        type: 'room',
+        action: 'updated',
+        target_id: id,
+        title: 'Room Updated',
+        message: `Room <b>${originalRoom?.name}</b> has been updated.`,
+      });
+    }
   }
 
   async deleteRoom(id: string) {
-    // Xoá người tham gia trước
-    const { error: participantError } = await supabase
-      .from('room_participants')
-      .delete()
-      .eq('room_id', id);
-    if (participantError) throw participantError;
-
-    // Rồi mới xoá phòng
-    const { error: roomError } = await supabase
-      .from('chat_rooms')
-      .delete()
-      .eq('id', id);
-    if (roomError) throw roomError;
+    await supabase.from('room_participants').delete().eq('room_id', id);
+    await supabase.from('chat_rooms').delete().eq('id', id);
   }
 
   async uploadRoomImage(file: File): Promise<string> {
@@ -90,7 +121,7 @@ export class ChatService {
     return data.publicUrl;
   }
 
-  // ========= Room participant logic =========
+  // ======== PARTICIPANT LOGIC ========
   async isUserInRoom(roomId: string, userId: string): Promise<boolean> {
     const { data, error } = await supabase
       .from('room_participants')
@@ -103,36 +134,46 @@ export class ChatService {
   }
 
   async joinRoom(roomId: string, userId: string): Promise<boolean> {
-    // Bước 1: Xoá nếu user đã tham gia để tránh lỗi unique
-    const { error: deleteError } = await supabase
-      .from('room_participants')
-      .delete()
-      .match({ room_id: roomId, user_id: userId });
+    await supabase.from('room_participants').delete().match({ room_id: roomId, user_id: userId });
 
-    if (deleteError) {
-      console.warn('⚠ Không thể xóa bản ghi cũ (nếu có):', deleteError.message);
-      // Không return false ở đây vì có thể bản ghi không tồn tại — điều đó vẫn ổn
-    }
+    const { error: insertError } = await supabase.from('room_participants').insert({
+      room_id: roomId,
+      user_id: userId,
+      joined_at: new Date().toISOString(),
+    });
 
-    // Bước 2: Insert lại bản ghi mới (trigger sẽ chạy chắc chắn)
-    const { error: insertError } = await supabase
-      .from('room_participants')
-      .insert({
-        room_id: roomId,
-        user_id: userId,
-        joined_at: new Date().toISOString(),
-      });
+    if (insertError) return false;
 
-    if (insertError) {
-      console.error('❌ Tham gia phòng thất bại:', insertError.message);
-      return false;
-    }
+    const { data: user } = await supabase.from('users').select('email').eq('id', userId).maybeSingle();
+    const { data: room } = await supabase.from('chat_rooms').select('name').eq('id', roomId).maybeSingle();
+
+    await this.notificationService.notifyAllAdmins({
+      type: 'room',
+      action: 'joined',
+      target_id: roomId,
+      title: 'User Joined Room',
+      message: `<b>${user?.email}</b> has joined room <b>${room?.name}</b>.`,
+    });
 
     return true;
   }
 
+  async leaveRoom(roomId: string, userId: string): Promise<void> {
+    await supabase.from('room_participants').delete().match({ room_id: roomId, user_id: userId });
 
-  // ========= Message logic =========
+    const { data: user } = await supabase.from('users').select('email').eq('id', userId).maybeSingle();
+    const { data: room } = await supabase.from('chat_rooms').select('name').eq('id', roomId).maybeSingle();
+
+    await this.notificationService.notifyAllAdmins({
+      type: 'room',
+      action: 'left',
+      target_id: roomId,
+      title: 'User Left Room',
+      message: `<b>${user?.email}</b> has left room <b>${room?.name}</b>.`,
+    });
+  }
+
+  // ======== MESSAGE LOGIC ========
   async getMessages(roomId: string): Promise<Message[]> {
     const { data, error } = await supabase
       .from('messages')
@@ -140,11 +181,7 @@ export class ChatService {
       .eq('room_id', roomId)
       .order('sent_at', { ascending: true });
 
-    if (error) {
-      console.error('❌ Failed to load messages:', error.message);
-      return [];
-    }
-
+    if (error) return [];
     return data as Message[];
   }
 
@@ -156,81 +193,53 @@ export class ChatService {
         content,
         media_type: 'text',
         media_url: null,
-        sent_at: new Date().toISOString()
-      }
+        sent_at: new Date().toISOString(),
+      },
     ]);
     return !error;
   }
 
-  async getTotalMessages(): Promise<number> {
-    const { count, error } = await supabase
-      .from('messages')
-      .select('id', { count: 'exact', head: true });
+  // async getTotalMessages(): Promise<number> {
+  //   const { count, error } = await supabase
+  //     .from('messages')
+  //     .select('id', { count: 'exact', head: true });
+  //   return error ? 0 : count ?? 0;
+  // }
 
-    if (error) {
-      console.error('❌ Error counting messages:', error.message);
-      return 0;
-    }
+  // async getMessagesNeedingReply(): Promise<number> {
+  //   const { data, error } = await supabase.from('messages').select('*');
+  //   if (error) return 0;
+  //   return data.filter((m: any) => !m.content?.toLowerCase().includes('replied')).length;
+  // }
 
-    return count ?? 0;
-  }
+  // async deleteRoomCompletely(id: string): Promise<void> {
+  //   await supabase.from('messages').delete().eq('room_id', id);
+  //   await supabase.from('room_participants').delete().eq('room_id', id);
+  //   await supabase.from('chat_rooms').delete().eq('id', id);
+  // }
 
-  async getMessagesNeedingReply(): Promise<number> {
-    const { data, error } = await supabase.from('messages').select('*');
-    if (error) {
-      console.error('❌ Error loading messages:', error.message);
-      return 0;
-    }
+  // subscribeToRoomChanges(onUpdate: (updatedRoom: Partial<ChatRoom>) => void, roomId: string) {
+  //   this.roomChannel = supabase
+  //     .channel(`chat_rooms:${roomId}`)
+  //     .on(
+  //       'postgres_changes',
+  //       {
+  //         event: 'UPDATE',
+  //         schema: 'public',
+  //         table: 'chat_rooms',
+  //         filter: `id=eq.${roomId}`,
+  //       },
+  //       (payload) => {
+  //         onUpdate(payload.new as Partial<ChatRoom>);
+  //       }
+  //     )
+  //     .subscribe();
+  // }
 
-    return data.filter((m: any) => !m.content?.toLowerCase().includes('replied')).length;
-  }
-  async deleteRoomCompletely(id: string): Promise<void> {
-    // Xoá tất cả messages của phòng
-    const { error: messageError } = await supabase
-      .from('messages')
-      .delete()
-      .eq('room_id', id);
-    if (messageError) throw new Error(`Failed to delete messages: ${messageError.message}`);
-
-    // Xoá tất cả participants của phòng
-    const { error: participantError } = await supabase
-      .from('room_participants')
-      .delete()
-      .eq('room_id', id);
-    if (participantError) throw new Error(`Failed to delete participants: ${participantError.message}`);
-
-    // Xoá phòng
-    const { error: roomError } = await supabase
-      .from('chat_rooms')
-      .delete()
-      .eq('id', id);
-    if (roomError) throw new Error(`Failed to delete room: ${roomError.message}`);
-  }
-
-  private roomChannel?: RealtimeChannel;
-  subscribeToRoomChanges(onUpdate: (updatedRoom: Partial<ChatRoom>) => void, roomId: string) {
-    this.roomChannel = supabase
-      .channel(`chat_rooms:${roomId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'chat_rooms',
-          filter: `id=eq.${roomId}`,
-        },
-        (payload) => {
-          onUpdate(payload.new as Partial<ChatRoom>);
-        }
-      )
-      .subscribe();
-  }
-
-  unsubscribeRoomChanges() {
-    if (this.roomChannel) {
-      supabase.removeChannel(this.roomChannel);
-      this.roomChannel = undefined;
-    }
-  }
-
+  // unsubscribeRoomChanges() {
+  //   if (this.roomChannel) {
+  //     supabase.removeChannel(this.roomChannel);
+  //     this.roomChannel = undefined;
+  //   }
+  // }
 }
