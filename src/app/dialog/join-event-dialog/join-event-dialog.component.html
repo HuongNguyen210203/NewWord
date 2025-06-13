@@ -1,11 +1,13 @@
 <h2 mat-dialog-title>{{ data.title }}</h2>
 
 <mat-dialog-content>
+
   <img
     [src]="data.image_url || 'https://via.placeholder.com/600x300?text=No+Image'"
     class="event-image"
     alt="event image"
   />
+
   <p>
     <strong>Date:</strong> {{ data.start_time | date: 'fullDate' }}
   </p>
@@ -16,21 +18,28 @@
     {{ data.start_time | date: 'shortTime' }} - {{ data.end_time | date: 'shortTime' }}
   </p>
 
-
   <p>
     <strong>Participants:</strong>
     <span
       [ngClass]="{
-      'full-slot': (data.current_participants || 0) >= (data.max_participants || 0),
-      'available-slot': (data.current_participants || 0) < (data.max_participants || 0)
-    }"
+        'full-slot': (data.current_participants || 0) >= (data.max_participants || 0),
+        'available-slot': (data.current_participants || 0) < (data.max_participants || 0)
+      }"
     >
-    {{ data.current_participants || 0 }} / {{ data.max_participants || 0 }}
-  </span>
+      {{ data.current_participants || 0 }} / {{ data.max_participants || 0 }}
+    </span>
   </p>
 
-
   <p>{{ data.description }}</p>
+
+  <!-- ✅ Conflict warning -->
+  @if (conflictEvent) {
+    <div style="margin-top: 1rem; padding: 0.75rem; background-color: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+      ⚠️ You have already registered for
+      <b>{{ conflictEvent.title }}</b> at the same time.
+    </div>
+  }
+
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

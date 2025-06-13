@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialogContent,
   MatDialogActions,
   MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
   MatDialogTitle
 } from '@angular/material/dialog';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -33,6 +33,8 @@ import { EventService } from '../../../Services/event.service';
 export class JoinEventDialogComponent implements OnInit, OnDestroy {
   loading = false;
   hasJoined = false;
+  userId: string | undefined;
+  conflictEvent?: any;
   private channel?: RealtimeChannel;
 
   constructor(
@@ -42,8 +44,13 @@ export class JoinEventDialogComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
+    const { data: authData } = await supabase.auth.getUser();
+    this.userId = authData.user?.id;
+    if (!this.userId) return;
+
     await this.checkJoined();
     await this.refreshParticipantCount();
+    await this.checkTimeConflict();
     this.subscribeToRealtime();
   }
 
@@ -89,37 +96,67 @@ export class JoinEventDialogComponent implements OnInit, OnDestroy {
   }
 
   async checkJoined() {
-    const { data: authData } = await supabase.auth.getUser();
-    const userId = authData.user?.id;
-    if (!userId) return;
+    if (!this.userId) return;
+    this.hasJoined = await this.eventService.hasJoined(this.userId, this.data.id);
+  }
 
-    this.hasJoined = await this.eventService.hasJoined(userId, this.data.id);
+  async checkTimeConflict() {
+    if (!this.userId) return;
+
+    const { data: joinedEvents, error } = await supabase
+      .from('event_participants')
+      .select('event_id, events!inner(id, title, start_time, end_time)')
+      .eq('user_id', this.userId);
+
+    if (error) return;
+
+    const events = (joinedEvents || []).map((e: any) => e.events);
+    const current = this.data;
+
+    const overlap = events.find((e: any) =>
+      new Date(e.start_time) < new Date(current.end_time) &&
+      new Date(e.end_time) > new Date(current.start_time) &&
+      e.id !== current.id
+    );
+
+    if (overlap) {
+      this.conflictEvent = overlap;
+    }
   }
 
   async toggleRegistration() {
     this.loading = true;
-    const { data: authData } = await supabase.auth.getUser();
-    const userId = authData.user?.id;
 
-    if (!userId) {
-      alert('❌ Bạn cần đăng nhập để thực hiện hành động này.');
+    if (!this.userId) {
+      alert('❌ You must be logged in to perform this action.');
       this.loading = false;
       return;
     }
 
+    if (!this.hasJoined && this.conflictEvent) {
+      const confirmed = confirm(
+        `⚠ You have already joined "${this.conflictEvent.title}" which overlaps with this event. Do you want to proceed?`
+      );
+      if (!confirmed) {
+        this.loading = false;
+        return;
+      }
+    }
+
     try {
       if (this.hasJoined) {
-        await this.eventService.leaveEvent(userId, this.data.id);
+        await this.eventService.leaveEvent(this.userId, this.data.id);
         this.hasJoined = false;
-        alert('❌ Bạn đã huỷ đăng ký sự kiện.');
+        alert('❌ You have left the event.');
         this.dialogRef.close({ cancelledEventId: this.data.id });
       } else {
-        await this.eventService.joinEvent(userId, this.data.id);
+        await this.eventService.joinEvent(this.userId, this.data.id);
         this.hasJoined = true;
-        alert('✅ Bạn đã đăng ký thành công!');
+        alert('✅ You have successfully registered!');
+        this.dialogRef.close();
       }
     } catch (error: any) {
-      alert(`❌ Hành động thất bại: ${error.message}`);
+      alert(`❌ Action failed: ${error.message}`);
     }
 
     this.loading = false;

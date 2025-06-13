@@ -1,0 +1,41 @@
+<!-- Wrapper toàn bộ timeline -->
+<div class="timeline-container">
+  <span class="time-label">{{ timeMode === 'PM' ? '12 P.M' : '12 A.M' }}</span>
+
+  <div class="timeline-line">
+    <!-- Mốc giờ -->
+    @for (hour of hourMarkers; track hour) {
+      <div class="hour-marker" [style.left]="getMarkerPercent(hour)">
+        {{ formatHourLabel(hour) }}
+        <div class="tick-line"></div>
+      </div>
+    }
+
+    <!-- Sự kiện -->
+    @for (event of filteredEvents; track event.start_time) {
+      <div
+        class="marker"
+        [style.left]="getMarkerPosition(event.start_time)"
+        [matMenuTriggerFor]="eventMenu"
+        (click)="onMarkerClick(event.start_time)"
+      >
+        <mat-icon class="marker-icon">location_on</mat-icon>
+      </div>
+    }
+  </div>
+
+  <span class="time-label">{{ timeMode === 'PM' ? '12 A.M' : '12 P.M' }}</span>
+</div>
+
+<!-- Popup danh sách sự kiện -->
+<mat-menu #eventMenu="matMenu" class="event-popup-menu">
+  @for (e of popupEvents; track e.id) {
+    <div class="popup-item" mat-menu-item (click)="openDialog(e)">
+      <img [src]="e.image_url || 'https://via.placeholder.com/60'" class="event-thumb" />
+      <div class="popup-info">
+        <div class="popup-title">{{ e.title }}</div>
+        <div class="popup-time">{{ e.start_time | date: 'shortTime' }}</div>
+      </div>
+    </div>
+  }
+</mat-menu>
