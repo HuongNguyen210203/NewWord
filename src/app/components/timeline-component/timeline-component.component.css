@@ -1,0 +1,166 @@
+/* Wrapper toàn bộ timeline */
+.timeline-wrapper-block {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+/* Bọc bên trong (nếu cần) */
+.timeline-inner-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Thanh chứa Date + Nút Sync */
+.timeline-toolbar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.timeline-datepicker {
+  width: 140px;
+}
+
+.timeline-toolbar-row button {
+  margin-left: auto;
+}
+
+/* Timeline line container */
+.timeline-container {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+  height: 48px;
+}
+
+/* Thanh thời gian chính */
+.timeline-line {
+  flex: 1;
+  height: 4px;
+  background-color: #4caf50;
+  margin: 0 8px;
+  border-radius: 2px;
+  position: relative;
+}
+
+/* Mốc giờ */
+.hour-marker {
+  position: absolute;
+  top: -28px;
+  font-size: 10px;
+  color: #66bb6a;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.tick-line {
+  width: 1px;
+  height: 10px;
+  background-color: #66bb6a;
+  margin-top: 2px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.hour-marker:hover {
+  color: #388e3c;
+}
+
+.hour-marker:hover .tick-line {
+  background-color: #388e3c;
+  transform: scaleY(1.3);
+}
+
+/* Icon marker sự kiện */
+.marker {
+  position: absolute;
+  top: -8px;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.marker-icon {
+  font-size: 24px;
+  color: #388e3c;
+  transition: transform 0.2s ease, color 0.2s;
+}
+
+.marker-icon:hover {
+  transform: scale(1.2);
+  color: #2e7d32;
+}
+
+/* Nhãn mốc đầu/cuối */
+.time-label {
+  font-size: 12px;
+  min-width: 40px;
+  text-align: center;
+  color: #2e7d2d;
+}
+
+/* Popup danh sách sự kiện */
+.event-popup-menu {
+  padding: 16px;
+  width: 500px !important;
+  max-width: unset !important;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.popup-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.popup-item:hover {
+  background-color: #f1f8e9;
+}
+
+.event-thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.popup-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-title {
+  font-weight: 600;
+  color: #2e7d32;
+  font-size: 14px;
+}
+
+.popup-time {
+  font-size: 12px;
+  color: #666;
+}

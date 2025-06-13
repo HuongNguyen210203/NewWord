@@ -29,6 +29,7 @@
               "src/favicon.ico"
             ],
             "styles": [
+              "node_modules/primeicons/primeicons.css",
               "src/custom-theme.scss",
               "src/styles.scss",
               "node_modules/@ctrl/ngx-emoji-mart/picker.css"
@@ -94,6 +95,7 @@
               "src/favicon.ico"
             ],
             "styles": [
+              "node_modules/primeicons/primeicons.css",
               "src/custom-theme.scss",
               "src/styles.scss",
               "node_modules/@ctrl/ngx-emoji-mart/picker.css"

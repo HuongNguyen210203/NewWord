@@ -1,7 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
+// styles.scss
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+// Global layout reset (nếu cần)
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+// Bạn có thể thêm lớp tiện ích nhỏ ở đây nếu cần
