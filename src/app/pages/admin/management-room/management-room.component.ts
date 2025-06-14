@@ -74,17 +74,36 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
     this.loadRoomsFromSupabase();
   }
 
+
+
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
-    // Optional: custom filter function based on name or description
+
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        case 'name':
+          return item.name?.toLowerCase() || '';
+        case 'description':
+          return item.description?.toLowerCase() || '';
+        case 'createdAt':
+          return new Date(item.createdAt);
+        case 'members':
+          return item.members || 0;
+        default:
+          return item[property];
+      }
+    };
+
+
     this.dataSource.filterPredicate = (data, filter) => {
       const name = data.name?.toLowerCase() || '';
       const desc = data.description?.toLowerCase() || '';
       return name.includes(filter) || desc.includes(filter);
     };
   }
+
 
   async loadRoomsFromSupabase() {
     try {
