@@ -19,36 +19,20 @@
 </section>
 
 <!-- EVENT SECTION -->
-<!-- EVENT SECTION -->
 <section class="section">
-  <div class="section-header">
+  <div class="section-header full-width">
     <h2>Event</h2>
 
-    <!-- 📅 + 🔁 nằm ở giữa -->
-    <div class="section-controls">
-      <mat-form-field appearance="outline" class="timeline-datepicker">
-        <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange()" />
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-
-      <!-- Nút Sync căn giữa -->
-      <button mat-icon-button class="sync-button" (click)="toggleTimeMode()" matTooltip="Switch AM/PM">
-        <mat-icon>sync</mat-icon>
-      </button>
+    <div class="timeline-wrapper-inline">
+      <app-timeline-component
+        class="timeline-inline"
+        [events]="events"
+        [selectedDate]="selectedDate"
+        [timeMode]="timeMode"
+      ></app-timeline-component>
     </div>
 
     <button mat-button class="see-more" (click)="goToEventPage()">See more</button>
-  </div>
-
-  <!-- Timeline: full width -->
-  <div class="timeline-row-oneline">
-    <app-timeline-component
-      class="timeline-flex"
-      [events]="events"
-      [selectedDate]="selectedDate"
-      [timeMode]="timeMode"
-    ></app-timeline-component>
   </div>
 
   <!-- Event Cards -->
@@ -62,5 +46,6 @@
     <button class="scroll-btn right" (click)="scrollRight('event')">❯</button>
   </div>
 </section>
+
 
 

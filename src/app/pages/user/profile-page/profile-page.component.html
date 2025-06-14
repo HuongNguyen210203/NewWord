@@ -8,7 +8,7 @@
           <div>
             <h2>{{ user.name }}</h2>
             <p>{{ user.email }}</p>
-            <p>{{ user.birth | date:'dd/MM/yyyy' }}</p>
+            <p>{{ user.birth | date: 'dd/MM/yyyy' }}</p>
           </div>
         </div>
       }
@@ -17,44 +17,6 @@
       <mat-icon>edit</mat-icon>
       Edit
     </button>
-  </div>
-
-  <!-- PARTICIPATED EVENTS -->
-  <div class="section-header">
-    <h3>Participated Events</h3>
-    <div class="section-actions">
-      <div class="custom-search">
-        <mat-icon class="search-icon">search</mat-icon>
-        <input class="search-input" [(ngModel)]="eventSearch" placeholder="Search event..." />
-      </div>
-      <button mat-button class="see-more-btn" (click)="goToEventPage()">See more</button>
-    </div>
-  </div>
-
-  <div class="scroll-container">
-    <button class="scroll-btn left" (click)="scrollLeft(eventScrollRef)">&#x276E;</button>
-    <div #eventScrollRef class="scroll-wrapper">
-      <div class="media-grid horizontal-scroll">
-        @if (filteredEvents().length > 0) {
-          @for (event of filteredEvents(); track event.id) {
-            <div
-              class="media-card"
-              [class.hidden-card]="event.is_hidden"
-              (click)="openEventDialog(event)"
-            >
-              <img [src]="event.image_url || 'https://via.placeholder.com/240x140'" />
-              <div class="overlay-text">{{ event.title }}</div>
-              @if (event.is_hidden) {
-                <div class="badge-hidden">(Hidden)</div>
-              }
-            </div>
-          }
-        } @else {
-          <div class="empty-message">You haven't joined any events yet.</div>
-        }
-      </div>
-    </div>
-    <button class="scroll-btn right" (click)="scrollRight(eventScrollRef)">&#x276F;</button>
   </div>
 
   <!-- PARTICIPATED ROOMS -->
@@ -94,4 +56,57 @@
     </div>
     <button class="scroll-btn right" (click)="scrollRight(roomScrollRef)">&#x276F;</button>
   </div>
+
+  <!-- PARTICIPATED EVENTS -->
+  <div class="section-header">
+    <h3>Participated Events</h3>
+    <div class="section-actions">
+      <div class="custom-search">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input class="search-input" [(ngModel)]="eventSearch" placeholder="Search event..." />
+      </div>
+      <button mat-button class="see-more-btn" (click)="goToEventPage()">See more</button>
+      <button mat-stroked-button color="primary" (click)="toggleShowAllEvents()">
+        {{ showAllEvents ? 'Filter by Date' : 'Show All' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ✅ TIMELINE NGAY SAU HEADER -->
+  <div class="timeline-row-oneline">
+    <app-timeline-component
+      class="timeline-inline"
+      [events]="events"
+      [selectedDate]="selectedDate"
+      [timeMode]="timeMode"
+    ></app-timeline-component>
+  </div>
+
+  <!-- CARDS -->
+  <div class="scroll-container">
+    <button class="scroll-btn left" (click)="scrollLeft(eventScrollRef)">&#x276E;</button>
+    <div #eventScrollRef class="scroll-wrapper">
+      <div class="media-grid horizontal-scroll">
+        @if (filteredEvents().length > 0) {
+          @for (event of filteredEvents(); track event.id) {
+            <div
+              class="media-card"
+              [class.hidden-card]="event.is_hidden"
+              (click)="openEventDialog(event)"
+            >
+              <img [src]="event.image_url || 'https://via.placeholder.com/240x140'" />
+              <div class="overlay-text">{{ event.title }}</div>
+              @if (event.is_hidden) {
+                <div class="badge-hidden">(Hidden)</div>
+              }
+            </div>
+          }
+        } @else {
+          <div class="empty-message">You haven't joined any events yet.</div>
+        }
+      </div>
+    </div>
+    <button class="scroll-btn right" (click)="scrollRight(eventScrollRef)">&#x276F;</button>
+  </div>
 </div>
+

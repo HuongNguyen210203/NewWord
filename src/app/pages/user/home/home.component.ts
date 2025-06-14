@@ -89,13 +89,4 @@ export class HomeComponent implements OnInit {
   goToRoomPage() {
     this.router.navigate(['/home/card-room']);
   }
-
-  toggleTimeMode() {
-    this.timeMode = this.timeMode === 'AM' ? 'PM' : 'AM';
-    this.updateFilteredEvents();
-  }
-
-  onDateChange() {
-    this.updateFilteredEvents();
-  }
 }

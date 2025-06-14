@@ -32,6 +32,13 @@
   </div>
 
   <div class="card-area">
+    <div class="timeline-wrapper-inline">
+      <app-timeline-component
+        [events]="filteredEvents"
+      ></app-timeline-component>
+
+    </div>
+
     <div class="card-grid">
       @for (card of pagedEvents; track card.id) {
         <mat-card
