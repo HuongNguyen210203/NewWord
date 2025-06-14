@@ -15,6 +15,7 @@ import { AppEvent } from '../../../../Models/event.model';
 import { ChatRoom } from '../../../../Models/chat-room.model';
 import { Router } from '@angular/router';
 import { JoinEventDialogComponent } from '../../../dialog/join-event-dialog/join-event-dialog.component';
+import {TimelineComponentComponent} from '../../../components/timeline-component/timeline-component.component';
 
 @Component({
   selector: 'app-profile-page',
@@ -26,6 +27,7 @@ import { JoinEventDialogComponent } from '../../../dialog/join-event-dialog/join
     MatIcon,
     MatButton,
     FormsModule,
+    TimelineComponentComponent,
   ]
 })
 export class ProfilePageComponent implements OnInit {
@@ -34,6 +36,11 @@ export class ProfilePageComponent implements OnInit {
   roomSearch: string = '';
   events: AppEvent[] = [];
   rooms: ChatRoom[] = [];
+
+  // ⏱ Timeline control
+  selectedDate: Date = new Date();
+  timeMode: 'AM' | 'PM' = 'AM';
+  showAllEvents: boolean = false;
 
   constructor(
     private dialog: MatDialog,
@@ -58,7 +65,7 @@ export class ProfilePageComponent implements OnInit {
       this.user = currentUser;
 
       // ✅ Lấy event đã tham gia (bao gồm cả bị ẩn)
-      const { data: joinedEvents, error: eventErr } = await supabase
+      const { data: joinedEvents } = await supabase
         .from('event_participants')
         .select('event_id, events(*)')
         .eq('user_id', uid);
@@ -66,7 +73,7 @@ export class ProfilePageComponent implements OnInit {
       this.events = (joinedEvents || []).map((item: any) => item.events);
 
       // ✅ Lấy room đã tham gia (bao gồm cả bị ẩn)
-      const { data: joinedRooms, error: roomErr } = await supabase
+      const { data: joinedRooms } = await supabase
         .from('room_participants')
         .select('room_id, chat_rooms(*)')
         .eq('user_id', uid);
@@ -97,10 +104,18 @@ export class ProfilePageComponent implements OnInit {
       .subscribe();
   }
 
+  // 🎯 Tìm kiếm + lọc theo ngày (nếu chưa bật showAll)
   filteredEvents() {
-    return this.events.filter(e =>
-      e.title.toLowerCase().includes(this.eventSearch.toLowerCase())
-    );
+    const keyword = this.eventSearch.toLowerCase();
+
+    return this.events.filter(e => {
+      const matchesTitle = e.title.toLowerCase().includes(keyword);
+      if (this.showAllEvents) return matchesTitle;
+
+      const eventDate = new Date(e.start_time);
+      const isSameDay = eventDate.toDateString() === this.selectedDate.toDateString();
+      return matchesTitle && isSameDay;
+    });
   }
 
   filteredRooms() {
@@ -109,11 +124,15 @@ export class ProfilePageComponent implements OnInit {
     );
   }
 
+  toggleShowAllEvents() {
+    this.showAllEvents = !this.showAllEvents;
+  }
+
   openEditProfileDialog() {
     const dialogRef = this.dialog.open(ChangeAvatarDialogComponent, {
       width: '500px',
       data: {
-        user: { ...this.user }, // clone tránh sửa trực tiếp
+        user: { ...this.user },
       },
     });
 
@@ -159,7 +178,6 @@ export class ProfilePageComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.cancelledEventId) {
-        // 🧹 Xoá khỏi danh sách nếu hủy tham gia
         this.events = this.events.filter(e => e.id !== result.cancelledEventId);
       }
     });

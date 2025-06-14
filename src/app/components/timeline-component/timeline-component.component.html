@@ -1,30 +1,45 @@
-<!-- Wrapper toàn bộ timeline -->
-<div class="timeline-container">
-  <span class="time-label">{{ timeMode === 'PM' ? '12 P.M' : '12 A.M' }}</span>
+<!-- Wrapper toàn bộ timeline: Date (trái) – Line (giữa) – Sync (phải) -->
+<div class="timeline-wrapper-block">
+  <!-- BÊN TRÁI: Datepicker -->
+  <mat-form-field appearance="outline" class="timeline-datepicker">
+    <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange()" />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
 
-  <div class="timeline-line">
-    <!-- Mốc giờ -->
-    @for (hour of hourMarkers; track hour) {
-      <div class="hour-marker" [style.left]="getMarkerPercent(hour)">
-        {{ formatHourLabel(hour) }}
-        <div class="tick-line"></div>
-      </div>
-    }
+  <!-- GIỮA: Timeline Line -->
+  <div class="timeline-container">
+    <span class="time-label">{{ getStartLabel() }}</span>
 
-    <!-- Sự kiện -->
-    @for (event of filteredEvents; track event.start_time) {
-      <div
-        class="marker"
-        [style.left]="getMarkerPosition(event.start_time)"
-        [matMenuTriggerFor]="eventMenu"
-        (click)="onMarkerClick(event.start_time)"
-      >
-        <mat-icon class="marker-icon">location_on</mat-icon>
-      </div>
-    }
+    <div class="timeline-line">
+      <!-- Mốc giờ -->
+      @for (hour of hourMarkers; track hour) {
+        <div class="hour-marker" [style.left]="getMarkerPercent(hour)">
+          {{ formatHourLabel(hour) }}
+          <div class="tick-line"></div>
+        </div>
+      }
+
+      <!-- Marker sự kiện -->
+      @for (event of filteredEvents; track event.start_time) {
+        <div
+          class="marker"
+          [style.left]="getMarkerPosition(event.start_time)"
+          [matMenuTriggerFor]="eventMenu"
+          (click)="onMarkerClick(event.start_time)"
+        >
+          <mat-icon class="marker-icon">location_on</mat-icon>
+        </div>
+      }
+    </div>
+
+    <span class="time-label">{{ getEndLabel() }}</span>
   </div>
 
-  <span class="time-label">{{ timeMode === 'PM' ? '12 A.M' : '12 P.M' }}</span>
+  <!-- BÊN PHẢI: Sync Button -->
+  <button mat-icon-button class="sync-button" (click)="toggleTimeMode()" matTooltip="Switch AM/PM">
+    <mat-icon>sync</mat-icon>
+  </button>
 </div>
 
 <!-- Popup danh sách sự kiện -->

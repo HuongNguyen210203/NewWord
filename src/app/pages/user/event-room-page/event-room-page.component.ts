@@ -1,24 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatSidenavModule, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
-
-
-import {AppEvent} from '../../../../Models/event.model';
-import {EventService} from '../../../../Services/event.service';
 import { MatChipsModule } from '@angular/material/chips';
-import {MatDialog} from '@angular/material/dialog';
-import {JoinEventDialogComponent} from '../../../dialog/join-event-dialog/join-event-dialog.component';
-import {CreateEventComponent} from '../../../dialog/create-event/create-event.component';
-import {Router} from '@angular/router';
-import {MatTooltip} from '@angular/material/tooltip';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 
+import { AppEvent } from '../../../../Models/event.model';
+import { EventService } from '../../../../Services/event.service';
+import { Router } from '@angular/router';
+
+import { JoinEventDialogComponent } from '../../../dialog/join-event-dialog/join-event-dialog.component';
+import { CreateEventComponent } from '../../../dialog/create-event/create-event.component';
+import { TimelineComponentComponent } from '../../../components/timeline-component/timeline-component.component';
 
 @Component({
   selector: 'app-event-room-page',
@@ -36,7 +36,8 @@ import {MatTooltip} from '@angular/material/tooltip';
     MatPaginatorModule,
     MatButtonModule,
     MatChipsModule,
-    MatTooltip
+    MatTooltip,
+    TimelineComponentComponent
   ]
 })
 export class EventRoomPageComponent implements OnInit {
@@ -54,7 +55,7 @@ export class EventRoomPageComponent implements OnInit {
   constructor(
     private eventService: EventService,
     private dialog: MatDialog,
-    private router : Router
+    private router: Router
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -103,7 +104,7 @@ export class EventRoomPageComponent implements OnInit {
       data: {
         ...card,
         imageUrl: card.image_url || 'https://via.placeholder.com/300x200?text=No+Image',
-        date: card.start_time  // 👈 Đảm bảo date được truyền
+        date: card.start_time
       }
     });
   }
@@ -113,19 +114,17 @@ export class EventRoomPageComponent implements OnInit {
     this.applyFilter();
   }
 
-
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateEventComponent, {
       width: '600px',
     });
 
     dialogRef.afterClosed().subscribe(() => {
-      this.reloadEvents(); // làm mới sự kiện nếu có sự thay đổi
+      this.reloadEvents();
     });
   }
 
-  goBack() {
-    this.router.navigate(['/home']); // hoặc '/' tùy route chính
+  goBack(): void {
+    this.router.navigate(['/home']);
   }
-
 }

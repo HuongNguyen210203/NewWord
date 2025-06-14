@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FormsModule } from '@angular/forms';
 import { JoinEventDialogComponent } from '../../dialog/join-event-dialog/join-event-dialog.component';
+import {MatIconButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-timeline-component',
@@ -26,6 +27,8 @@ import { JoinEventDialogComponent } from '../../dialog/join-event-dialog/join-ev
     MatInputModule,
     MatDatepickerModule,
     FormsModule,
+    MatIconButton,
+    MatTooltip,
   ],
   templateUrl: './timeline-component.component.html',
   styleUrls: ['./timeline-component.component.css'],
@@ -84,8 +87,9 @@ export class TimelineComponentComponent implements OnChanges {
   }
 
   formatHourLabel(hour: number): string {
-    if (hour === 0 || hour === 24) return '12 A.M';
-    if (hour === 12) return this.timeMode === 'PM' ? '12 P.M' : '12 A.M';
+    if (hour === 0) return '12 A.M';
+    if (hour === 12) return '12 P.M';
+    if (hour === 24) return '12 A.M';
     if (this.timeMode === 'AM') return `${hour} A.M`;
     return `${hour - 12} P.M`;
   }
@@ -102,6 +106,14 @@ export class TimelineComponentComponent implements OnChanges {
       data: event,
       width: '500px',
     });
+  }
+
+  getStartLabel(): string {
+    return this.timeMode === 'AM' ? '12 A.M' : '12 P.M';
+  }
+
+  getEndLabel(): string {
+    return this.timeMode === 'AM' ? '12 P.M' : '12 A.M';
   }
 
   toggleTimeMode() {
