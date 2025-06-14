@@ -16,6 +16,8 @@ import { SidebarComponent } from '../admin-page/components/sidebar/sidebar.compo
 import {UserService} from '../../../../Services/user.service';
 import {User} from '../../../../Models/user.model';
 import {MatSlideToggle} from '@angular/material/slide-toggle';
+import { MatSort } from '@angular/material/sort';
+import { ViewChild, AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-management-profile',

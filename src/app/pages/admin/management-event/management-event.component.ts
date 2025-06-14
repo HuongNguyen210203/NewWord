@@ -1,7 +1,8 @@
 import {
   Component,
   OnInit,
-  ViewChild
+  ViewChild,
+  AfterViewInit, OnDestroy
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -22,6 +23,7 @@ import { EditEventDialogComponent } from './components/edit-event-dialog/edit-ev
 
 import { EventService } from '../../../../Services/event.service';
 import { AppEvent } from '../../../../Models/event.model';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-management-event',
@@ -41,13 +43,22 @@ import { AppEvent } from '../../../../Models/event.model';
     MatMenuModule,
   ]
 })
-export class ManagementEventComponent implements OnInit {
+
+
+export class ManagementEventComponent implements OnInit, AfterViewInit, OnDestroy {
   sidebarOpen = true;
-  dataSource = new MatTableDataSource<AppEvent>();
+  dataSource = new MatTableDataSource<AppEvent & {
+    title: string,
+    participants: number,
+    registerStart: Date,
+    eventDate: Date,
+    registerEnd: Date
+  }>();
+
   displayedColumns: string[] = [
     'select',
     'image',
-    'name',
+    'title',
     'description',
     'registerStart',
     'eventDate',
@@ -55,13 +66,12 @@ export class ManagementEventComponent implements OnInit {
     'participants',
     'actions',
   ];
-
-  searchTerm: string = '';
   pageSize = 5;
   pageIndex = 0;
-  pageSizeOptions = [5, 10];
+
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private dialog: MatDialog,
@@ -76,40 +86,61 @@ export class ManagementEventComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        case 'participants':
+          return item.participants ?? 0;
+
+        case 'title':
+          return item.title?.toLowerCase() || '';
+
+        case 'description':
+          return item.description?.toLowerCase() || '';
+
+        case 'registerStart':
+          return item.registerStart?.getTime?.() || new Date(item.registerStart).getTime();
+
+        case 'eventDate':
+          return item.eventDate?.getTime?.() || new Date(item.eventDate).getTime();
+
+        case 'registerEnd':
+          return item.registerEnd?.getTime?.() || new Date(item.registerEnd).getTime();
+
+        default:
+          return (item as any)[property];
+      }
+    };
+  }
+
   ngOnDestroy(): void {
     this.eventService.unsubscribeEvents();
   }
 
-
   async loadEventsFromSupabase() {
     try {
       const events = await this.eventService.getAllEvents();
-      console.log(events);
       this.dataSource.data = events.map(event => ({
         ...event,
         image: event.image_url,
+        title: event.title || '',
         is_hidden: event.is_hidden ?? false,
         registerStart: new Date(event.registration_deadline),
         registerEnd: new Date(event.end_time),
-        eventDate: new Date(event.start_time)
+        eventDate: new Date(event.start_time),
+        participants: Number(event.current_participants) || 0
       }));
     } catch (error) {
       console.error('Lỗi khi tải sự kiện:', error);
     }
   }
 
-  get filteredData(): AppEvent[] {
-    const filtered = this.dataSource.data.filter((item: AppEvent) =>
-      item.title.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
-    const start = this.pageIndex * this.pageSize;
-    const end = start + this.pageSize;
-    return filtered.slice(start, end);
-  }
-
-  onPageChange(event: PageEvent) {
-    this.pageIndex = event.pageIndex;
-    this.pageSize = event.pageSize;
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
   }
 
   toggleSidebar() {
@@ -130,8 +161,8 @@ export class ManagementEventComponent implements OnInit {
       if (!result) return;
 
       try {
-        const created = await this.eventService.createEvent(result);
-        await this.loadEventsFromSupabase(); // refresh list after creation
+        await this.eventService.createEvent(result);
+        await this.loadEventsFromSupabase();
       } catch (error) {
         console.error('Lỗi khi tạo sự kiện:', error);
         alert('Không thể tạo sự kiện. Vui lòng thử lại.');
@@ -144,7 +175,7 @@ export class ManagementEventComponent implements OnInit {
       width: '800px',
       data: {
         ...event,
-        participants: event.max_participants,
+        participants: event.max_participants || 0,
         startDate: new Date(event.start_time),
         startTime: this.formatTime(event.start_time),
         endDate: new Date(event.end_time),
@@ -175,7 +206,6 @@ export class ManagementEventComponent implements OnInit {
     }).catch(() => alert('Xoá thất bại.'));
   }
 
-  // Selection logic
   selection = {
     selected: [] as AppEvent[],
     toggle: (row: AppEvent) => {
@@ -187,13 +217,13 @@ export class ManagementEventComponent implements OnInit {
   };
 
   isAllSelected(): boolean {
-    return this.selection.selected.length === this.filteredData.length;
+    return this.selection.selected.length === this.dataSource.filteredData.length;
   }
 
   masterToggle(): void {
     this.isAllSelected()
       ? (this.selection.selected = [])
-      : (this.selection.selected = [...this.filteredData]);
+      : (this.selection.selected = [...this.dataSource.filteredData]);
   }
 
   formatTime(dateString: string): string {
