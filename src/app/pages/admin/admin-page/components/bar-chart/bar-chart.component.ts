@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ChartConfiguration, ChartType } from 'chart.js';
+import { ChartConfiguration } from 'chart.js';
 import { NgChartsModule } from 'ng2-charts';
 
 @Component({
@@ -11,6 +11,11 @@ import { NgChartsModule } from 'ng2-charts';
   styleUrls: ['./bar-chart.component.css']
 })
 export class BarChartComponent implements OnInit {
+  // ✅ Dữ liệu từ component cha
+  @Input() chartData: number[] = [];
+  @Input() labels: string[] = [];
+
+  // ✅ Dữ liệu hiển thị biểu đồ
   public barChartData: ChartConfiguration<'bar'>['data'] = {
     labels: [],
     datasets: [],
@@ -41,12 +46,13 @@ export class BarChartComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.generateChartData();
+    this.initChart();
   }
 
-  private generateChartData(): void {
-    const labels = Array.from({ length: 20 }, (_, i) => `${i + 1}`);
-    const data = Array.from({ length: 20 }, () => Math.floor(Math.random() * 60));
+  private initChart(): void {
+    // ✅ Dùng dữ liệu truyền vào nếu có
+    const labels = this.labels?.length ? this.labels : Array.from({ length: 20 }, (_, i) => `${i + 1}`);
+    const data = this.chartData?.length ? this.chartData : Array.from({ length: 20 }, () => Math.floor(Math.random() * 60));
 
     this.barChartData = {
       labels,

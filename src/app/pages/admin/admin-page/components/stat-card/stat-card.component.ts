@@ -1,8 +1,9 @@
 import { Component, Input } from '@angular/core';
-import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from '@angular/material/card';
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 
 @Component({
   selector: 'app-stat-card',
+  standalone: true,
   imports: [
     MatCard,
     MatCardTitle,
@@ -13,14 +14,15 @@ import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from '@angular/mat
   styleUrl: './stat-card.component.css'
 })
 export class StatCardComponent {
-  @Input() title = ""
-  @Input() value = ""
-  @Input() subtitle = ""
-  @Input() color = "blue"
-  @Input() secondValue = ""
-  @Input() secondSubtitle = ""
+  @Input() title: string = "";
+  @Input() value: number | string = "";
+  @Input() subtitle: string = "";
+  @Input() color: 'blue' | 'orange' | 'purple' | 'red' = 'blue';
+
+  @Input() secondValue?: number | string;
+  @Input() secondSubtitle?: string;
 
   get colorClass(): string {
-    return `color-${this.color}`
+    return `color-${this.color}`;
   }
 }
