@@ -1,18 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { TopbarComponent } from '../admin-page/components/topbar/topbar.component';
-import { SidebarComponent } from '../admin-page/components/sidebar/sidebar.component';
 import {UserService} from '../../../../Services/user.service';
 import {User} from '../../../../Models/user.model';
 import {MatSlideToggle} from '@angular/material/slide-toggle';
@@ -39,102 +36,78 @@ import { ViewChild, AfterViewInit } from '@angular/core';
     MatSlideToggle,
   ]
 })
-export class ManagementProfileComponent implements OnInit {
-  sidebarOpen = true;
-
-  constructor(private dialog: MatDialog, private userService: UserService) {}
-
-  toggleSidebar() {
-    this.sidebarOpen = !this.sidebarOpen;
-  }
-
-  dataSource: User[] = [];
-  searchTerm = '';
-  pageSize = 5;
-  currentPageIndex = 0;
-
+export class ManagementProfileComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['select', 'email', 'name', 'joinedRooms', 'events', 'actions'];
+  dataSource = new MatTableDataSource<User>();
 
-  async ngOnInit(): Promise<void> {
-    this.dataSource = await this.userService.getAllUsers();
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  constructor(private userService: UserService) {}
+
+  ngOnInit(): void {
+    this.loadUsers();
   }
 
-  get filteredData(): User[] {
-    const term = this.searchTerm.trim().toLowerCase();
-    return this.dataSource.filter(row =>
-      row.email.toLowerCase().includes(term) ||
-      row.name.toLowerCase().includes(term)
-    );
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
+    // Optional: Custom sort for string fields
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        case 'email':
+          return item.email?.toLowerCase();
+        case 'name':
+          return item.name?.toLowerCase();
+        case 'joinedRooms':
+        case 'events':
+          return Number(item[property as keyof User]) || 0;
+        default:
+          return (item as any)[property];
+      }
+    };
   }
 
-  get pagedData(): User[] {
-    const startIndex = this.currentPageIndex * this.pageSize;
-    return this.filteredData.slice(startIndex, startIndex + this.pageSize);
-  }
-
-  onPageEvent(event: any): void {
-    this.pageSize = event.pageSize;
-    this.currentPageIndex = event.pageIndex;
-  }
-
-  updatePaginator(): void {
-    this.currentPageIndex = 0;
-  }
-
-  async toggleVisibility(row: User): Promise<void> {
-    row.is_hidden = !row.is_hidden;
+  async loadUsers(): Promise<void> {
     try {
-      await this.userService.updateVisibility(row.id, row.is_hidden);
-    } catch (err) {
-      alert('Lỗi khi cập nhật trạng thái người dùng');
-      row.is_hidden = !row.is_hidden; // rollback
+      const users = await this.userService.getAllUsers();
+      this.dataSource.data = users;
+    } catch (error) {
+      console.error('Error loading users:', error);
     }
+  }
+
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
+  }
+
+  truncateText(text: string, limit: number): string {
+    return text?.length > limit ? text.substring(0, limit) + '...' : text;
+  }
+
+  toggleVisibility(user: User): void {
+    user.is_hidden = !user.is_hidden;
   }
 
   selection = {
     selected: [] as User[],
-    toggle(row: User) {
-      const index = this.selected.indexOf(row);
-      index === -1 ? this.selected.push(row) : this.selected.splice(index, 1);
+    toggle: (row: User) => {
+      const idx = this.selection.selected.indexOf(row);
+      idx === -1 ? this.selection.selected.push(row) : this.selection.selected.splice(idx, 1);
     },
-    isSelected(row: User) {
-      return this.selected.includes(row);
-    },
-    hasValue() {
-      return this.selected.length > 0;
-    }
+    isSelected: (row: User) => this.selection.selected.includes(row),
+    hasValue: () => this.selection.selected.length > 0
   };
 
   isAllSelected(): boolean {
-    return this.selection.selected.length === this.filteredData.length;
+    return this.selection.selected.length === this.dataSource.filteredData.length;
   }
 
   masterToggle(): void {
     this.isAllSelected()
       ? (this.selection.selected = [])
-      : (this.selection.selected = [...this.filteredData]);
-  }
-
-  exportCSV(): void {
-    const rows = [
-      ['Email', 'Name', 'Joined Rooms', 'Events'],
-      ...this.filteredData.map(row => [row.email, row.name, row.joinedRooms, row.events])
-    ];
-    const csvContent = rows.map(e => e.join(',')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.setAttribute('href', URL.createObjectURL(blob));
-    link.setAttribute('download', 'user_profiles.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-
-  truncateText(text: string, maxWords: number): string {
-    if (!text) return '';
-    const words = text.split(' ');
-    return words.length > maxWords
-      ? words.slice(0, maxWords).join(' ') + '...'
-      : text;
+      : (this.selection.selected = [...this.dataSource.filteredData]);
   }
 }
