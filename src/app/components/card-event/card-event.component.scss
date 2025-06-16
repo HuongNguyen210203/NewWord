@@ -9,7 +9,7 @@
 }
 
 mat-card-image {
-  height: 120px;
+  height: 110px;
   width: 100%;
   object-fit: cover;
   aspect-ratio: 4 / 3;
@@ -18,7 +18,7 @@ mat-card-image {
   border-top-right-radius: 12px;
 }
 .image-wrapper {
-  height: 120px;
+  height: 110px;
   width: 100%;
   overflow: hidden;
   border-top-left-radius: 12px;
@@ -37,8 +37,8 @@ mat-card-image {
 .content {
   display: flex;
   flex-direction: row;
-  padding: 12px;
-  gap: 12px;
+  padding: 4px;
+  gap: 4px;
 }
 
 .date {
@@ -67,7 +67,7 @@ mat-card-image {
 }
 
 .title {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #1a237e;
   margin-bottom: 4px;
