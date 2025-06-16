@@ -17,9 +17,9 @@
     </div>
 
     @if (room.is_hidden) {
-      <button mat-raised-button color="warn" disabled>Hidden</button>
+      <button mat-stroked-button color="warn" disabled>Hidden</button>
     } @else {
-      <button mat-raised-button color="primary" (click)="goToChatRoom()">View</button>
+      <button mat-stroked-button color="primary" (click)="goToChatRoom()">View</button>
     }
   </mat-card-actions>
 </mat-card>
