@@ -100,7 +100,8 @@ export class NotificationService {
           const enriched = await this.enrichNotification(newNoti);
           const current = this.notificationsSubject.getValue();
           this.notificationsSubject.next([enriched, ...current]);
-          this.hasUnreadSubject.next(true);
+          const updated = [enriched, ...current];
+          this.hasUnreadSubject.next(updated.some(n => !n.seen));
         }
       )
       .subscribe();

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {
   MatCell,
   MatCellDef,
@@ -6,8 +6,10 @@ import {
   MatHeaderCell,
   MatHeaderCellDef, MatHeaderRow, MatHeaderRowDef, MatRow,
   MatRowDef,
-  MatTable
+  MatTable,
 } from '@angular/material/table';
+import {MatIcon} from '@angular/material/icon';
+import {EventService} from '../../../../../../Services/event.service';
 
 export interface Event {
   name: string
@@ -26,18 +28,24 @@ export interface Event {
     MatRowDef,
     MatHeaderRowDef,
     MatRow,
-    MatHeaderRow
+    MatHeaderRow,
+    MatIcon,
   ],
   templateUrl: './events-table.component.html',
   styleUrl: './events-table.component.css'
 })
-export class EventsTableComponent {
-  displayedColumns: string[] = ["name", "attendees", "time"]
+export class EventsTableComponent implements OnInit {
+  events: any[] = [];
+  displayedColumns: string[] = ['name', 'attendees', 'time'];
 
-  events: Event[] = [
-    { name: "Native Speaking", attendees: "26,000", time: "8:00" },
-    { name: "ThanksGiving", attendees: "22,000", time: "9:00" },
-    { name: "Tet Holiday", attendees: "22,000", time: "10:00" },
-  ]
+  constructor(private eventService: EventService) {}
+
+  async ngOnInit() {
+    const topEvents = await this.eventService.getTopEventsByParticipants();
+    this.events = topEvents.map(event => ({
+      name: event.title,
+      attendees: event.current_participants,
+      time: new Date(event.start_time).toLocaleString()
+    }));
+  }
 }
-

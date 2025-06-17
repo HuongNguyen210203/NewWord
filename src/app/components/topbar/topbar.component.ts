@@ -8,6 +8,7 @@ import { UserService } from '../../../Services/user.service';
 import { NotificationService } from '../../../Services/notification.service';
 import { Notification } from '../../../Models/notification.model';
 import {CommonModule} from '@angular/common';
+import { ChangeDetectorRef} from '@angular/core';
 
 @Component({
   selector: 'app-topbar',
@@ -27,7 +28,8 @@ export class TopbarComponent implements OnInit {
   constructor(
     private router: Router,
     private userService: UserService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -48,8 +50,16 @@ export class TopbarComponent implements OnInit {
       this.userService.setAvatarUrl(userData.avatar_url);
     }
 
-    this.notificationService.notifications$.subscribe(n => this.notifications = n);
-    this.notificationService.hasUnread$.subscribe(flag => this.hasUnread = flag);
+    this.notificationService.notifications$.subscribe(n => {
+      this.notifications = n;
+      this.cdr.detectChanges();
+    });
+
+    this.notificationService.hasUnread$.subscribe(flag => {
+      this.hasUnread = flag;
+      this.cdr.detectChanges();
+    });
+
   }
 
   toggleNotifications() {

@@ -8,12 +8,15 @@
 
   <div class="right-section">
     <div class="notification-wrapper">
-      <button mat-icon-button class="notification" (click)="toggleNotifications()">
-        <mat-icon>notifications</mat-icon>
-      </button>
-      @if (hasUnread) {
-        <span class="dot"></span>
-      }
+      <div class="notification-icon-wrapper">
+        <button mat-icon-button class="notification" (click)="toggleNotifications()">
+          <mat-icon>notifications</mat-icon>
+        </button>
+
+        @if (hasUnread) {
+          <span class="noti-badge">{{ getUnreadCount() }}</span>
+        }
+      </div>
 
       @if (showNotifications) {
         <div class="notification-popup">
@@ -27,7 +30,6 @@
                 <div class="noti-item">
                   <div class="noti-content">
                     <p class="noti-title">{{ n.title }}</p>
-
                     <div class="noti-thumbnail">
                       <img [src]="n.target_image || 'https://via.placeholder.com/60'" alt="thumbnail" class="noti-img" />
                       <button mat-icon-button color="warn" (click)="deleteNotification(n.id)">
@@ -39,7 +41,6 @@
                   </div>
                 </div>
               }
-
             } @else {
               <p class="no-noti-text">You have no notifications.</p>
             }
@@ -47,6 +48,7 @@
         </div>
       }
     </div>
+
 
     <div class="avatar" style="cursor: pointer;">
       <img src="/assets/images/avatar.png" alt="User avatar">

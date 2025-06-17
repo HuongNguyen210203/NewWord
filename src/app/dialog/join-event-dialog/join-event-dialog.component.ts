@@ -9,10 +9,10 @@ import {
 } from '@angular/material/dialog';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { supabase } from '../../supabase.client';
 import { EventService } from '../../../Services/event.service';
+import { NotificationService } from '../../../Services/notification.service';
 
 @Component({
   standalone: true,
@@ -24,7 +24,6 @@ import { EventService } from '../../../Services/event.service';
     MatDialogTitle,
     MatDialogClose,
     MatButtonModule,
-    MatIcon,
   ],
   providers: [DatePipe],
   templateUrl: './join-event-dialog.component.html',
@@ -40,7 +39,8 @@ export class JoinEventDialogComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<JoinEventDialogComponent>,
-    private eventService: EventService
+    private eventService: EventService,
+    private notificationService: NotificationService,
   ) {}
 
   async ngOnInit() {
@@ -147,11 +147,13 @@ export class JoinEventDialogComponent implements OnInit, OnDestroy {
       if (this.hasJoined) {
         await this.eventService.leaveEvent(this.userId, this.data.id);
         this.hasJoined = false;
+        await this.notificationService.fetchNotifications();
         alert('❌ You have left the event.');
         this.dialogRef.close({ cancelledEventId: this.data.id });
       } else {
         await this.eventService.joinEvent(this.userId, this.data.id);
         this.hasJoined = true;
+        await this.notificationService.fetchNotifications();
         alert('✅ You have successfully registered!');
         this.dialogRef.close();
       }

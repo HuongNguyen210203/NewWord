@@ -8,12 +8,13 @@
 
   <div class="right-section">
     <div class="notification-wrapper">
-      <button mat-icon-button (click)="toggleNotifications()">
+      <button mat-icon-button (click)="toggleNotifications()" class="noti-btn">
         <mat-icon>notifications</mat-icon>
+
+        <span *ngIf="hasUnread" class="noti-badge">
+      {{ notifications.length <= 9 ? notifications.length : '9+' }}
+    </span>
       </button>
-      @if (hasUnread) {
-        <span class="dot"></span>
-      }
 
       @if (showNotifications) {
         <div class="notification-popup">
@@ -28,7 +29,7 @@
                   <div class="noti-content">
                     <p class="noti-title">{{ n.title }}</p>
                     <div class="noti-thumbnail">
-                      <img [src]="n.target_image || 'https://via.placeholder.com/60'" alt="thumbnail" class="noti-img" style="width: 160px;"/>
+                      <img [src]="n.target_image || 'https://via.placeholder.com/60'" class="noti-img" />
                       <button mat-icon-button color="warn" (click)="deleteNotification(n.id)">
                         <mat-icon>delete</mat-icon>
                       </button>
@@ -45,6 +46,7 @@
         </div>
       }
     </div>
+
 
     <div class="avatar" (click)="goToProfile()" style="cursor: pointer;">
       <img [src]="avatarUrl" alt="User avatar" width="40" height="40" style="border-radius: 50%;" />
