@@ -2,8 +2,17 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Notification } from '../Models/notification.model';
 import { supabase } from '../app/supabase.client';
+import { RealtimeChannel } from '@supabase/supabase-js';
 
-export type NotificationAction = 'updated' | 'locked' | 'unlocked' | 'joined' | 'full' | 'left' | 'registered';
+export type NotificationAction =
+  | 'updated'
+  | 'locked'
+  | 'unlocked'
+  | 'joined'
+  | 'full'
+  | 'left'
+  | 'registered';
+
 export type NotificationType = 'event' | 'room' | 'admin';
 
 @Injectable({
@@ -18,6 +27,7 @@ export class NotificationService {
 
   private userId: string = '';
   private role: string = '';
+  private realtimeChannel: RealtimeChannel | null = null;
 
   constructor() {
     this.init();
@@ -51,11 +61,13 @@ export class NotificationService {
     if (!error && data) {
       const enriched = await Promise.all(data.map(this.enrichNotification));
       this.notificationsSubject.next(enriched);
-      this.hasUnreadSubject.next(enriched.some(n => !n.seen));
+      this.hasUnreadSubject.next(enriched.some((n) => !n.seen));
     }
   }
 
-  private async enrichNotification(n: Notification): Promise<Notification & { target_name: string, target_image: string }> {
+  private async enrichNotification(
+    n: Notification
+  ): Promise<Notification & { target_name: string; target_image: string }> {
     let targetName = '';
     let imageUrl = '';
 
@@ -85,7 +97,7 @@ export class NotificationService {
   }
 
   private listenToRealtime() {
-    supabase
+    this.realtimeChannel = supabase
       .channel('notifications-realtime')
       .on(
         'postgres_changes',
@@ -99,16 +111,24 @@ export class NotificationService {
           const newNoti = payload.new as Notification;
           const enriched = await this.enrichNotification(newNoti);
           const current = this.notificationsSubject.getValue();
-          this.notificationsSubject.next([enriched, ...current]);
           const updated = [enriched, ...current];
-          this.hasUnreadSubject.next(updated.some(n => !n.seen));
+          this.notificationsSubject.next(updated);
+          this.hasUnreadSubject.next(updated.some((n) => !n.seen));
         }
       )
       .subscribe();
   }
 
+  public reconnectRealtime() {
+    if (this.realtimeChannel) {
+      supabase.removeChannel(this.realtimeChannel);
+      this.realtimeChannel = null;
+    }
+    this.listenToRealtime();
+  }
+
   async markAllAsRead() {
-    const unseen = this.notificationsSubject.getValue().filter(n => !n.seen);
+    const unseen = this.notificationsSubject.getValue().filter((n) => !n.seen);
     if (unseen.length === 0) return;
 
     await supabase
@@ -131,7 +151,6 @@ export class NotificationService {
     title: string;
     message: string;
   }) {
-    console.log('✅ Sending notification to admins:', payload);
     const { data: admins } = await supabase
       .from('users')
       .select('id')
@@ -145,8 +164,10 @@ export class NotificationService {
       seen: false,
     }));
 
-    console.log('📤 Payload to insert (admins):', notifications);
-    const { error } = await supabase.from('notifications').insert(notifications);
+    const { error } = await supabase
+      .from('notifications')
+      .insert(notifications);
+
     if (error) console.error('❌ Failed to insert notifications:', error);
   }
 
@@ -166,8 +187,10 @@ export class NotificationService {
       seen: false,
     }));
 
-    console.log('📤 Payload to insert (participants):', notifications);
-    const { error } = await supabase.from('notifications').insert(notifications);
+    const { error } = await supabase
+      .from('notifications')
+      .insert(notifications);
+
     if (error) console.error('❌ Failed to notify participants:', error);
   }
 
