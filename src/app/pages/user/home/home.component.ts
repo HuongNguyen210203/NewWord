@@ -46,6 +46,10 @@ import { Router } from '@angular/router';
 export class HomeComponent implements OnInit {
   rooms: ChatRoom[] = [];
   events: AppEvent[] = [];
+
+  randomRooms: ChatRoom[] = [];
+  randomEvents: AppEvent[] = [];
+
   eventsOfSelectedDate: AppEvent[] = [];
 
   selectedDate: Date = new Date();
@@ -62,13 +66,35 @@ export class HomeComponent implements OnInit {
 
   async ngOnInit() {
     this.rooms = await this.chatService.getAllRooms();
+    if (this.rooms?.length > 0) {
+      this.updateFilteredRooms(); // ✅ đảm bảo rooms đã sẵn sàng
+    }
+
     this.events = await this.eventService.getAllEvents();
-    this.updateFilteredEvents();
+    if (this.events?.length > 0) {
+      this.updateFilteredEvents();
+    }
   }
 
   updateFilteredEvents() {
-    this.eventsOfSelectedDate = this.events.slice(0, 10);
+    this.randomEvents = this.getRandomItems(this.events, 10);
+    this.eventsOfSelectedDate = this.randomEvents;
   }
+
+  updateFilteredRooms() {
+    if (!this.rooms || this.rooms.length === 0) return;
+    this.randomRooms = this.getRandomItems(this.rooms, 10);
+  }
+
+  getRandomItems<T>(array: T[], count: number): T[] {
+    const copied = [...array];
+    for (let i = copied.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copied[i], copied[j]] = [copied[j], copied[i]];
+    }
+    return copied.slice(0, count);
+  }
+
 
   scrollLeft(type: 'event' | 'room') {
     const container =
