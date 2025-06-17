@@ -165,9 +165,22 @@ export class ManagementRoomComponent implements OnInit, AfterViewInit {
   }
 
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    const filterValue = (event.target as HTMLInputElement).value
+      .trim()
+      .toLowerCase();
+
+    const filterWords = filterValue.split(/\s+/);
+
+    this.dataSource.filterPredicate = (data, filter: string) => {
+      const combinedData = `${data.name} ${data.description}`.toLowerCase();
+
+
+      return filterWords.some(word => combinedData.includes(word));
+    };
+
     this.dataSource.filter = filterValue;
   }
+
 
   editRoom(row: any): void {
     const dialogRef = this.dialog.open(EditRoomDialogComponent, {

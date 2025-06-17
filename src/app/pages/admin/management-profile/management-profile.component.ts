@@ -78,10 +78,23 @@ export class ManagementProfileComponent implements OnInit, AfterViewInit {
     }
   }
 
-  applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value
+      .trim()
+      .toLowerCase();
+
+    const filterWords = filterValue.split(/\s+/);
+
+    this.dataSource.filterPredicate = (data, filter: string) => {
+      const combinedData = `${data.name} ${data.email}`.toLowerCase();
+
+
+      return filterWords.some(word => combinedData.includes(word));
+    };
+
     this.dataSource.filter = filterValue;
   }
+
 
   truncateText(text: string, limit: number): string {
     return text?.length > limit ? text.substring(0, limit) + '...' : text;

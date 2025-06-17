@@ -138,14 +138,23 @@ export class ManagementEventComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value
+      .trim()
+      .toLowerCase();
+
+    const filterWords = filterValue.split(/\s+/);
+
+    this.dataSource.filterPredicate = (data, filter: string) => {
+      const combinedData = `${data.title} ${data.description}`.toLowerCase();
+
+      return filterWords.some(word => combinedData.includes(word));
+    };
+
     this.dataSource.filter = filterValue;
   }
 
-  toggleSidebar() {
-    this.sidebarOpen = !this.sidebarOpen;
-  }
 
   truncateText(text: string | undefined, limit: number): string {
     if (!text) return '';
