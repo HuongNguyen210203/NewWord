@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {MatIconButton} from '@angular/material/button';
+import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {Router} from '@angular/router';
 import {NotificationService} from '../../../../../../Services/notification.service';
@@ -15,6 +15,7 @@ import {supabase} from '../../../../../supabase.client';
     MatIcon,
     CommonModule,
     MatToolbar,
+    MatButton,
   ],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.css'
@@ -30,6 +31,11 @@ export class TopbarComponent implements OnInit {
     private router: Router,
     private notificationService: NotificationService
   ) {}
+
+  getUnreadCount(): number {
+    return this.notifications.filter(n => !n.seen).length;
+  }
+
 
   ngOnInit() {
     this.notificationService.notifications$.subscribe(n => this.notifications = n);
@@ -60,5 +66,6 @@ export class TopbarComponent implements OnInit {
     await this.notificationService.fetchNotifications();
   }
 
+  protected readonly length = length;
 }
 

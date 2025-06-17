@@ -59,22 +59,34 @@ button:hover {
 }
 
 /* ---------- Notification Icon Dot ---------- */
-.dot {
+
+
+.noti-badge {
   position: absolute;
-  top: 10px;
-  right: 42px;
-  width: 10px;
-  height: 10px;
+  top: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  font-weight: 600;
+  color: white;
   background-color: red;
   border-radius: 50%;
   border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  z-index: 10;
 }
+
+
 
 /* ---------- Popup Notification ---------- */
-.notification-wrapper {
+.notification-icon-wrapper {
   position: relative;
+  display: inline-block;
 }
-
 .notification-popup {
   position: absolute;
   top: 60px;

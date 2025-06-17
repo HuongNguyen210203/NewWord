@@ -172,4 +172,20 @@ export class EventService {
       this.eventChannel = undefined;
     }
   }
+
+  async getTopEventsByParticipants(limit: number = 5) {
+    const { data, error } = await supabase
+      .from('events')
+      .select('id, title, start_time, current_participants')
+      .order('current_participants', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error('Error fetching top events:', error);
+      return [];
+    }
+
+    return data || [];
+  }
+
 }
