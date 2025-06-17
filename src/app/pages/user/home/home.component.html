@@ -9,7 +9,7 @@
     <button class="scroll-btn left" (click)="scrollLeft('room')">❮</button>
 
     <div class="card-list" #roomScroll>
-      @for (room of rooms; track room.id) {
+      @for (room of randomRooms; track room.id) {
         <app-card-room [room]="room" />
       }
     </div>
