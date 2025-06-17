@@ -1,26 +1,3 @@
-<!--<table mat-table [dataSource]="events" class="events-table">-->
-<!--  &lt;!&ndash; Name Column &ndash;&gt;-->
-<!--  <ng-container matColumnDef="name">-->
-<!--    <th mat-header-cell *matHeaderCellDef>Name of Events</th>-->
-<!--    <td mat-cell *matCellDef="let event">{{ event.name }}</td>-->
-<!--  </ng-container>-->
-
-<!--  &lt;!&ndash; Attendees Column &ndash;&gt;-->
-<!--  <ng-container matColumnDef="attendees">-->
-<!--    <th mat-header-cell *matHeaderCellDef class="text-right">Number of attendees</th>-->
-<!--    <td mat-cell *matCellDef="let event" class="text-right">{{ event.attendees }}</td>-->
-<!--  </ng-container>-->
-
-<!--  &lt;!&ndash; Time Column &ndash;&gt;-->
-<!--  <ng-container matColumnDef="time">-->
-<!--    <th mat-header-cell *matHeaderCellDef class="text-right">Time</th>-->
-<!--    <td mat-cell *matCellDef="let event" class="text-right time-cell">{{ event.time }}</td>-->
-<!--  </ng-container>-->
-
-<!--  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>-->
-<!--  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>-->
-<!--</table>-->
-
 <table mat-table [dataSource]="events" class="events-table mat-elevation-z2">
   <!-- Name Column -->
   <ng-container matColumnDef="name">
