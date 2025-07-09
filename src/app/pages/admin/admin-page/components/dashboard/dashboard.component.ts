@@ -57,82 +57,41 @@ export class DashboardComponent implements OnInit {
   }
 
   async loadStats() {
-    const { data: events } = await supabase.from('events').select('id');
+    const { from, to } = this.getTimeRange();
+
+    const { data: events } = await supabase
+      .from('events')
+      .select('id')
+      .gte('start_time', from.toISOString())
+      .lte('start_time', to.toISOString());
+
     this.totalEvents = events?.length || 0;
 
-    const { data: rooms } = await supabase.from('chat_rooms').select('id');
+    const { data: rooms } = await supabase
+      .from('chat_rooms')
+      .select('id')
+      .gte('created_at', from.toISOString())
+      .lte('created_at', to.toISOString());
+
     this.totalRooms = rooms?.length || 0;
 
-    const { data: messages } = await supabase.from('messages').select('*');
+    const { data: users } = await supabase
+      .from('users')
+      .select('id')
+      .gte('created_at', from.toISOString())
+      .lte('created_at', to.toISOString());
+
+    this.totalUsers = users?.length || 0;
+
+    const { data: messages } = await supabase
+      .from('messages')
+      .select('*')
+      .gte('created_at', from.toISOString())
+      .lte('created_at', to.toISOString());
+
     this.newMessages = messages?.filter(m => !m.is_read)?.length || 0;
     this.pastMessages = messages?.filter(m => m.is_flagged)?.length || 0;
   }
-  //
-  // async loadEventStats() {
-  //   const days = this.selectedTimeFrame === 'This Week' ? 7 :
-  //     this.selectedTimeFrame === 'Last Week' ? 14 : 30;
-  //
-  //   const fromDate = new Date();
-  //   fromDate.setDate(fromDate.getDate() - days);
-  //
-  //   const { data, error } = await supabase
-  //     .from('events')
-  //     .select('created_at')
-  //     .gte('created_at', fromDate.toISOString());  // Lọc theo mốc thời gian
-  //
-  //   if (error || !data) {
-  //     console.error('Error loading event data:', error);
-  //     return;
-  //   }
-  //
-  //   // Đếm số event theo ngày
-  //   const dailyCounts: { [date: string]: number } = {};
-  //   data.forEach((e: any) => {
-  //     const date = new Date(e.created_at).toISOString().split('T')[0];
-  //     dailyCounts[date] = (dailyCounts[date] || 0) + 1;
-  //   });
-  //
-  //   const sortedDates = Object.keys(dailyCounts).sort();
-  //   const values = sortedDates.map(d => dailyCounts[d]);
-  //
-  //   this.eventChartLabels = sortedDates;
-  //   this.eventChartData = values;
-  // }
-
-
-
-  // async loadEventStats() {
-  //   const days = this.selectedTimeFrame === 'This Week' ? 7 :
-  //     this.selectedTimeFrame === 'Last Week' ? 14 : 30;
-  //
-  //   const fromDate = new Date();
-  //   fromDate.setDate(fromDate.getDate() - days);
-  //
-  //   const { data, error } = await supabase
-  //     .from('events')
-  //     .select('start_time')
-  //     .gte('start_time', fromDate.toISOString());
-  //
-  //   if (error || !data) {
-  //     console.error('Error loading event data:', error);
-  //     return;
-  //   }
-  //
-  //   const dailyCounts: { [date: string]: number } = {};
-  //   data.forEach((e: any) => {
-  //     const date = new Date(e.start_time).toISOString().split('T')[0];
-  //     dailyCounts[date] = (dailyCounts[date] || 0) + 1;
-  //   });
-  //
-  //   const sortedDates = Object.keys(dailyCounts).sort();
-  //   const values = sortedDates.map(d => dailyCounts[d]);
-  //
-  //   this.eventChartLabels = sortedDates;
-  //   this.eventChartData = values;
-  //
-  //   // (Optional) Nếu bạn muốn hiển thị tổng Event thống kê được
-  //   this.totalEvents = values.reduce((sum, count) => sum + count, 0);
-  // }
 
   async loadEventStats() {
     let fromDate = new Date();
@@ -212,9 +171,37 @@ export class DashboardComponent implements OnInit {
 
   // Khi user chọn mốc thời gian mới
   async onTimeFrameChange() {
-    await this.loadUserStats(); // vẫn dùng full list
+    await this.loadStats(); // <<== thêm dòng này
+    await this.loadUserStats(); // vẫn giữ
     await this.loadEventStats();
   }
+
+
+  getTimeRange(): { from: Date; to: Date } {
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
+
+    let fromDate = new Date();
+    let toDate = new Date();
+
+    if (this.selectedTimeFrame === 'This Month') {
+      fromDate = new Date(currentYear, currentMonth, 1);
+      toDate = new Date(currentYear, currentMonth + 1, 0);
+    } else if (this.selectedTimeFrame === 'Last Month') {
+      fromDate = new Date(currentYear, currentMonth - 1, 1);
+      toDate = new Date(currentYear, currentMonth, 0);
+    } else if (this.selectedTimeFrame === 'Next Month') {
+      fromDate = new Date(currentYear, currentMonth + 1, 1);
+      toDate = new Date(currentYear, currentMonth + 2, 0);
+    }
+
+    fromDate.setHours(0, 0, 0, 0);
+    toDate.setHours(23, 59, 59, 999);
+
+    return { from: fromDate, to: toDate };
+  }
+
 
 
   // generateUserChartData() {
