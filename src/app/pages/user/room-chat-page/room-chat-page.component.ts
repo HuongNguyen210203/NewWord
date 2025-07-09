@@ -114,10 +114,17 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     document.removeEventListener('click', this.closeEmojiOutside, true);
-    if (this.messageChannel) supabase.removeChannel(this.messageChannel);
+    if (this.messageChannel) {
+      supabase.removeChannel(this.messageChannel);
+      this.messageChannel = null;
+    }
   }
 
   subscribeToRoomUpdates() {
+    if (this.messageChannel && this.messageChannel.state === 'joined') {
+      supabase.removeChannel(this.messageChannel);
+    }
+
     this.messageChannel = supabase
       .channel('room-hidden-updates')
       .on('postgres_changes', {
@@ -137,7 +144,9 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
           }
         }
       })
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Channel subscription status:', status);
+      });
   }
 
   async addRoomAndSelect(room: ChatRoom) {
@@ -208,16 +217,40 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
   async sendMessage() {
     const trimmed = this.inputMessage.trim();
     if (!trimmed || !this.currentUserId || !this.activeRoom) return;
-    const success = await this.chatService.sendMessage(this.activeRoom.id, this.currentUserId, trimmed);
+
+    let mediaUrl: string | undefined;
+    let mediaType: 'image' | 'video' | undefined;
+
+    if (this.selectedFile) {
+      try {
+        mediaUrl = await this.chatService.uploadFile(this.selectedFile, this.currentUserId);
+        mediaType = this.selectedFile.type.startsWith('image/') ? 'image' : 'video';
+      } catch (err: any) {
+        alert(`❌ ${err.message}`);
+        return;
+      }
+    }
+
+    const success = await this.chatService.sendMessage(
+      this.activeRoom.id,
+      this.currentUserId,
+      trimmed || (mediaType ? `${mediaType === 'image' ? 'Image' : 'Video'} message` : ''),
+      mediaUrl,
+      mediaType
+    );
+
     if (success) {
       this.messages.push({
         id: Date.now().toString(),
         from: 'me',
         avatar: this.userAvatar,
         name: 'Bạn',
-        text: trimmed,
+        text: trimmed || (mediaType ? `${mediaType === 'image' ? 'Image' : 'Video'} message` : ''),
+        mediaUrl,
+        mediaType,
       });
       this.inputMessage = '';
+      this.selectedFile = null;
       setTimeout(() => this.scrollToBottom(), 100);
     }
   }
@@ -283,25 +316,33 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
     (event.target as HTMLImageElement).src = '/assets/images/avatar.png';
   }
 
-  handleFileUpload(event: Event) {
+  async handleFileUpload(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) return;
 
     const file = input.files[0];
     const fileType = file.type;
+    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const validVideoTypes = ['video/mp4', 'video/webm'];
 
-    if (fileType.startsWith('image/')) {
+    if (validImageTypes.includes(fileType)) {
       this.selectedFile = file;
-    } else if (fileType.startsWith('video/')) {
+      await this.sendMessage();
+    } else if (validVideoTypes.includes(fileType)) {
       const video = document.createElement('video');
       video.preload = 'metadata';
-      video.onloadedmetadata = () => {
+      video.onloadedmetadata = async () => {
         URL.revokeObjectURL(video.src);
         if (video.duration > 60) {
           alert('❌ Video vượt quá 1 phút.');
           return;
         }
         this.selectedFile = file;
+        await this.sendMessage();
+      };
+      video.onerror = () => {
+        URL.revokeObjectURL(video.src);
+        alert('❌ Lỗi khi kiểm tra video.');
       };
       video.src = URL.createObjectURL(file);
     } else {
@@ -310,6 +351,7 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
 
     input.value = '';
   }
+
   removeRoom(roomId: string) {
     const confirmed = confirm('Bạn có chắc muốn xoá phòng này khỏi danh sách hiển thị không?');
     if (!confirmed) return;
@@ -326,5 +368,4 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
       this.messages = [];
     }
   }
-
 }
