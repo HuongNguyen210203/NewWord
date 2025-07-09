@@ -11,6 +11,38 @@ export class ChatService {
 
   constructor(private notificationService: NotificationService) {}
 
+  // ======== FILE UPLOAD LOGIC ========
+  async uploadFile(file: File, userId: string): Promise<string> {
+    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const validVideoTypes = ['video/mp4', 'video/webm'];
+    const fileType = file.type;
+    const fileExt = file.name.split('.').pop()?.toLowerCase();
+
+    if (!validImageTypes.includes(fileType) && !validVideoTypes.includes(fileType)) {
+      throw new Error('Chỉ hỗ trợ ảnh (JPG, PNG, GIF) hoặc video (MP4, WebM).');
+    }
+
+    // Generate a unique file name in the public folder
+    const fileName = `${userId}/${Date.now()}.${fileExt}`;
+    const filePath = `public/${fileName}`;
+
+    // Upload file to Supabase storage
+    const { error } = await supabase.storage
+      .from('chat-uploads')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+    if (error) {
+      throw new Error(`Lỗi khi tải file lên: ${error.message}`);
+    }
+
+    // Get the public URL of the uploaded file
+    const { data } = supabase.storage.from('chat-uploads').getPublicUrl(filePath);
+    return data.publicUrl;
+  }
+
   // ======== ROOM LOGIC ========
   async getAllRooms(): Promise<ChatRoom[]> {
     const { data: rooms, error: roomError } = await supabase
@@ -34,7 +66,7 @@ export class ChatService {
       ...room,
       image: room.image_url,
       createdAt: room.created_at,
-      members: countMap.get(room.id) || 0
+      members: countMap.get(room.id) || 0,
     }));
   }
 
@@ -54,7 +86,7 @@ export class ChatService {
         name: room.name,
         description: room.description || '',
         image_url: imageUrl,
-        created_by: user.id
+        created_by: user.id,
       })
       .select()
       .single();
@@ -80,7 +112,6 @@ export class ChatService {
 
     const participantIds = participants?.map(p => p.user_id) || [];
 
-    // Gửi thông báo tùy theo trạng thái
     if (updates.is_hidden === true && originalRoom?.is_hidden === false) {
       await this.notificationService.notifyParticipants(participantIds, {
         type: 'room',
@@ -185,61 +216,23 @@ export class ChatService {
     return data as Message[];
   }
 
-  async sendMessage(roomId: string, userId: string, content: string): Promise<boolean> {
+  async sendMessage(
+    roomId: string,
+    userId: string,
+    content: string,
+    mediaUrl?: string,
+    mediaType?: 'image' | 'video'
+  ): Promise<boolean> {
     const { error } = await supabase.from('messages').insert([
       {
         room_id: roomId,
         sender_id: userId,
         content,
-        media_type: 'text',
-        media_url: null,
+        media_url: mediaUrl,
+        media_type: mediaType || 'text',
         sent_at: new Date().toISOString(),
       },
     ]);
     return !error;
   }
-
-  // async getTotalMessages(): Promise<number> {
-  //   const { count, error } = await supabase
-  //     .from('messages')
-  //     .select('id', { count: 'exact', head: true });
-  //   return error ? 0 : count ?? 0;
-  // }
-
-  // async getMessagesNeedingReply(): Promise<number> {
-  //   const { data, error } = await supabase.from('messages').select('*');
-  //   if (error) return 0;
-  //   return data.filter((m: any) => !m.content?.toLowerCase().includes('replied')).length;
-  // }
-
-  // async deleteRoomCompletely(id: string): Promise<void> {
-  //   await supabase.from('messages').delete().eq('room_id', id);
-  //   await supabase.from('room_participants').delete().eq('room_id', id);
-  //   await supabase.from('chat_rooms').delete().eq('id', id);
-  // }
-
-  // subscribeToRoomChanges(onUpdate: (updatedRoom: Partial<ChatRoom>) => void, roomId: string) {
-  //   this.roomChannel = supabase
-  //     .channel(`chat_rooms:${roomId}`)
-  //     .on(
-  //       'postgres_changes',
-  //       {
-  //         event: 'UPDATE',
-  //         schema: 'public',
-  //         table: 'chat_rooms',
-  //         filter: `id=eq.${roomId}`,
-  //       },
-  //       (payload) => {
-  //         onUpdate(payload.new as Partial<ChatRoom>);
-  //       }
-  //     )
-  //     .subscribe();
-  // }
-
-  // unsubscribeRoomChanges() {
-  //   if (this.roomChannel) {
-  //     supabase.removeChannel(this.roomChannel);
-  //     this.roomChannel = undefined;
-  //   }
-  // }
 }
