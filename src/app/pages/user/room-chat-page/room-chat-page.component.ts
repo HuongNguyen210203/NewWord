@@ -216,7 +216,7 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
 
   async sendMessage() {
     const trimmed = this.inputMessage.trim();
-    if (!trimmed || !this.currentUserId || !this.activeRoom) return;
+    if ((!trimmed && !this.selectedFile) || !this.currentUserId || !this.activeRoom) return;
 
     let mediaUrl: string | undefined;
     let mediaType: 'image' | 'video' | undefined;
