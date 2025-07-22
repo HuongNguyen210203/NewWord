@@ -15,6 +15,7 @@ import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { ChatService } from '../../../../Services/chat.service';
 
+
 @Component({
   selector: 'app-room-chat-page',
   standalone: true,
@@ -36,6 +37,7 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
   isJoined = false;
   showEmojiPicker = false;
   selectedFile: File | null = null;
+  filePreviewUrl: string | null = null;
 
   chatRooms: (ChatRoom & {
     preview?: string;
@@ -117,6 +119,10 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
     if (this.messageChannel) {
       supabase.removeChannel(this.messageChannel);
       this.messageChannel = null;
+    }
+    if (this.filePreviewUrl) {
+      URL.revokeObjectURL(this.filePreviewUrl);
+      this.filePreviewUrl = null;
     }
   }
 
@@ -216,10 +222,12 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
 
   async sendMessage() {
     const trimmed = this.inputMessage.trim();
-    if (!trimmed || !this.currentUserId || !this.activeRoom) return;
-
+    if ((!trimmed && !this.selectedFile) || !this.currentUserId || !this.activeRoom) return;
     let mediaUrl: string | undefined;
     let mediaType: 'image' | 'video' | undefined;
+
+    // Allow sending if either a file is selected or there is text input
+    if (!trimmed && !this.selectedFile) return;
 
     if (this.selectedFile) {
       try {
@@ -231,10 +239,11 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
       }
     }
 
+    const messageContent = trimmed || (mediaType ? `${mediaType === 'image' ? 'Image' : 'Video'} message` : '');
     const success = await this.chatService.sendMessage(
       this.activeRoom.id,
       this.currentUserId,
-      trimmed || (mediaType ? `${mediaType === 'image' ? 'Image' : 'Video'} message` : ''),
+      messageContent,
       mediaUrl,
       mediaType
     );
@@ -245,14 +254,26 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
         from: 'me',
         avatar: this.userAvatar,
         name: 'Bạn',
-        text: trimmed || (mediaType ? `${mediaType === 'image' ? 'Image' : 'Video'} message` : ''),
+        text: messageContent,
         mediaUrl,
         mediaType,
       });
       this.inputMessage = '';
       this.selectedFile = null;
+      if (this.filePreviewUrl) {
+        URL.revokeObjectURL(this.filePreviewUrl);
+        this.filePreviewUrl = null;
+      }
       setTimeout(() => this.scrollToBottom(), 100);
     }
+  }
+
+  removeSelectedFile() {
+    if (this.selectedFile && this.filePreviewUrl) {
+      URL.revokeObjectURL(this.filePreviewUrl);
+    }
+    this.selectedFile = null;
+    this.filePreviewUrl = null;
   }
 
   async joinRoom() {
@@ -327,7 +348,8 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
 
     if (validImageTypes.includes(fileType)) {
       this.selectedFile = file;
-      await this.sendMessage();
+      this.filePreviewUrl = URL.createObjectURL(file);
+      input.value = '';
     } else if (validVideoTypes.includes(fileType)) {
       const video = document.createElement('video');
       video.preload = 'metadata';
@@ -338,7 +360,8 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
           return;
         }
         this.selectedFile = file;
-        await this.sendMessage();
+        this.filePreviewUrl = URL.createObjectURL(file);
+        input.value = '';
       };
       video.onerror = () => {
         URL.revokeObjectURL(video.src);
@@ -347,9 +370,8 @@ export class RoomChatPageComponent implements OnInit, OnDestroy {
       video.src = URL.createObjectURL(file);
     } else {
       alert('❌ Chỉ hỗ trợ ảnh (JPG, PNG, GIF) và video (MP4, WebM)');
+      input.value = '';
     }
-
-    input.value = '';
   }
 
   removeRoom(roomId: string) {
