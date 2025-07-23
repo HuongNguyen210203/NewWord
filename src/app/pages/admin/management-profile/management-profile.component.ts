@@ -102,7 +102,9 @@ export class ManagementProfileComponent implements OnInit, AfterViewInit {
 
   toggleVisibility(user: User): void {
     user.is_hidden = !user.is_hidden;
+    this.userService.updateVisibility(user.id, user.is_hidden)
   }
+
 
   selection = {
     selected: [] as User[],

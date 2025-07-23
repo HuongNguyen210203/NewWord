@@ -81,7 +81,8 @@ export class UserService {
       .update({
         name: user.name,
         birth: user.birth,
-        avatar_url: user.avatar_url
+        avatar_url: user.avatar_url,
+        is_hidden: user.is_hidden,
       })
       .eq('id', user.id);
 
