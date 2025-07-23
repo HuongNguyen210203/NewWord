@@ -3,11 +3,9 @@ export interface Message {
   room_id: string;
   sender_id: string;
   content: string;
-  media_type?: string;   // "text" | "image" | "video" | "file"
+  media_type?: string;
   media_url?: string;
-  sent_at: string;       // ISO string (UTC)
-
-  // Optional: nếu join user để lấy tên/ảnh
+  sent_at: string;
   sender?: {
     name: string;
     avatar_url?: string;
