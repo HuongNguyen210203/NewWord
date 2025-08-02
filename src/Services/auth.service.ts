@@ -3,7 +3,7 @@ import { supabase } from '../app/supabase.client';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  constructor() {}
+  constructor(fakeSupabase: any) {}
 
   /**
    * Đăng ký tài khoản mới

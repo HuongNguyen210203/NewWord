@@ -6,7 +6,7 @@ import { supabase } from '../supabase.client';
 export class AuthGuard implements CanActivate {
   constructor(private router: Router) {}
 
-  async canActivate(): Promise<boolean | UrlTree> {
+  async canActivate(route: unknown, state: unknown): Promise<boolean | UrlTree> {
     const { data: sessionData } = await supabase.auth.getUser();
     const user = sessionData.user;
 
